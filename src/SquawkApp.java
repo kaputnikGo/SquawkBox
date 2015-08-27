@@ -3,8 +3,8 @@ public class SquawkApp {
 
 	public static void main(String[] args) {
         //interface
-		SquawkView testerView = new SquawkView();
-        testerView.run();	     
+		SquawkView squawkView = new SquawkView();
+        squawkView.run();	     
 	}
 	
 	/*

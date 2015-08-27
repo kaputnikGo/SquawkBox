@@ -7,6 +7,8 @@ import org.eclipse.swt.SWTError;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.browser.LocationEvent;
 import org.eclipse.swt.browser.LocationListener;
+import org.eclipse.swt.browser.ProgressEvent;
+import org.eclipse.swt.browser.ProgressListener;
 import org.eclipse.swt.browser.TitleEvent;
 import org.eclipse.swt.browser.TitleListener;
 import org.eclipse.swt.custom.SashForm;
@@ -28,7 +30,7 @@ import org.eclipse.swt.widgets.ToolItem;
 
 public class SquawkBrowser {
 	private static final int SHELL_HEIGHT = 950;
-	private static final int SHELL_WIDTH = 768;
+	private static final int SHELL_WIDTH = 860;
 	private boolean DEBUG = true;
 	private SquawkView squawkView;
 	private Browser browser;
@@ -45,6 +47,18 @@ public class SquawkBrowser {
 	private static final int TYPE_LOCAL = 1;
 	private static final int TYPE_WWW_UP = 2;
 	private static final int TYPE_WWW_DOWN = 3;
+	
+	protected String userByline = "default byline";
+	protected String userHeading = "default heading";
+	protected String userPara1 = "default user paragraph 1";
+	protected String userPara2 = "default user paragraph 2";
+	protected String userPara3 = "default user paragraph 3";
+	protected int userCoverWidth = 180;
+	protected int userCoverHeight = 227;
+	protected String userReportUrl = "http://www.moneymorning.com.au/wp-content/uploads/2015/04/Top10MiningStocks-cover-sml.png";
+	protected String exportedDeviceHtml;
+	
+	
 	
 	SquawkBrowser(SquawkView squawkView) {
 		// constructor
@@ -121,6 +135,14 @@ public class SquawkBrowser {
 		    		shell.setText("Squawk Browser : " + event.title);
 		    	}
 		    });
+		    browser.addProgressListener(new ProgressListener() {
+		    	public void changed(ProgressEvent event) {
+		    		//
+		    	}
+		    	public void completed(ProgressEvent event) {
+		    		parseDevice();
+		    	}
+		    });
 		    
 			// open file button
 		    openButton.addListener(SWT.Selection, new Listener() {
@@ -177,7 +199,7 @@ public class SquawkBrowser {
 		}
 		debug("url type: " + type);
 		switch (type) {
-			case 0: //unknown
+			case 0: // unknown
 					unknownPagetype(userString);
 					break;
 			case 1: // local html page
@@ -186,12 +208,23 @@ public class SquawkBrowser {
 			case 2: // www page up
 					loadWWWpage(userString);
 					break;
-			case 3: //www page down
+			case 3: // www page down
 					websiteNoConnection(userString);
 					break;
 			default: // ummmm.
 					break;					
 		}
+	}
+	
+	public void processBrowser() {		
+		browser.refresh();
+	}
+	
+	public void exportDevice() {
+		// yar
+		exportedDeviceHtml = browser.getText();
+		// save it somewhere for ultimate zip and send
+		//System.out.println(exportedDeviceHtml);
 	}
 
 /************************************************************
@@ -247,5 +280,28 @@ public class SquawkBrowser {
 		// 1. your connection to wan
 		// 2. isp thru
 		// 3. website down... get error code.
+	}
+	
+	private void parseDevice() {
+		// <div id="idname"> requires the quotes to be escaped below.
+		debug("parse device called.");
+		
+		/*
+		String deviceHtml = 
+				"document.getElementById(\"templateByline\").innerHTML = 'Hi byline';"
+				+ "document.getElementById(\"templateHeading\").innerHTML = 'Hi heading';"
+				+ "document.getElementById(\"templateCover\").style.width = " + width + ";"
+				+ "document.getElementById(\"templateCover\").style.height = "+ height + ";";
+		*/
+		//browser.execute(deviceHtml);
+		
+		// better luck with separating these into single calls. must be better way...
+		browser.execute("document.getElementById(\"templateByline\").innerHTML = '" + userByline + "';");
+		browser.execute("document.getElementById(\"templateHeading\").innerHTML = '" + userHeading + "';");
+		browser.execute("document.getElementById(\"templatePara1\").innerHTML = '" + userPara1 + "';");
+		browser.execute("document.getElementById(\"templatePara2\").innerHTML = '" + userPara2 + "';");
+		browser.execute("document.getElementById(\"templatePara3\").innerHTML = '" + userPara3 + "';");
+		browser.execute("document.getElementById(\"templateCover\").style.width = '" + userCoverWidth + "';");
+		browser.execute("document.getElementById(\"templateCover\").style.height = '" + userCoverHeight + "';");
 	}
 }
