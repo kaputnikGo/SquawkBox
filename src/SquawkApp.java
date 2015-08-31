@@ -13,9 +13,5 @@ public class SquawkApp {
 	 * source folder in c://workspace/JAVAesque/
 	 * 
 	 * 
-	 * 
-	 * 
-	 * 
-	 * 
 	 */
 }

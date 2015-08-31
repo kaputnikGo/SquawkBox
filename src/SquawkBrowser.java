@@ -1,12 +1,12 @@
 import java.io.File;
+import java.io.FileWriter;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.net.MalformedURLException;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTError;
 import org.eclipse.swt.browser.Browser;
-import org.eclipse.swt.browser.LocationEvent;
-import org.eclipse.swt.browser.LocationListener;
 import org.eclipse.swt.browser.ProgressEvent;
 import org.eclipse.swt.browser.ProgressListener;
 import org.eclipse.swt.browser.TitleEvent;
@@ -20,6 +20,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Monitor;
@@ -38,9 +39,6 @@ public class SquawkBrowser {
 	
 	private ToolBar toolbar;
 	private ToolItem openButton;
-	private ToolItem backButton;
-	private ToolItem forwardButton;
-	private LocationListener locationListener;
 	private static String[] urls;
 	
 	private static final int TYPE_UNKNOWN = 0;
@@ -56,9 +54,7 @@ public class SquawkBrowser {
 	protected int userCoverWidth = 180;
 	protected int userCoverHeight = 227;
 	protected String userReportUrl = "http://www.moneymorning.com.au/wp-content/uploads/2015/04/Top10MiningStocks-cover-sml.png";
-	protected String exportedDeviceHtml;
-	
-	
+	protected String exportedDeviceHtml;	
 	
 	SquawkBrowser(SquawkView squawkView) {
 		// constructor
@@ -85,13 +81,7 @@ public class SquawkBrowser {
 	    
 	    toolbar = new ToolBar(shell, SWT.BORDER | SWT.FLAT);
 	    openButton = new ToolItem(toolbar, SWT.PUSH);
-	    openButton.setText("open");	    
-	    backButton = new ToolItem(toolbar, SWT.PUSH);
-	    backButton.setText("back");
-	    backButton.setEnabled(false);
-	    forwardButton = new ToolItem(toolbar, SWT.PUSH);
-	    forwardButton.setText("forward");
-	    forwardButton.setEnabled(false);
+	    openButton.setText("open");	
 	}
 
 /************************************************************
@@ -108,33 +98,14 @@ public class SquawkBrowser {
 			final SashForm form = new SashForm(comp, SWT.HORIZONTAL);
 			form.setLayout(new FillLayout());
 			
-			browser = new Browser(form, SWT.NONE);	
-		    backButton.addListener(SWT.Selection,  new Listener() {
-		    	public void handleEvent(Event event) {
-		    		browser.back();
-		    	}
-		    });
-		    forwardButton.addListener(SWT.Selection,  new Listener() {
-		    	public void handleEvent(Event event) {
-		    		browser.forward();
-		    	}
-		    });
-		    locationListener = new LocationListener() {
-		    	public void changed(LocationEvent event) {
-		    		backButton.setEnabled(browser.isEnabled());
-		    		forwardButton.setEnabled(browser.isEnabled());
-		    	}
-		    	public void changing(LocationEvent event) {
-		    		//
-		    	}
-		    };
-		    browser.addLocationListener(locationListener);
+			browser = new Browser(form, SWT.NONE);			    
 		    // browser title grab
 		    browser.addTitleListener(new TitleListener() {
 		    	public void changed(TitleEvent event) {
 		    		shell.setText("Squawk Browser : " + event.title);
 		    	}
 		    });
+			
 		    browser.addProgressListener(new ProgressListener() {
 		    	public void changed(ProgressEvent event) {
 		    		//
@@ -186,14 +157,20 @@ public class SquawkBrowser {
 		return true;
 	}
 	
+	public void openResourcePage(String userString) {
+		// ONLY called when opening a template dir/file from the template folders
+		debug("resource url: " + userString);
+		browser.setUrl(userString);
+		userString = null;
+	}
+	
 	public void openWebpage(String userString) {
-		int type = 0;
+		int type = TYPE_UNKNOWN;
 		debug("Checking url string: " + userString);
 		if (Utilities.checkString(userString)) {
 			type = checkWebpageType(userString);
 		}
 		else {
-			// not a valid string
 			debug("Not a valid url string: " + userString);
 			type =  TYPE_UNKNOWN;
 		}
@@ -220,12 +197,27 @@ public class SquawkBrowser {
 		browser.refresh();
 	}
 	
-	public void exportDevice() {
+	public String getDeviceHtml() {
+		return browser.getText();
+	}
+	
+	public void exportDevice(String savename) {
 		// yar
 		exportedDeviceHtml = browser.getText();
 		// save it somewhere for ultimate zip and send
 		//System.out.println(exportedDeviceHtml);
+
+		boolean saveDevice = (saveDeviceFile(saveDialog(savename)));
+		
+        if ( saveDevice == false) { 
+            debug("device save fail with name: " + savename);
+        	return; 
+        } 
+        else {
+        	debug ("device saved with name: " + savename);
+        }
 	}
+
 
 /************************************************************
 * 
@@ -234,6 +226,40 @@ public class SquawkBrowser {
 ************************************************************/
 	protected void debug(String message) {
 		if (DEBUG) squawkView.updateConsole(message);
+	}
+	
+	private String saveDialog(String savename) {
+		// this will save with correct extension...even though can't see it in dialog.
+		FileDialog dialog = new FileDialog(shell, SWT.SAVE); 
+		dialog.setFilterNames(new String[] {"Text Files", "HTML Files"});
+		dialog.setFilterExtensions(new String[] { "*.txt", ".html"});
+		dialog.setFilterPath("c:\\"); // windows...
+		dialog.setFileName(savename + ".txt");
+		dialog.setOverwrite(true);
+		debug("Save dialog open...");
+		
+		String filename = dialog.open();
+		return filename;
+	}
+	
+	private boolean saveDeviceFile(String fileName) {
+		if (fileName == null || fileName == "") {
+			debug("fileName is null or empty.");
+			return false;
+		}
+        final File outputFile = new File(fileName);	
+        try {
+			FileWriter fw = new FileWriter(outputFile);
+			fw.write(exportedDeviceHtml);
+			fw.close();
+			debug("device saved.");
+			return true;
+			
+		} catch (IOException e) {
+			debug("Save device to file failed.");
+			e.printStackTrace();
+		}		
+		return false;
 	}
 	
 	private int checkWebpageType(String urlCandidate) {
@@ -285,17 +311,8 @@ public class SquawkBrowser {
 	private void parseDevice() {
 		// <div id="idname"> requires the quotes to be escaped below.
 		debug("parse device called.");
-		
-		/*
-		String deviceHtml = 
-				"document.getElementById(\"templateByline\").innerHTML = 'Hi byline';"
-				+ "document.getElementById(\"templateHeading\").innerHTML = 'Hi heading';"
-				+ "document.getElementById(\"templateCover\").style.width = " + width + ";"
-				+ "document.getElementById(\"templateCover\").style.height = "+ height + ";";
-		*/
-		//browser.execute(deviceHtml);
-		
 		// better luck with separating these into single calls. must be better way...
+		// browser.execute(String script) is to run javascript
 		browser.execute("document.getElementById(\"templateByline\").innerHTML = '" + userByline + "';");
 		browser.execute("document.getElementById(\"templateHeading\").innerHTML = '" + userHeading + "';");
 		browser.execute("document.getElementById(\"templatePara1\").innerHTML = '" + userPara1 + "';");

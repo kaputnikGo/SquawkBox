@@ -1,7 +1,12 @@
 
+import java.net.URL;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.FormAttachment;
@@ -11,6 +16,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
@@ -21,12 +27,14 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 
+
+
 public class SquawkView {
-	private static final int SHELL_HEIGHT = 580;
-	private static final int SHELL_WIDTH = 640;
+	private static final int SHELL_HEIGHT = 600;
+	private static final int SHELL_WIDTH = 720;
 	private static Image icon;
 	private SqlTalk squawk;
-	private SquawkBrowser squawkBrowser; // confusing as its not the actual browser
+	private SquawkBrowser squawkBrowser;
 	
 	//layout structure elements
 	private Display display;
@@ -59,15 +67,18 @@ public class SquawkView {
 	private String label3cString = "Paragraph3:";
 	private String label4aString = "image url:";
 
-	private String button1String = "MM";
-	private String button2String = "DR";
-	private String button3String = "ESKY";
-	private String button4String = "ILA";
+	private String button1String = "DR";
+	private String button2String = "ESKY";
+	private String button3String = "ILA";
+	private String button4String = "MM";
 	private String button5String = "process";
-	private String button6String = "export";
+	private String button6String = "EXPORT";
 	private String debugTitle = "Console:";
 	
-	//gui elements
+	private static final String[] DEVICE_LIST = new String[] {"EOA", "IF", "PU", "SF"};
+	private String userDevice = "EOA"; // default set
+	private String userWebcode = "";
+	
 	private Label label0;
 	private Label label1;
 	private Label label1a;
@@ -97,6 +108,7 @@ public class SquawkView {
 	private Button b6;
 	private Label debugLabel;
 	private Text debugText;
+
 	
 	SquawkView() {
 		// constructor
@@ -144,8 +156,11 @@ public class SquawkView {
 	public void run() {				
 		shell.open();
 		updateConsole("squawk says install...");
-		squawk.installDB();
+		squawk.installDB();		
 		updateConsole("squawk says finished.");
+		
+		// debug new method for getting resource/template files
+		//Utilities.dumpTemplate("DR", "EOA");
 		
 		while(!shell.isDisposed()) {
 			if(!display.readAndDispatch()) {
@@ -173,7 +188,7 @@ public class SquawkView {
 	
 /************************************************************
 * 
-* 		// internal methods 
+* 		// interface methods 
 * 
 ************************************************************/	
 	
@@ -181,7 +196,7 @@ public class SquawkView {
 		initLeftPanel();
 		initRightPanel();
 		initBottomPanel();
-	}
+	}	
 	
 	private void initLeftPanel() {
 		// instructions and a big space...
@@ -201,8 +216,8 @@ public class SquawkView {
 		label5 = new Label(fillComp, SWT.NONE);
 		label5.setText(label5String);
 		label6 = new Label(fillComp, SWT.NONE);
-		label6.setText(label6String);	
-		
+		label6.setText(label6String);
+
 		formFill = new FormData();
 		formFill.top = new FormAttachment(0, 10);
 		formFill.left = new FormAttachment(0, 10);
@@ -331,8 +346,20 @@ public class SquawkView {
 		rowComp = new Composite(shell, SWT.NONE);
 		rowLayout = new RowLayout();
 		rowLayout.pack = false;
-		rowComp.setLayout(rowLayout);
-		
+		rowComp.setLayout(rowLayout); 		
+		// device list
+		Combo comboDevices = new Combo(rowComp, SWT.DROP_DOWN | SWT.BORDER);
+	    SelectionListener selectionListener = new SelectionAdapter() {
+	    	public void widgetSelected(SelectionEvent event) {
+	    		Combo combo = ((Combo) event.widget);
+	    		System.out.println(combo.getText());
+	    		userDevice = combo.getText();
+	    	}
+	    };
+	    comboDevices.addSelectionListener(selectionListener);
+	    comboDevices.setItems(DEVICE_LIST);
+	    comboDevices.select(0);
+		//	    
 		b1 = new Button(rowComp, SWT.PUSH);
 		b1.setText(button1String);
 		b2 = new Button(rowComp, SWT.PUSH);
@@ -349,29 +376,44 @@ public class SquawkView {
 	    b1.addListener(SWT.Selection,  new Listener() {
 	    	public void handleEvent(Event event) {
 	    		//open a set url at first
-	    		String userString = "http://127.0.0.1/SquawkBin/MM/";
-	    		squawkBrowser.openWebpage(userString);
+	    		URL drFile = getClass().getClassLoader().getResource("templates/DR/template_" + userDevice + ".html");
+	    		if (drFile == null) updateConsole("DR device file not found: " + userDevice);	    		
+	    		squawkBrowser.openResourcePage(drFile.toString());
+	    		userWebcode = "DR";
+	    		drFile = null;
 	    	}
 	    });
 	    b2.addListener(SWT.Selection,  new Listener() {
 	    	public void handleEvent(Event event) {
 	    		//open a set url at first
-	    		String userString = "http://127.0.0.1/SquawkBin/DR/";
-	    		squawkBrowser.openWebpage(userString);
+	    		// need to check that device is selected - or use default
+	    		URL eskyFile = getClass().getClassLoader().getResource("templates/ESKY/template_" + userDevice + ".html");
+	    		if (eskyFile == null) updateConsole("ESKY device file not found: " + userDevice);	    		
+	    		squawkBrowser.openResourcePage(eskyFile.toString());
+	    		userWebcode = "ESKY";
+	    		eskyFile = null;
 	    	}
 	    });
 	    b3.addListener(SWT.Selection,  new Listener() {
 	    	public void handleEvent(Event event) {
 	    		//open a set url at first
-	    		String userString = "http://127.0.0.1/SquawkBin/ESKY/";
-	    		squawkBrowser.openWebpage(userString);
+	    		// need to check that device is selected - or use default
+	    		URL ilaFile = getClass().getClassLoader().getResource("templates/ILA/template_" + userDevice + ".html");
+	    		if (ilaFile == null) updateConsole("ILA device file not found: " + userDevice);	    		
+	    		squawkBrowser.openResourcePage(ilaFile.toString());
+	    		userWebcode = "ILA";
+	    		ilaFile = null;
 	    	}
 	    });
 	    b4.addListener(SWT.Selection,  new Listener() {
 	    	public void handleEvent(Event event) {
 	    		//open a set url at first
-	    		String userString = "http://127.0.0.1/SquawkBin/ILA/";
-	    		squawkBrowser.openWebpage(userString);
+	    		// need to check that device is selected - or use default
+	    		URL mmFile = getClass().getClassLoader().getResource("templates/MM/template_" + userDevice + ".html");
+	    		if (mmFile == null) updateConsole("MM device file not found: " + userDevice);	    		
+	    		squawkBrowser.openResourcePage(mmFile.toString());
+	    		userWebcode = "MM";
+	    		mmFile = null;
 	    	}
 	    });
 	    b5.addListener(SWT.Selection,  new Listener() {
@@ -383,12 +425,22 @@ public class SquawkView {
 	    b6.addListener(SWT.Selection,  new Listener() {
 	    	public void handleEvent(Event event) {
 	    		// export the finished device as a text file
-	    		// be nice if you could zip the lot in a folder
-	    		// and the smtp - or invoke email with attachment
-	    		// button labeled "send to vince"
-	    		squawkBrowser.exportDevice();
+	    		// be nice if you could zip the lot in a folder	    		
+	    		// be nice to send the UI name string here to.
+	    		squawkBrowser.exportDevice("test_device");
+	    		// here tell sqltalk to save a record of the device
+	    		squawk.saveDeviceRecord(userWebcode, userDevice, squawkBrowser.getDeviceHtml());
 	    	}
 	    });
+	    
+		formRow = new FormData();
+		formRow.top = new FormAttachment(fillComp, 10);
+		formRow.left = new FormAttachment(0, 10);
+		formRow.bottom = new FormAttachment(100, -10);
+		formRow.right = new FormAttachment(100, -10);
+		rowComp.setLayoutData(formRow);
+		
+		
 		
 		// debugging console
 		debugLabel = new Label(gridComp, SWT.NONE);
@@ -401,12 +453,5 @@ public class SquawkView {
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		data.heightHint = 100;
 		debugText.setLayoutData(data);
-		
-		formRow = new FormData();
-		formRow.top = new FormAttachment(fillComp, 10);
-		formRow.left = new FormAttachment(0, 10);
-		formRow.bottom = new FormAttachment(100, -10);
-		formRow.right = new FormAttachment(100, -10);
-		rowComp.setLayoutData(formRow);
 	}
 }
