@@ -32,28 +32,19 @@ public class SqlTalk {
 		// need to include a button and method that wraps the device in site specific html so it
 		// looks like what it will on the actual site.
 		
+		//TODO
+		// enable a listing of devices saved to the DB for selection, display, edit, save, export, etc
+		// allow a given template file to load into browser and get parsed into the squawkBox view form fields
+		// allow for a change in style sheets?
+		// JFaceDataBinding for better MVC in this app
+		
 	}
 	
 /************************************************************
 * 
 * 		// public methods 
 * 
-************************************************************/	
-	/*
-	public boolean loadWebsiteType(String websiteType) {
-		
-		return false;
-	}
-	
-	public boolean selectDeviceType(String deviceType) {
-		// find a match with the statics -
-		if (checkString(deviceType)) {
-			
-		}
-		return false;
-	}
-	*/
-	
+************************************************************/		
 	protected void installDB() {
 		// testing method, print to console.
 		installAdminTable();
