@@ -44,27 +44,23 @@ public class SquawkView {
 	// var strings
 	private String appName = "SQUAWK BOX.";
 
-	private String label1aString = "Heading:";
-	private String label2aString = "Byline:";
+	private String label1aString = "Subject:";
+	private String label2aString = "Preheader:";
 	private String label3aString = "Paragraph1:";
 	private String label3bString = "Paragraph2:";
-	private String label3cString = "Paragraph3:";
-	private String label4aString = "Cover url:";
+	private String label3cString = "Footer:";
+	private String label4aString = "Banner url:";
 
-	private String button1String = "DR";
-	private String button2String = "ESKY";
-	private String button3String = "ILA";
-	private String button4String = "MM";
+	private String button1String = "no1";
+	private String button2String = "no2";
+	private String button3String = "no3";
+	private String button4String = "no4";
 	private String button5String = "process";
 	private String button6String = "EXPORT";
 	private String button7String = "browser";
 	private String button8String = "local open";
 	private String button9String = "dump";
-	private String button10String = "wrapper";
-	
-	private static final String[] DEVICE_LIST = new String[] {"EOA", "IF", "PU", "SF"};
-	private String userDevice = "EOA"; // default set
-	private String userWebcode = "DR"; // default set 
+	private String button10String = "email";
 	
 	private Label label1a;
 	private Label label2a;
@@ -130,12 +126,9 @@ public class SquawkView {
 ************************************************************/		
 	public void run() {				
 		shell.open();
-		updateConsole("squawk says install...");
+		updateConsole("Squawk says install...");
 		squawk.installDB();		
-		updateConsole("squawk says finished.");
-		
-		// debug new method for getting resource/template files
-		//Utilities.dumpTemplate("DR", "EOA");
+		updateConsole("Squawk says finished.");
 		
 		while(!shell.isDisposed()) {
 			if(!display.readAndDispatch()) {
@@ -261,15 +254,17 @@ public class SquawkView {
 	    SelectionListener selectionListener = new SelectionAdapter() {
 	    	public void widgetSelected(SelectionEvent event) {
 	    		Combo combo = ((Combo) event.widget);
+	    		/*
 	    		userDevice = combo.getText();
 	    		URL deviceFile = getClass().getClassLoader().getResource("templates/" + userWebcode + "/template_" + userDevice + ".html");
 	    		if (deviceFile == null) 
 	    			updateConsole("device file " + userDevice + " not found for site code " + userWebcode);	    		
 	    		squawkBrowser.openResourcePage(deviceFile.toString());
+	    		*/
 	    	}
 	    };
 	    comboDevices.addSelectionListener(selectionListener);
-	    comboDevices.setItems(DEVICE_LIST);
+	    comboDevices.setItems(Utilities.WEBCODE_LIST);
 	    comboDevices.select(0);
 	    
 	    // lower
@@ -397,45 +392,53 @@ public class SquawkView {
 	    b1.addListener(SWT.Selection,  new Listener() {
 	    	public void handleEvent(Event event) {
 	    		b1.setFocus();
+	    		/*
 	    		URL drFile = getClass().getClassLoader().getResource("templates/DR/template_" + userDevice + ".html");
 	    		if (drFile == null) 
 	    			updateConsole("DR device file not found: " + userDevice);	    		
 	    		squawkBrowser.openResourcePage(drFile.toString());
 	    		userWebcode = "DR";
 	    		drFile = null;
+	    		*/
 	    	}
 	    });
 	    b2.addListener(SWT.Selection,  new Listener() {
 	    	public void handleEvent(Event event) {
 	    		b2.setFocus();
+	    		/*
 	    		URL eskyFile = getClass().getClassLoader().getResource("templates/ESKY/template_" + userDevice + ".html");
 	    		if (eskyFile == null) 
 	    			updateConsole("ESKY device file not found: " + userDevice);	    		
 	    		squawkBrowser.openResourcePage(eskyFile.toString());
 	    		userWebcode = "ESKY";
 	    		eskyFile = null;
+	    		*/
 	    	}
 	    });
 	    b3.addListener(SWT.Selection,  new Listener() {
 	    	public void handleEvent(Event event) {
 	    		b3.setFocus();
+	    		/*
 	    		URL ilaFile = getClass().getClassLoader().getResource("templates/ILA/template_" + userDevice + ".html");
 	    		if (ilaFile == null) 
 	    			updateConsole("ILA device file not found: " + userDevice);	    		
 	    		squawkBrowser.openResourcePage(ilaFile.toString());
 	    		userWebcode = "ILA";
 	    		ilaFile = null;
+	    		*/
 	    	}
 	    });
 	    b4.addListener(SWT.Selection,  new Listener() {
 	    	public void handleEvent(Event event) {
 	    		b4.setFocus();
+	    		/*
 	    		URL mmFile = getClass().getClassLoader().getResource("templates/MM/template_" + userDevice + ".html");
 	    		if (mmFile == null) 
 	    			updateConsole("MM device file not found: " + userDevice);	    		
 	    		squawkBrowser.openResourcePage(mmFile.toString());
 	    		userWebcode = "MM";
 	    		mmFile = null;
+	    		*/
 	    	}
 	    });
 	    
@@ -448,9 +451,10 @@ public class SquawkView {
 	    b6.addListener(SWT.Selection,  new Listener() {
 	    	public void handleEvent(Event event) {
 	    		// export the finished device as a text file
-	    		squawkBrowser.exportDevice("test_device");
-	    		// here tell sqltalk to save a record of the device
-	    		squawk.saveDeviceRecord(userWebcode, userDevice, squawkBrowser.getDeviceHtml());
+	    		squawkBrowser.exportBrowser("test_device");
+	    		
+	    		// here tell sqltalk to save a record of the device	    		
+	    		//squawk.saveDeviceRecord(userWebcode, userDevice, squawkBrowser.getDeviceHtml());
 	    	}
 	    });
 	    b7.addListener(SWT.Selection,  new Listener() {
@@ -468,13 +472,13 @@ public class SquawkView {
 		// dump to squawkBrowser button
 	    b9.addListener(SWT.Selection, new Listener() {
 	    	public void handleEvent(Event e) {
-	    		squawkBrowser.dumpToBrowser(Utilities.debugAdminDB(squawk.getAdminTable()));
+	    		squawkBrowser.dumpToBrowser(Utilities.debugDumpTableDB(squawk.getDefaultDB(), squawk.getAdminTable()));
 	    	}
 	    });
 		// add site specific wrapper to device in browser
 	    b10.addListener(SWT.Selection, new Listener() {
 	    	public void handleEvent(Event e) {
-	    		squawkBrowser.addWrapper();
+	    		squawkBrowser.openEmailTemplate();
 	    	}
 	    });
 	}
@@ -510,7 +514,7 @@ public class SquawkView {
 		// report url
 		text4.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent event) {
-				squawkBrowser.userReportUrl = text4.getText();
+				//squawkBrowser.userReportUrl = text4.getText();
 			}
 		});
 		

@@ -1,0 +1,1550 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+  <meta name="viewport" content="initial-scale=1.0" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>
+    rev2.23 - Email Component Template 2015 - responsive test
+	</title>  
+	<meta name="keywords" content="" />
+	<meta name="description" content="" />  
+<!-- limited header styles component - version 2.23 - SquawkBox version -->
+<!-- NOTES:
+This version attempts to minimise sender code to stay out of the way of 
+the inevitable (unique) client-side code that will draw the email.
+
+1.  images need to be sized to 1:1 scale, declare style max-width
+    as some clients will only display images at this scale
+2.  <td> elements MUST have width assigned
+3.  align=center does not necessarily cascade 
+4.  inaccuracies are derived from nesting
+5.  &nbsp; indicates null element - not necessarily respected
+6.  assume IRIS wil linline the <style>
+7.  validator.w3.org == errors in facebook url only (&, = )
+8.  added white page/red footer/white links, that gets spam positive 
+      due white on white links :solution add black backer
+9.  yahoo ios7.1 safari translate y stops at -2547px
+10. yahoo webmail setting : uncheck settings/viewing/enable conversations
+      this stops yahoo reducing an email to a snippet.
+11. yahoo webmail mobile site firefox borks on render as html (other browsers auto render as html)
+
+z. make percentage a tenth of pixel number (10% == 100px)
+
+-->	
+  <style type="text/css">
+    body {
+      color:#252525;
+      font-family: Calibri, sans-serif; 
+      font-weight: normal; 
+      font-size: 15px;
+      line-height: 1.5;
+      min-width: 320px;
+      padding: 0;
+      margin: 0;
+    }
+    a {
+      color: #fd6804;
+      text-decoration: underline;
+    }
+    a:hover {
+      color: #000000;
+    }
+    a img {
+      outline : none;
+    }
+    img {
+      border : 0;
+      /* global max-width for any and all images that don't delare */
+      max-width: 600px;
+    }
+    hr { 
+      display: block; 
+      height: 1px;
+      border: 0; 
+      border-top: 2px solid #999999;
+      margin: 1em 0; 
+      padding: 0; 
+    }    
+    table, th, td {
+      border: 1px solid #99CCFF;
+    }
+    .preheader { 
+      display:none !important; 
+      visibility: hidden; 
+      opacity: 0; 
+      color: transparent; 
+      height: 0; 
+      width: 0;
+    } 
+	</style>
+<!-- end header styles component -->
+</head>
+<body>
+<!-- end universal html header component -->
+<!-- PRE-HEADER TEXT -->
+<table width="100%" cellspacing="0" cellpadding="0" border="0">
+  <tr>
+    <td width="100%" align="center" style="display:none">
+      <div class="preheader" style="display: none !important; visibility: hidden; opacity: 0; color: transparent; height: 0; width: 0;">
+        This pre-header text should show up in GMail, iOS, Mail.app, &amp; more: 75 chars max - some only see 40 chars max . Chkd: ios web gmail, ios web yahoo, ios web outlook, android 4.1.1. mail apps
+      </div>
+    </td>
+  </tr>
+</table>
+
+<!-- start of paged template -->
+<!-- full width banner component -->
+  <table width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="#012331">
+    <tr>
+      <td width="100%" align="center">
+        <table width="80%" cellspacing="0" cellpadding="0" border="0" align="center" bgcolor="#012331">
+          <tr>
+            <td width="10%">&nbsp;</td>
+            <td width="10%">&nbsp;</td>
+            <td width="60%" align="center">
+              <img width="" style="width:100%;max-width:367px;" align="middle" src="http://www.moneymorning.com.au/wp-content/uploads/2015/04/MMP_email_banner-rev.png" alt="Money Morning" />
+            </td>
+            <td width="10%">&nbsp;</td>
+            <td width="10%">&nbsp;</td>
+          </tr>
+        </table>  
+      </td>
+    </tr>
+  </table>
+<!-- end component -->
+
+<!-- start content section component -->
+  <table width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="#f2f2f2">
+    <tr>
+      <td width="100%" align="center">
+        <table width="80%" cellspacing="0" cellpadding="0" border="0" align="center" bgcolor="#ffffff">
+          <tr>
+            <td width="10%">&nbsp;</td>
+            <td width="80%">&nbsp;</td>
+            <td width="10%">&nbsp;</td>
+          </tr>          
+          <tr align="center">
+            <td width="10%">&nbsp;</td>
+            <td width="80%" align="left">
+              <p style="font-family:Calibri, sans-serif; font-size: 14px; text-align: left; line-height: 1;"><font face="Calibri, sans-serif">
+                Dear Reader,
+                <br /><br />
+                I’m worried for you.
+                <br /><br />
+                Locavore four dollar toast retro fingerstache hoodie, bespoke trust fund Williamsburg. You probably haven't heard of them small batch fanny pack art party cold-pressed biodiesel, American Apparel Williamsburg tousled cronut PBR&amp;B. Roof party sustainable taxidermy, tousled Thundercats drinking vinegar post-ironic typewriter heirloom swag master cleanse Banksy. Listicle kitsch cold-pressed, hashtag skateboard Truffaut occupy chillwave artisan iPhone meditation Schlitz direct trade. High Life sustainable artisan, pop-up next level cronut DIY direct trade Odd Future. Mixtape PBR&amp;B chambray, banh mi viral forage jean shorts bicycle rights you probably haven't heard of them Echo Park put a bird on it. Pour-over cronut occupy banjo ennui Vice, meh stumptown bicycle rights quinoa shabby chic lumbersexual butcher.
+                <br /><br />
+                Farm-to-table cardigan squid cornhole seitan sartorial, actually lo-fi 90's cliche food truck narwhal synth. Mustache Thundercats Wes Anderson deep v pop-up, kitsch Odd Future hoodie lomo artisan mlkshk four dollar toast. Lumbersexual pork belly lo-fi Schlitz retro flexitarian. Ennui yr Thundercats before they sold out. Meggings kitsch 90's, lomo organic disrupt yr. Tattooed locavore occupy, heirloom wayfarers bespoke cronut meggings jean shorts mumblecore. Keytar banjo hashtag, 8-bit church-key fingerstache Shoreditch drinking vinegar Vice PBR&amp;B heirloom trust fund put a bird on it gentrify.
+                <br /><br />
+                Many thanks,
+<!-- end of user content above this line -->
+
+<!-- author sign off component -->
+                <br /><br />
+                <img style="width:auto;max-width:200px" src="http://portphillippublishing.com.au/wp-content/uploads/Bensig.jpg" width="200" alt="Ben Otomo signature" />
+                <br />Ben Otomo
+                <br />
+                Associate Publisher, <em>Money Morning</em>  
+              </font></p>
+            </td>
+            <td width="10%">&nbsp;</td>
+          </tr>
+          <tr>
+            <td width="10%">&nbsp;</td>
+            <td width="80%">&nbsp;</td>
+            <td width="10%">&nbsp;</td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+<!-- end author sign off -->  
+
+<!-- paged footer component -->
+  <table width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="#f2f2f2">
+    <tr>
+      <td width="100%" align="center">
+        <table width="80%" cellspacing="0" cellpadding="0" border="0" align="center" bgcolor="#ffffff">
+			<tr>
+				<td width="10%">&nbsp;</td>
+				<td width="80%">
+					<br />
+					<p style="font-family: Arial, sans-serif; font-size: 10px; line-height: 1.5;"><font face="Arial, sans-serif">
+                 		All content is &copy; 2005 &ndash; 2015 <a href="http://www.portphillippublishing.com.au/" target="_blank">Port Phillip Publishing Pty Ltd</a> All Rights Reserved
+						<br /><br />
+		                Port Phillip Publishing Pty Ltd holds an Australian Financial Services Licence: 323 988.
+		                <br /><br />
+		                ACN: 117 765 009 ABN: 33 117 765 009
+		                <br /><br />
+		                All advice is general advice and has not taken into account your personal circumstances. Please seek independent financial advice regarding your own situation, or if in doubt about the suitability of an investment.
+		                <br /><br />
+		                <strong>Calculating Your Future Returns:</strong> The value of any investment and the income derived from it can go down as well as up. Never invest more than you can afford to lose and keep in mind the ultimate risk is that you can lose whatever you've invested. While useful for detecting patterns, the past is not a guide to future performance. Some figures contained in this report are forecasts and may not be a reliable indicator of future results. Any potential gains in this letter do not include taxes, brokerage commissions, or associated fees. Please seek independent financial advice regarding your particular situation. Investments in foreign companies involve risk and may not be suitable for all investors. Specifically, changes in the rates of exchange between currencies may cause a divergence between your nominal gain and your currency-converted gain, making it possible to lose money once your total return is adjusted for currency.
+		                <br /><br />
+		                You are receiving this email as part of your subscription to <em>Money Morning Premium</em>. If you would like to contact us about your subscription please call us on 1300 308 726 or email us at <a href="mailto:premiummembers@portphillippublishing.com.au">premiummembers@portphillippublishing.com.au</a>
+		                <br /><br />
+		            </font></p>
+				</td>
+				<td width="10%">&nbsp;</td>
+			</tr>
+		</table> 
+	 </td>
+	</tr>
+  </table>     
+<!-- end component -->
+
+<!--  remove this -->  
+<table width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="#f2f2f2">  
+	<tr><td>&nbsp;</td></tr>  
+  	<tr>
+    	<td width="100%" bgcolor="#000000" align="center"><span style="color:#ffffff;">END OF FIRST TEMPLATE</span></td>                   
+  	</tr>
+  	<tr><td>&nbsp;</td></tr>
+</table>
+<!-- end of remove -->
+        
+<!-- start second template -->
+ <table width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="#f2f2f2">
+    <tr>
+    	<td width="10%">&nbsp;</td>
+<!-- email url  and top spacer component -->			
+        <td width="80%" align="center" style="background-color: #f2f2f2;">
+            <p style="font-family: Georgia, serif; font-size: 15px;"><font face="Georgia, serif">
+            	email url can go here, or (3 * br), or &amp;nbsp; tag(s)
+            </font></p>
+		</td>
+		<td width="10%">&nbsp;</td>
+	</tr>
+<!-- end component -->
+   
+<!-- banner component -->        
+    <tr>
+    	<td width="10%">&nbsp;</td>
+    	<td width="80%" align="center" style="background-color: #fd8204;">
+			<table width="100%" align="center" cellspacing="0" cellpadding="0" border="0">
+				<tr>
+					<td width="10%">&nbsp;</td>
+					<td width="40%">&nbsp;</td>
+					<td width="10%">&nbsp;</td>
+					<td width="10%">&nbsp;</td>
+					<td width="10%">&nbsp;</td>
+					<td width="5%">&nbsp;</td>
+					<td width="5%">&nbsp;</td>
+					<td width="10%">&nbsp;</td>
+				</tr>
+				<tr>
+					<td width="10%">&nbsp;</td>
+					<td width="40%">
+						<a href="http://www.portnerpress.com.au" style=" text-decoration:none;">
+							<img src="http://www.healthandsafetyhandbook.com.au/wp-content/uploads/2015/04/portner_press_logo-bulletin.png" alt="Portner Press Logo" width="122" height="24" style="outline:none; text-decoration:none; border:none;" />
+						</a>
+					</td>
+					<td width="10%">&nbsp;</td>
+                	<td width="10%" align="right" valign="middle">
+						<a href="http://www.healthandsafetyhandbook.com.au/" style="font-family: Calibri, sans-serif; font-size: 12px; color: #ffffff; text-decoration:none;"><strong>Home</strong></a>
+                	</td>
+					<td width="10%" align="right" valign="middle">
+						<a href="http://www.healthandsafetyhandbook.com.au/about/" style="font-family: Calibri, sans-serif; font-size: 12px; color: #ffffff; text-decoration:none;"><strong>About Us</strong></a>
+                	</td>                
+					<td width="5%" align="right">
+						<a href="https://twitter.com/portnerpress" style=" text-decoration:none;">
+							<img src="http://www.healthandsafetyhandbook.com.au/wp-content/uploads/2015/04/twitter-icon.png" alt="Twitter" width="20" height="17" border="0" style="outline:none; text-decoration:none; border:none; padding:0 3px 0 0;" />
+						</a>
+                	</td>
+					<td width="5%" align="right">                
+						<a href="http://www.linkedin.com/company/portner-press/" style=" text-decoration:none;">
+							<img src="http://www.healthandsafetyhandbook.com.au/wp-content/uploads/2015/04/linkedin-icon.png" alt="LinkedIn" width="19" height="18" border="0" style="outline:none; text-decoration:none; border:none;" />
+						</a>
+					</td>
+					<td width="10%">&nbsp;</td>
+				</tr>
+				<tr>
+					<td width="10%">&nbsp;</td>
+					<td width="40%">&nbsp;</td>
+					<td width="10%">&nbsp;</td>
+					<td width="10%">&nbsp;</td>
+					<td width="10%">&nbsp;</td>
+					<td width="5%">&nbsp;</td>
+					<td width="5%">&nbsp;</td>
+					<td width="10%">&nbsp;</td>
+				</tr>
+			</table>
+		</td>
+		<td width="10%">&nbsp;</td>
+	</tr>        
+<!-- end component -->
+
+<!-- article components start -->				
+   
+<!-- logo, date, heading -->    
+    <tr>    
+    	<td width="10%">&nbsp;</td>        
+        <td width="80%">         						                       
+			<table width="100%" bgcolor="#ffffff" style="background-color: #ffffff; text-align: left;" cellspacing="0" cellpadding="0" border="0">
+				<tr>
+			       <td width="10%">&nbsp;</td>
+			       <td width="40%">&nbsp;</td>
+			       <td width="40%">&nbsp;</td>
+			       <td width="10%">&nbsp;</td>
+			    </tr> 
+				<tr valign="top">
+					<td width="10%">&nbsp;</td>
+					<td width="40%" align="left">
+						<img src="http://www.healthandsafetyhandbook.com.au/wp-content/uploads/2015/04/hsbul_logo.png" width="112" alt="HS Bulletin logo" />
+					</td>
+				    <td width="40%" align="right">
+				        <p style="font-family:Calibri, sans-serif; font-size: 14px; text-align: right; line-height: 1;"><font face="Calibri, sans-serif">
+				        	Tuesday 5th May 2015
+				        </font></p>
+				    </td>
+				    <td width="10%">&nbsp;</td>
+				</tr>						
+			</table> 
+		</td>
+		<td width="10%">&nbsp;</td>
+	</tr>
+	<tr>
+		<td width="10%">&nbsp;</td>
+		<td width="80%">
+			<table width="100%" bgcolor="#ffffff" style="background-color: #ffffff; text-align: left;" cellspacing="0" cellpadding="0" border="0">
+				<tr>
+					<td width="10%">&nbsp;</td>
+					<td width="80%;">						
+						<p style="font-family: Georgia, serif; font-size: 34px;"><font face="Georgia, serif">
+							How to fulfil your privacy obligations to non&ndash;employees
+						</font></p>
+					</td>
+					<td width="10%">&nbsp;</td>
+				</tr>
+			</table>
+		</td>
+		<td width="10%">&nbsp;</td>
+	</tr>
+			          
+<!-- article author image, aligned intro paragraph -->
+	<tr>
+		<td width="10%">&nbsp;</td>
+		<td width="80%">
+			<table width="100%" bgcolor="#ffffff" style="text-align: left;" cellspacing="0" cellpadding="0" border="0">
+				<tr>
+					<td width="10%">&nbsp;</td>
+					<td width="16%">
+				    	<img src="http://www.healthandsafetyhandbook.com.au/wp-content/uploads/2015/04/JW_HS.jpg" width="149" alt="author image" />
+				    </td>
+				    <td width="60%">
+				        <p style="font-family: Calibri, sans-serif; font-size: 15px;"><font face="Calibri, sans-serif">
+				        	Dear Reader,
+				            <br />
+				            In last <a href="#">Wednesday&rsquo;s Health &amp; Safety Bulletin</a>, we looked at the Australian Privacy Principles legislated in the Privacy Act 1988 (Cth). As promised, today Charles Power will look at some of the APPs that relate to non&ndash;employees&rsquo; personal information in more detail.
+				        </font></p>                
+				    </td>
+				    <td width="10%">&nbsp;</td>
+				 </tr>
+			</table>
+		</td>
+		<td width="10%">&nbsp;</td>
+	</tr>
+				        
+<!-- article main body text -->
+	<tr>
+		<td width="10%">&nbsp;</td>
+		<td width="80%">
+			<table width="100%" bgcolor="#ffffff" style="text-align: left;" cellspacing="0" cellpadding="0" border="0">
+				<tr>
+					<td width="10%">&nbsp;</td>
+					<td width="80%">
+			        	<p style="font-family: Calibri, sans-serif; font-size: 15px;"><font face="Calibri, sans-serif">
+			            	This is often relevant, because the personal information of non&ndash;employees does not fall under the employee records exemption, which may exempt you from the APPs when you are dealing with records that directly relate to a current or former employment relationship.
+							<br /><br />
+			                When it comes to the personal information of non&ndash;employees, the APPs require you to take certain steps in relation to:
+			            </font></p>
+			        </td>
+			        <td width="10%">&nbsp;</td>
+			     </tr>
+
+<!-- table bullet list -->			     
+			     <tr>
+			     	<td width="10%">&nbsp;</td>
+			     	<td width="80%">
+			        	<table width="100%" cellspacing="0" cellpadding="0" border="0">
+			            	<tr valign="top">
+			                	<td width="2%">
+			                		<p style="font-family: Calibri, sans-serif; font-size: 15px; mso-line-height-rule: exactly; line-height: 1;"><font face="Calibri, sans-serif">
+			                			&bull;
+			                		</font></p>
+			                	</td>
+			                    <td width="2%">&nbsp;</td>
+			                    <td width="96%">
+			                        <p style="font-family: Calibri, sans-serif; font-size: 15px; mso-line-height-rule: exactly; line-height: 1;"><font face="Calibri, sans-serif">
+			                        	your organisation&rsquo;s privacy policy;
+			                        </font></p>
+			                    </td>
+			                </tr>
+			                <tr valign="top">
+			                    <td width="2%">
+			                    	<p style="font-family: Calibri, sans-serif; font-size: 15px; mso-line-height-rule: exactly; line-height: 1;"><font face="Calibri, sans-serif">
+			                    		&bull;
+			                    	</font></p>
+			                    </td>
+			                    <td width="2%">&nbsp;</td>
+			                    <td width="96%">
+			                        <p style="font-family: Calibri, sans-serif; font-size: 15px; mso-line-height-rule: exactly; line-height: 1;"><font face="Calibri, sans-serif">
+			                        	dealing with unsolicited job applications; and
+			                        </font></p>
+			                    </td>
+			                </tr>
+			                <tr valign="top">
+			                    <td width="2%">
+			                    	<p style="font-family: Calibri, sans-serif; font-size: 15px; mso-line-height-rule: exactly; line-height: 1;"><font face="Calibri, sans-serif">
+			                    		&bull;
+			                    	</font></p>
+			                    </td>
+			                    <td width="2%">&nbsp;</td>
+			                    <td width="96%">
+			                        <p style="font-family: Calibri, sans-serif; font-size: 15px; mso-line-height-rule: exactly; line-height: 1;"><font face="Calibri, sans-serif">
+			                        	transferring personal information offshore.
+			                        </font></p>
+			                    </td>
+			                </tr>                    
+			             </table>	
+			        </td>
+			        <td width="10%">&nbsp;</td>
+			     </tr>
+<!-- end table bullet list -->
+
+<!-- bulletin sign off component -->
+				<tr>
+			     	<td width="10%">&nbsp;</td>
+			     	<td width="80%">				
+						<p style="font-family: Calibri, sans-serif; font-size: 15px;"><font face="Calibri, sans-serif">
+				            Read on for the details.
+				            <br />
+							Until next time,
+                  			<br /><br />
+							<img width="125" height="95" src="http://www.healthandsafetyhandbook.com.au/wp-content/uploads/2015/04/Joe_sig_small.jpg" alt="J. Nunweek signature" border="0" />
+							<br />
+					        <strong>Joseph Nunweek</strong>
+					        <br />
+							Editor, <em>Health &amp; Safety Bulletin</em>
+                  		</font></p>
+					</td>
+					<td width="10%">&nbsp;</td>
+				</tr>				
+           </table>
+        </td>
+        <td width="10%">&nbsp;</td>
+     </tr>
+<!-- end sign off component -->
+
+<!-- advert announce component -->
+	<tr>
+		<td width="10%">&nbsp;</td>
+		<td width="80%">
+			<table width="100%" bgcolor="#ffffff" style="text-align: left;" cellspacing="0" cellpadding="0" border="0">
+				<tr align="center" valign="middle">
+			    	<td width="33%"><hr /></td>
+			        <td width="33%">
+			        	<p style="font-family: Georgia, serif; font-size: 12px; color:#999999;"><font face="Georgia, serif">
+			        		Advertisment
+			        	</font></p>
+			        </td>
+			        <td width="33%"><hr /></td>
+			    </tr>
+			</table>
+		</td>
+		<td width="10%">&nbsp;</td>
+	</tr>
+			
+<!-- text advert component -->
+	<tr>
+		<td width="10%">&nbsp;</td>
+		<td width="80%">
+			<table width="100%" bgcolor="#ffffff" style="text-align: left;" cellspacing="0" cellpadding="0" border="0">       
+	          <tr>
+	            <td width="10%">&nbsp;</td>
+	            <td width="80%">&nbsp;</td>
+	            <td width="10%">&nbsp;</td>
+	          </tr>          
+	          <tr>
+	            <td width="10%">&nbsp;</td>
+	            <td width="80%" bgcolor="#fae9d6" align="center">&nbsp;</td>
+	            <td width="10%">&nbsp;</td>
+	          </tr>
+	          <tr>
+	            <td width="10%">&nbsp;</td>
+	            <td width="80%" bgcolor="#fae9d6" align="center">
+	              <p style="font-family: Georgia, serif; font-size: 15px;"><font face="Georgia, serif">
+	                <strong>Have you considered upgrading to an annual payment option for your Employment Law Practical Handbook updates yet?</strong>
+	              </font></p>
+	            </td>
+	            <td width="10%">&nbsp;</td>
+	          </tr>
+	          <tr>
+	            <td width="10%">&nbsp;</td>
+	            <td width="80%" bgcolor="#fae9d6" align="center">             
+	              <p style="font-family: Georgia, serif; font-size: 15px;"><font face="Georgia, serif">
+	                <strong>Doing so won&rsquo;t just save you the hassle of having to pay an invoice each time an update is released &ndash; it will also mean you save money.</strong>
+	              </font></p>
+	            </td>
+	            <td width="10%">&nbsp;</td>
+	          </tr>
+	          <tr>
+	            <td width="10%">&nbsp;</td>
+	            <td width="80%" bgcolor="#fae9d6" align="center">									
+	              <p style="font-family: Georgia, serif; font-size: 15px;"><font face="Georgia, serif">
+	                <a href="http://www.employmentlawhandbook.com.au/about/">Click here to find out how</a>
+	              </font></p>
+	            </td>
+	            <td width="10%">&nbsp;</td>
+	          </tr>
+	          <tr>
+	            <td width="10%">&nbsp;</td>
+	            <td width="80%" bgcolor="#fae9d6" align="center">&nbsp;</td>
+	            <td width="10%">&nbsp;</td>
+	          </tr>          
+	          <tr>
+	            <td width="10%">&nbsp;</td>
+	            <td width="80%">&nbsp;</td>
+	            <td width="10%">&nbsp;</td>
+	          </tr>
+        	</table>
+      	</td>
+      	<td width="10%">&nbsp;</td>
+    </tr>						
+<!-- end components -->
+
+<!-- 2x product row component -->
+	<tr>
+		<td width="10%">&nbsp;</td>
+		<td width="80%">
+			<table width="100%" bgcolor="#ffffff" style="text-align: left;" cellspacing="0" cellpadding="0" border="0">   
+			   <tr>   
+			      <td align="center">
+			        <table width="80%" cellspacing="0" cellpadding="0" border="0" align="center" bgcolor="#ffffff">
+			          	<tr>
+							<td width="10%">&nbsp;</td>
+							<td width="30%">&nbsp;</td>
+							<td width="20%">&nbsp;</td>
+							<td width="30%">&nbsp;</td>
+							<td width="10%">&nbsp;</td>
+						</tr>							
+						<tr>
+							<td width="10%">&nbsp;</td>
+							<td width="30%" align="center">
+								<a href="#"><img style="width:auto;max-width:80%" src="http://www.portnerpress.com.au/wp-content/uploads/2015/06/prod-order-bg.png" alt="Bullying Guide" border="0" /></a>
+							</td>
+							<td width="20%">&nbsp;</td>
+							<td width="30%" align="center">
+								<a href="#"><img style="width:auto;max-width:80%" src="http://www.portnerpress.com.au/wp-content/uploads/2015/06/prod-order-sop.png" alt="How to Develop a Safe Operating Procedure" border="0" /></a>
+							</td>
+	            			<td width="10%">&nbsp;</td>
+						</tr>							
+						<tr>
+							<td width="10%">&nbsp;</td>
+							<td width="30%" align="center">
+								<p style="font-family: Calibri, sans-serif; font-size: 15px;"><font face="Calibri, sans-serif">
+					                <strong>The Bullying Guide</strong>
+					                <br />
+					                Price: <span style="text-decoration: line-through;">$99</span> <strong><span style="color: #e60002;">$84.00</span></strong>
+				              	</font></p>
+							</td> 
+							<td width="20%">&nbsp;</td>
+							<td width="30%" align="center">
+								<p style="font-family: Calibri, sans-serif; font-size: 15px;"><font face="Calibri, sans-serif">
+					                <strong>How to Develop a Safe Operating Procedure</strong>
+					                <br />
+					                Price: <span style="text-decoration: line-through;">$49</span> <strong><span style="color: #e60002;">$41.00</span></strong>
+				              	</font></p>
+							</td>
+							<td width="10%">&nbsp;</td>
+						</tr>
+						<tr>
+							<td width="10%">&nbsp;</td>
+							<td width="30%">&nbsp;</td>
+							<td width="20%">&nbsp;</td>
+							<td width="30%">&nbsp;</td>
+							<td width="10%">&nbsp;</td>
+						</tr>
+        			</table>
+      			 </td>            
+    		  </tr>
+  			</table>
+  		</td>
+  		<td width="10%">&nbsp;</td>
+  	</tr>          
+<!-- end 2x product row component -->
+
+<!-- 1x product row component -->
+	<tr>
+		<td width="10%">&nbsp;</td>
+		<td width="80%">
+			  <table width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="#ffffff">
+			    <tr>
+			      <td align="center">
+			        <table width="80%" cellspacing="0" cellpadding="0" border="0" align="center" bgcolor="#ffffff">
+			          <tr>
+						<td width="20%">&nbsp;</td>
+						<td width="60%">&nbsp;</td>
+						<td width="20%">&nbsp;</td>
+					</tr>							
+					<tr>
+						<td width="20%">&nbsp;</td>
+						<td width="60%" align="center">
+							<a href="#">
+                				<img style="width:auto;max-width:80%" src="http://www.portnerpress.com.au/wp-content/uploads/2015/06/prod-order-smtl.png" alt="Social Media &amp; The Law" border="0" />
+							</a>
+						</td>
+						<td width="20%">&nbsp;</td>
+					</tr>							
+					<tr>
+						<td width="20%"></td>
+						<td width="60%" align="center">
+							<p style="font-family: Calibri, sans-serif; font-size: 15px;"><font face="Calibri, sans-serif">
+				                <strong>Social Media &amp; The Law</strong>
+				                <br />
+				                Price: <span style="text-decoration: line-through;">$49</span> <strong><span style="color: #e60002;">$41.00</span></strong>
+				            </font></p>
+						</td> 
+						<td width="20%">&nbsp;</td>
+					</tr>
+         			<tr>
+						<td width="20%">&nbsp;</td>
+						<td width="60%">&nbsp;</td>
+						<td width="20%">&nbsp;</td>
+					</tr>	
+		        </table>
+		      </td>            
+		    </tr>
+		  </table>
+		</td>
+		<td width="10%">&nbsp;</td>
+	</tr>                 
+<!-- end 1x product row component --> 
+
+<!-- asterix separator component -->
+	<tr>
+		<td width="10%">&nbsp;</td>
+		<td width="80%">
+		  <table width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="#ffffff">
+		    <tr>
+		      <td align="center">
+		        <table width="80%" cellspacing="0" cellpadding="0" border="0" align="center" bgcolor="#ffffff">          
+		          <tr align="center" valign="middle">
+		            <td width="40%">&nbsp;</td>
+		            <td width="20%" align="center">
+		              <p style="font-family: Georgia, serif; font-size: 12px;"><font face="Georgia, serif">
+		                * * *
+		              </font></p>
+		            </td>
+		            <td width="40%">&nbsp;</td>
+		          </tr>
+		        </table>
+		      </td>
+		    </tr>
+		  </table>
+		</td>
+		<td width="10%">&nbsp;</td>
+	</tr>
+<!-- end asterix separator component -->
+
+<!-- graphic banner advert component -->
+	<tr>
+		<td width="10%">&nbsp;</td>
+		<td width="80%">
+		  <table width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="#ffffff">
+		    <tr>
+		      <td align="center">
+		        <table width="80%" cellspacing="0" cellpadding="0" border="0" align="center" bgcolor="#ffffff">							
+		          	<tr> 
+		            	<td width="10%">&nbsp;</td>
+		            	<td width="60%">&nbsp;</td>
+		            	<td width="10%">&nbsp;</td>            
+		        	</tr>
+		        	<tr>
+			            <td width="10%">&nbsp;</td>
+						<td width="60%" align="center">
+							<a style="height:100%;color:#0255bb;" href="https://orders.portnerpress.com.au/pdtrialOHsingle/E921Q8A2/index.htm?pageNumber=2">
+			                	<img width="" style="width:100%; max-width:600px;" align="middle" src="http://www.healthandsafetyhandbook.com.au/wp-content/uploads/2015/04/HS_Bulletin-trial_banner.jpg" alt="HS Bulletin trial banner" />
+							</a>
+						</td>
+				        <td width="10%">&nbsp;</td>            
+					</tr>
+			        <tr> 
+			            <td width="10%">&nbsp;</td>
+			            <td width="60%">&nbsp;</td>
+			            <td width="10%">&nbsp;</td>
+			        </tr>          
+				</table>
+			  </td>
+		    </tr>
+		 </table>
+      </td>
+      <td width="10%">&nbsp;</td>
+    </tr>
+<!-- end graphic banner advert component -->
+
+<!-- bullet list component -->
+	<tr>
+		<td width="10%">&nbsp;</td>
+		<td width="80%">
+		  <table width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="#ffffff">
+	          <tr>
+	            <td width="10%">&nbsp;</td>
+	            <td width="2%">&nbsp;</td>
+	            <td width="77%">&nbsp;</td>
+	            <td width="10%">&nbsp;</td>            
+	          </tr>
+	          <tr align="center" valign="top">
+	            <td width="10%">&nbsp;</td>
+	            <td width="2%">
+	              <p style="font-family: Calibri, sans-serif; font-size: 15px; mso-line-height-rule: exactly; line-height: 1;"><font face="Calibri, sans-serif">
+	                &bull;
+	              </font></p>
+	            </td>
+	            <td width="77%" align="left">
+	              <p style="font-family: Calibri, sans-serif; font-size: 15px; mso-line-height-rule: exactly; line-height: 1;"><font face="Calibri, sans-serif">
+	                your organisation&rsquo;s privacy policy;
+	              </font></p>
+	            </td>
+	            <td width="10%">&nbsp;</td>            
+	          </tr>
+	          <tr align="center" valign="top">
+	            <td width="10%">&nbsp;</td>            
+	            <td width="2%">
+	              <p style="font-family: Calibri, sans-serif; font-size: 15px; mso-line-height-rule: exactly; line-height: 1;"><font face="Calibri, sans-serif">
+	                &bull;
+	              </font></p>
+	            </td>
+	            <td width="77%" align="left">
+	              <p style="font-family: Calibri, sans-serif; font-size: 15px; mso-line-height-rule: exactly; line-height: 1;"><font face="Calibri, sans-serif">
+	                dealing with unsolicited job applications; and
+	              </font></p>
+	            </td>
+	            <td width="10%">&nbsp;</td>            
+	          </tr>
+	          <tr align="center" valign="top">
+	            <td width="10%">&nbsp;</td>
+	            <td width="2%">  
+	              <p style="font-family: Calibri, sans-serif; font-size: 15px; mso-line-height-rule: exactly; line-height: 1;"><font face="Calibri, sans-serif">
+	                &bull;
+	              </font></p>
+	            </td>
+	            <td width="77%" align="left">
+	              <p style="font-family: Calibri, sans-serif; font-size: 15px; mso-line-height-rule: exactly; line-height: 1;"><font face="Calibri, sans-serif">
+	                transferring personal information offshore.
+	              </font></p>
+	            </td>
+	            <td width="10%">&nbsp;</td>            
+	          </tr>
+	          <tr>
+	            <td width="10%">&nbsp;</td>
+	            <td width="2%">&nbsp;</td>
+	            <td width="77%">&nbsp;</td>
+	            <td width="10%">&nbsp;</td>            
+	          </tr>          
+        	</table>
+      	</td>
+      	<td width="10%">&nbsp;</td>
+    </tr>
+<!-- end bullet list component -->
+
+<!-- nested table bullet list component -->
+	<tr>
+		<td width="10%">&nbsp;</td>
+		<td width="80%">		  	
+		  	<table width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="#ffffff">
+	          
+	          <tr>
+	            <td width="10%">&nbsp;</td>
+	            <td width="2%">&nbsp;</td>
+	            <td width="77%">&nbsp;</td>
+	            <td width="10%">&nbsp;</td>          
+	          </tr>          
+	          
+	          <tr valign="top">
+	            <td width="10%">&nbsp;</td>            
+	            <td width="2%" align="center">
+	              <p style="font-family: Calibri, sans-serif; font-size: 15px; mso-line-height-rule: exactly; line-height: 100%;"><font face="Calibri, sans-serif">
+	                &bull;
+	              </font></p>
+	            </td>
+	            <td width="77%">
+	              <p style="font-family: Calibri, sans-serif; font-size: 15px; mso-line-height-rule: exactly; line-height: 100%;"><font face="Calibri, sans-serif">
+	                take reasonable steps to implement practices, procedures and systems to:
+	              </font></p>
+	            </td>
+	            <td width="10%">&nbsp;</td>             
+	          </tr>
+	          
+	          <tr>
+	            <td width="10%">&nbsp;</td>
+	            <td width="2%">&nbsp;</td>
+	            <td width="77%">
+	              <table width="100%" cellspacing="0" cellpadding="0" border="0">
+	                <tr valign="top">
+	                  <td width="2%">&nbsp;</td>
+	                  <td width="2%" align="center">
+	                    <p style="font-family: Calibri, sans-serif; font-size: 15px; mso-line-height-rule: exactly; line-height: 100%;"><font face="Calibri, sans-serif">
+	                      &ndash;
+	                    </font></p>
+	                  </td>
+	                  <td width="85%">
+	                    <p style="font-family: Calibri, sans-serif; font-size: 15px; mso-line-height-rule: exactly; line-height: 100%;"><font face="Calibri, sans-serif">
+	                      ensure compliance with APPs and any binding registered APP code, i.e. a set of privacy principles approved by the Privacy Commissioner for a particular organisation; and
+	                    </font></p>
+	                  </td>
+	                  <td width="10%">&nbsp;</td>
+	                </tr>
+	              </table>
+	            </td>
+	            <td width="10%">&nbsp;</td>            
+	          </tr>
+	          
+	          <tr>
+	            <td width="10%">&nbsp;</td>
+	            <td width="2%">&nbsp;</td>
+	            <td width="78%">
+	              <table width="100%" cellspacing="0" cellpadding="0" border="0">
+	                <tr valign="top">
+	                  <td width="2%">&nbsp;</td>
+	                  <td width="2%" align="center">
+	                    <p style="font-family: Calibri, sans-serif; font-size: 15px; mso-line-height-rule: exactly; line-height: 100%;"><font face="Calibri, sans-serif">
+	                      &ndash;
+	                    </font></p>
+	                  </td>
+	                  <td width="85%">                      
+	                    <p style="font-family: Calibri, sans-serif; font-size: 15px; mso-line-height-rule: exactly; line-height: 100%;"><font face="Calibri, sans-serif">
+	                      deal with related inquiries and complaints;
+	                    </font></p>
+	                  </td>
+	                  <td width="10%">&nbsp;</td>                  
+	                </tr>
+	              </table>                      
+	            </td>
+	            <td width="10%">&nbsp;</td>            
+	          </tr>                    
+	          
+	          <tr valign="top">
+	            <td width="10%">&nbsp;</td>
+	            <td width="2%" align="center">
+	              <p style="font-family: Calibri, sans-serif; font-size: 15px; mso-line-height-rule: exactly; line-height: 100%;"><font face="Calibri, sans-serif">
+	                &bull;
+	              </font></p>
+	            </td>
+	            <td width="77%">
+	              <p style="font-family: Calibri, sans-serif; font-size: 15px; mso-line-height-rule: exactly; line-height: 100%;"><font face="Calibri, sans-serif">
+	                have a clearly expressed and up&ndash;to&ndash;date privacy policy about how personal information is managed; and
+	              </font></p>
+	            </td>
+	            <td width="10%">&nbsp;</td>            
+	          </tr>
+	          
+	          <tr valign="top">
+	            <td width="10%">&nbsp;</td>          
+	            <td width="2%" align="center">
+	              <p style="font-family: Calibri, sans-serif; font-size: 15px; mso-line-height-rule: exactly; line-height: 100%;"><font face="Calibri, sans-serif">
+	                &bull;
+	              </font></p>
+	            </td>
+	            <td width="77%">
+	              <p style="font-family: Calibri, sans-serif; font-size: 15px; mso-line-height-rule: exactly; line-height: 100%;"><font face="Calibri, sans-serif">
+	                take reasonable steps to make its privacy policy available
+	              </font></p>
+	            </td>
+	            <td width="10%">&nbsp;</td>            
+	          </tr>                    
+	          
+	          <tr>
+	            <td width="10%">&nbsp;</td>
+	            <td width="2%">&nbsp;</td>
+	            <td width="77%">
+	              <table width="100%" cellspacing="0" cellpadding="0" border="0">
+	                <tr valign="top">
+	                  <td width="2%">&nbsp;</td>
+	                  <td width="2%" align="center">
+	                    <p style="font-family: Calibri, sans-serif; font-size: 15px; mso-line-height-rule: exactly; line-height: 100%;"><font face="Calibri, sans-serif">
+	                      &ndash;
+	                    </font></p>
+	                  </td>
+	                  <td width="85%">                      
+	                    <p style="font-family: Calibri, sans-serif; font-size: 15px; mso-line-height-rule: exactly; line-height: 100%;"><font face="Calibri, sans-serif">
+	                      free of charge;
+	                    </font></p>
+	                  </td>
+	                  <td width="10%">&nbsp;</td>                  
+	                </tr>
+	              </table>                      
+	            </td>
+	            <td width="10%">&nbsp;</td>
+	          </tr>
+	          
+	          <tr>
+	            <td width="10%">&nbsp;</td>
+	            <td width="2%">&nbsp;</td>
+	            <td width="77%">
+	              <table width="100%" cellspacing="0" cellpadding="0" border="0">
+	                <tr valign="top">
+	                  <td width="2%">&nbsp;</td>
+	                  <td width="2%" align="center">
+	                    <p style="font-family: Calibri, sans-serif; font-size: 15px; mso-line-height-rule: exactly; line-height: 100%;"><font face="Calibri, sans-serif">
+	                      &ndash;
+	                    </font></p>
+	                  </td>
+	                  <td width="85%">                      
+	                    <p style="font-family: Calibri, sans-serif; font-size: 15px; mso-line-height-rule: exactly; line-height: 100%;"><font face="Calibri, sans-serif">
+	                      in an appropriate form (e.g. online); and
+	                    </font></p>
+	                  </td>
+	                  <td width="10%">&nbsp;</td>                  
+	                </tr>
+	              </table>                      
+	            </td>
+	            <td width="10%">&nbsp;</td>            
+	          </tr>
+	          
+	          <tr>
+	            <td width="10%">&nbsp;</td>
+	            <td width="2%">&nbsp;</td>
+	            <td width="77%">
+	              <table width="100%" cellspacing="0" cellpadding="0" border="0">
+	                <tr valign="top">
+	                  <td width="2%">&nbsp;</td>
+	                  <td width="2%" align="center">
+	                    <p style="font-family: Calibri, sans-serif; font-size: 15px; mso-line-height-rule: exactly; line-height: 100%;"><font face="Calibri, sans-serif">
+	                      &ndash;
+	                    </font></p>
+	                  </td>
+	                  <td width="85%">                      
+	                    <p style="font-family: Calibri, sans-serif; font-size: 15px; mso-line-height-rule: exactly; line-height: 100%;"><font face="Calibri, sans-serif">
+	                      on request and in a particular form, as requested.
+	                    </font></p>
+	                  </td>
+	                  <td width="10%">&nbsp;</td>                   
+	                </tr>
+	              </table>                      
+	            </td>
+	            <td width="10%">&nbsp;</td> 
+	          </tr>
+	          
+	          <tr>
+	            <td width="10%">&nbsp;</td>
+	            <td width="2%">&nbsp;</td>
+	            <td width="77%">&nbsp;</td>
+	            <td width="10%">&nbsp;</td>          
+	          </tr>
+	          
+        	</table>
+      	</td>
+      	<td width="10%">&nbsp;</td> 
+   </tr>
+<!-- end nested table bullet list component -->
+
+<!-- 2x advert row component -->
+	<tr>
+		<td width="10%">&nbsp;</td>
+		<td width="80%">
+        	<table width="100%" cellspacing="0" cellpadding="0" border="0" align="center" bgcolor="#2d424b">
+          		<tr>
+					<td width="10%">&nbsp;</td>
+					<td width="80%">&nbsp;</td>
+					<td width="10%">&nbsp;</td>
+		        </tr>  
+		        <tr>
+					<td width="10%">&nbsp;</td>
+					<td width="80%">
+		              <p style="font-family: Calibri, sans-serif; font-size: 22px; color: #ffffff; text-align:center;"><font face="Calibri, sans-serif">
+		                Check out our other <strong>free bulletins</strong>
+		              </font></p>
+            		</td>
+					<td width="10%">&nbsp;</td>
+				</tr>
+          		<tr>
+					<td width="10%">&nbsp;</td>
+					<td width="80%">&nbsp;</td>
+					<td width="10%">&nbsp;</td>
+          		</tr>           
+        	</table>
+      	</td> 
+      	<td width="10%">&nbsp;</td>
+    </tr>  
+	<tr>
+		<td width="10%">&nbsp;</td>
+		<td width="80%">
+		  <table width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="#ffffff">
+	          <tr>
+	            <td width="10%">&nbsp;</td>
+	            <td width="30%">&nbsp;</td>
+	            <td width="20%">&nbsp;</td>
+	            <td width="30%">&nbsp;</td>
+	            <td width="10%">&nbsp;</td>
+	          </tr>							
+	          <tr>
+	            <td width="10%">&nbsp;</td>
+	            <td width="30%" align="center">
+	              <a href="http://www.employmentlawhandbook.com.au/free-workplace-bulletin-newsletter/">
+	                <img style="width:auto;max-width:80%" src="http://www.healthandsafetyhandbook.com.au/wp-content/uploads/2015/04/WKP-bulletin-roundel.png" alt="Workplace Bulletin icon" border="0" />
+	              </a>
+	            </td>
+	            <td width="20%">&nbsp;</td>
+	            <td width="30%" align="center">
+	              <a href="http://www.coradviser.com.au/">
+	                <img style="width:auto;max-width:80%" src="http://www.employmentlawhandbook.com.au/wp-content/uploads/2015/04/COR-bulletin-roundel.png" alt="CoR Adviser Bulletin icon" border="0" />
+	              </a>
+	            </td>
+	            <td width="10%">&nbsp;</td>
+	          </tr>							
+	          <tr>
+	            <td width="10%">&nbsp;</td>
+	            <td width="30%" align="center">
+	              <p style="font-family: Calibri, sans-serif; font-size: 15px;"><font face="Calibri, sans-serif">
+	                Twice&ndash;weekly tips and useful advice to help ensure you&rsquo;re always up to date with workplace legislation. Click below for an immediate free subscription.
+	              </font></p>
+	            </td> 
+	            <td width="20%">&nbsp;</td>
+	             <td width="30%" align="center">
+	              <p style="font-family: Calibri, sans-serif; font-size: 15px;"><font face="Calibri, sans-serif">
+	                Practical advice that will help ensure you comply with all your CoR and road transport obligations. Click below for an immediate free subscription.
+	              </font></p>
+	            </td>
+	            <td width="10%">&nbsp;</td>
+	          </tr>
+	          <tr>
+	            <td width="10%">&nbsp;</td>
+	            <td width="30%">&nbsp;</td>
+	            <td width="20%">&nbsp;</td>
+	            <td width="30%">&nbsp;</td>
+	            <td width="10%">&nbsp;</td>
+	          </tr>               
+	          <tr>
+	            <td width="10%">&nbsp;</td>
+	            <td width="30%" align="center">
+	              <a href="http://www.employmentlawhandbook.com.au/free-workplace-bulletin-newsletter/" target="_blank">
+	                <img style="width:auto;max-width:80%" src="http://www.healthandsafetyhandbook.com.au/wp-content/uploads/2015/04/HS_Bulletin-signup-blue.png" alt="Workplace Bulletin Signup button" border="0" />
+	              </a>
+	            </td>
+	            <td width="20%">&nbsp;</td>
+	            <td width="30%" align="center">
+	              <a href="http://www.coradviser.com.au/" target="_blank">
+	                <img style="width:auto;max-width:80%" src="http://www.employmentlawhandbook.com.au/wp-content/uploads/2015/04/COR_Bulletin-signupButton.png" alt="COR Adviser Bulletin Sign Up" border="0" />
+	              </a>
+	            </td>
+	            <td width="10%">&nbsp;</td>
+	          </tr>							
+	          <tr>
+	            <td width="10%">&nbsp;</td>
+	            <td width="30%">&nbsp;</td>
+	            <td width="20%">&nbsp;</td>
+	            <td width="30%">&nbsp;</td>
+	            <td width="10%">&nbsp;</td>
+	          </tr>
+	        </table>
+      	</td>
+      	<td width="10%">&nbsp;</td>
+    </tr>         
+<!-- end 2x advert row component -->
+
+<!-- paged footer component -->
+	<tr>
+		<td width="10%">&nbsp;</td>
+		<td width="80%">
+			<table width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="#ffffff">
+				<tr>
+					<td width="10%">&nbsp;</td>
+					<td width="80%">
+						<br />
+						<p style="font-family: Calibri, sans-serif; font-size: 10px; line-height: 1.5; color:#929292;"><font face="Calibri, sans-serif">
+	                  		<strong>Please whitelist the <em><a href="mailto:no-reply@healthandsafetyhandbook.com.au">Health &amp; Safety Bulletin</a></em> to make sure you get every edition delivered to your inbox.</strong>
+							<br /><br />
+	                  		The information in this email is intended solely for the addressee. Access to this email by anyone else is unauthorised. If you are not the intended recipient, please return the message to the sender and delete it from your records. All content is &copy; 2007-2015 Portner Press Pty Ltd All Rights Reserved.
+							<br /><br />									
+	                  		Disclaimer: We research our recommendations and articles thoroughly, but disclaim all liability for any inaccuracies or omissions found in our publications. Click here to view our <a href="http://www.portnerpress.com.au/privacy-policy/" target="_blank">Privacy Policy</a> and <a href="http://www.portnerpress.com.au/terms-and-conditions/" target="_blank">Terms and Conditions</a>.
+							<br /><br />									
+	                 		Queries: For general enquiries, email <a href="mailto:cs@portnerpress.com.au">cs@portnerpress.com.au</a> or call 1300 782 911.
+							<br /><br />									
+	                  		Workplace Helpdesk: Paid subscribers to the <em>Health &amp; Safety Handbook</em> can <a href="http://www.healthandsafetyhandbook.com.au/contact-us/" target="_blank">ask our experts for advice</a>.
+							<br /><br />									
+	                  		Syndication: To republish a <em>Health &amp; Safety Bulletin </em>article, please email <a href="mailto:cs@portnerpress.com.au" target="_blank">cs@portnerpress.com.au</a> for information.
+							<br /><br />									
+						    Health &amp; Safety Bulletin ISSN 1837-6533
+						</font></p>
+						<p style="font-family: Calibri, sans-serif; font-size: 10px; line-height: 1; color:#929292;"><font face="Calibri, sans-serif">Portner Press Pty Ltd
+							96-98 Bridport Street
+	                  		<br />
+							Albert Park VIC 3206
+	                  		<br />
+							Australia
+	                  		<br /><br />
+							To unsubscribe to the <em>Health &amp; Safety Bulletin</em>, click [%= :Unsub(here) %].
+						</font></p>
+					</td>
+					<td width="10%">&nbsp;</td>
+				</tr>
+			</table> 
+		</td>
+		<td width="10%">&nbsp;</td>
+	</tr>
+</table>           
+<!-- end template 2 -->
+
+<!--  remove this -->  
+<table width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="#f2f2f2">  
+  <tr><td>&nbsp;</td></tr>
+  <tr>
+    <td width="100%" bgcolor="#000000" align="center"><span style="color:#ffffff;">END OF SECOND TEMPLATE</span></td>                   
+  </tr>
+  <tr><td>&nbsp;</td></tr>
+</table>
+<!-- end of remove -->
+
+<!-- extra components here -->
+
+<!-- stocks spreadsheet component -->
+
+<table width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="#f2f2f2">
+    <tr>
+      <td width="100%" align="center">
+        <table width="100%" cellspacing="0" cellpadding="0" border="0" align="center" bgcolor="#00aeff">          
+          <tr align="center" valign="middle"> 
+            <td width="30%">&nbsp;</td>            
+            <td width="40%" align="center">
+              <p style="font-family: Calibri, sans-serif; font-size: 24px;margin: 0;"><font face="Calibri, sans-serif">
+              <strong>Portfolio</strong>
+              </font></p>
+            </td>
+            <td width="30%">&nbsp;</td>            
+          </tr>         
+        </table>
+        <table width="100%" cellspacing="0" cellpadding="0" border="0" align="center" bgcolor="#ffffff">  
+          <tr align="center" bgcolor="#404041" style="color:#FFFFFF">
+            <td width="40%">
+              <strong>Stock</strong>
+            </td>
+            <td width="12%">
+              <strong>Ticker Symbol</strong>
+            </td>
+            <td width="12%">
+              <strong>Exchange</strong>
+            </td>
+            <td width="12%">
+              <strong>Current Price</strong>
+            </td>
+            <td width="12%">
+              <strong>Buy Up To Price</strong>
+            </td>
+            <td width="12%">
+              <strong>Current Gain</strong>
+            </td>
+          </tr>                
+          <tr align="center" valign="top">
+            <td width="40%">
+              <strong>Qualcomm [<a href="http://portphillippublishing.com.au/2014/01/january-2014-immersive-technology-began/" target="_blank">Jan '14</a>]</strong>
+            </td>
+            <td width="12%">
+            QCOM
+            </td>
+            <td width="12%">
+            NASDAQ
+            </td>
+            <td width="12%">
+            $69.620
+            </td>
+            <td width="12%">
+            $80.000
+            </td>
+            <td width="12%">
+            -5.64%
+            </td>
+          </tr>
+          <tr align="center" valign="top" bgcolor="#e9eaeb">
+            <td width="40%">
+              <strong>Neonode [<a href="http://portphillippublishing.com.au/2014/02/february-2014-keys-revolutionary-technology/" target="_blank">Feb '14</a>]</strong>
+            </td>
+            <td width="12%">
+            NEON
+            </td>
+            <td width="12%">
+            NASDAQ
+            </td>
+            <td width="12%">
+            $3.860
+            </td>
+            <td width="12%">
+            $6.82
+            </td>
+            <td width="12%">
+            -32.40%
+            </td>
+          </tr>
+          <tr align="center" valign="top">
+            <td width="40%">
+              <strong>NVIDIA Corporation [<a href="http://www.portphillippublishing.com.au/2013/12/december-2013-the-last-invention-man-need-ever-make/" target="_blank">Dec '13</a>]</strong>
+            </td>
+            <td width="12%">
+            NVDA
+            </td>
+            <td width="12%">
+            NASDAQ
+            </td>
+            <td width="12%">
+            $21.040
+            </td>
+            <td width="12%">
+            $16.750
+            </td>
+            <td width="12%">
+            31.83%
+            </td>
+          </tr>
+          <tr align="center" valign="top" bgcolor="#e9eaeb">
+            <td width="40%">
+              <strong>Corning Inc [<a href="http://portphillippublishing.com.au/2013/06/global-tech-superstars-pioneering-sixth-revolution/" target="_blank">Jun '13</a>]</strong>
+            </td>
+            <td width="12%">
+            GLW
+            </td>
+            <td width="12%">
+            NYSE
+            </td>
+            <td width="12%">
+            $21.490
+            </td>
+            <td width="12%">
+            $17.00
+            </td>
+            <td width="12%">
+            39.36%
+            </td>
+          </tr>                
+          <tr align="center" valign="top">
+            <td width="40%">
+              <strong>MedTech Global Ltd [<a href="http://portphillippublishing.com.au/2015/01/january-2015-you-may-now-see-the-doctor-please-log-in/" target="_blank">Jan '15</a>]</strong>
+            </td>
+            <td width="12%">
+            MDG
+            </td>
+            <td width="12%">
+            ASX
+            </td>
+            <td width="12%">
+            $0.140
+            </td>
+            <td width="12%">
+            $0.124
+            </td>
+            <td width="12%">
+            33.33%
+            </td>
+          </tr>                 
+          <tr align="center" valign="top" bgcolor="#e9eaeb">
+            <td width="40%">
+              <strong>NXT-ID Inc. [<a href="http://www.portphillippublishing.com.au/2015/03/stock-alert-the-ultimate-security-in-our-immersive-tech-world/" target="_blank">Feb '15</a>]</strong>
+            </td>
+            <td width="12%">
+            NXTD
+            </td>
+            <td width="12%">
+            NASDAQ
+            </td>
+            <td width="12%">
+            $2.430
+            </td>
+            <td width="12%">
+            $2.540
+            </td>
+            <td width="12%">
+            9.95%
+            </td>
+          </tr>              
+        </table>
+        <table width="100%" cellspacing="0" cellpadding="0" border="0" align="center" bgcolor="#ffffff">          
+          <tr align="center" valign="top"> 
+            <td width="30%">&nbsp;</td>            
+            <td width="40%">&nbsp;</td>
+            <td width="30%">&nbsp;</td>            
+          </tr>         
+        </table>        
+      </td>
+    </tr>
+</table>              
+<!-- end stocks spreadsheet component -->
+
+<!-- 2nd paged footer component -->
+<table width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="#f2f2f2">
+    <tr>
+      <td width="100%" align="center">
+        <table width="80%" cellspacing="0" cellpadding="0" border="0" align="center" bgcolor="#ffffff">
+          <tr align="center">
+            <td width="10%">&nbsp;</td>
+            <td width="80%" align="left">
+              <p style="font-family:Calibri, sans-serif; font-size: 14px; text-align: left; line-height: 1;"><font face="Calibri, sans-serif">
+                <a style="color: #fd6804;" href="#">Terms and Conditions</a> | <a style="color: #fd6804;" href="#">Privacy Policy</a> | <a style="color: #fd6804;" href="#">Unsubscribe</a> | <a style="color: #fd6804;" href="#">FAQ</a>
+                <br /><br />
+                Talk to us: send your feedback, praise, barbs, thoughts and musings to <a style="color: #fd6804;" href="mailto:">postcards@internationalliving.com.au</a>
+                <br /><br />
+                To remove your name from Postcards and associated external offers, <a style="color: #fd6804;" href="#">unsubscribe</a> here.
+                <br />
+                To cancel by email, write us at: <a style="color: #fd6804;" href="mailto:">cs@fitzroypress.com.au</a>
+                <br /><br />
+                ACN: 117 765 009 ABN: 33 117 765 009
+              </font></p>								
+            </td>
+            <td width="10%">&nbsp;</td>
+          </tr>
+        </table>
+        <table width="80%" cellspacing="0" cellpadding="0" border="0" align="center" bgcolor="#ffffff">
+          <tr align="center">
+            <td width="10%">&nbsp;</td>
+            <td width="80%" align="left">
+              <p style="font-family:Calibri, sans-serif; font-size: 14px; text-align: left; line-height: 1;"><font face="Calibri, sans-serif">
+                Fitzroy Press
+                <br />
+                Attn: International Living Postcards (Australian Edition)
+                <br />
+                PO Box 713
+                <br />
+                South Melbourne VIC 3205  
+                <br /><br />
+                Tel: 1300 667 481
+                <br />
+                Fax: (03) 9558 2219
+                <br />
+              </font></p>	               
+            </td>
+            <td width="10%">&nbsp;</td>         
+          </tr>
+          <tr>
+            <td width="10%">&nbsp;</td>
+            <td width="80%">&nbsp;</td>
+            <td width="10%">&nbsp;</td>
+          </tr>           
+        </table>
+      </td>
+    </tr>
+</table>
+<!-- end paged footer component -->
+
+<!--  remove this -->  
+<table width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="#f2f2f2">  
+  <tr><td>&nbsp;</td></tr>
+  <tr>
+    <td width="100%" bgcolor="#000000" align="center"><span style="color:#ffffff;">FULL FOOTER TEMPLATE</span></td>                   
+  </tr>
+  <tr><td>&nbsp;</td></tr>
+</table>
+<!-- end of remove -->
+
+<!-- full footer component -->
+<table align="center" width="100%" style="background-color: #353535;" cellspacing="0" cellpadding="0" border="0">
+    <tr>
+      <td width="100%" style="width: 100%; background-image:url('http://fitzroypress.com.au/wp-content/uploads/2015/05/footer-repeat.gif'); background-repeat:repeat-x;" valign="top">&nbsp;</td>
+    </tr>
+    <tr>
+      <td width="80%" align="center">
+        <table width="80%" style="text-align: center;" cellspacing="0" cellpadding="0" border="0">	            
+          <tr>
+            <td width="10%">&nbsp;</td>
+            <td width="50%">&nbsp;</td>
+            <td width="30%">&nbsp;</td> 
+            <td width="10%">&nbsp;</td>            
+          </tr>
+          <tr>
+            <td width="10%">&nbsp;</td>
+            <td width="50%" align="left">
+              <img style="width:auto;max-width:80%;height:auto;" src="http://fitzroypress.com.au/wp-content/uploads/2015/05/ila-email-footer-logo.jpg" width="227" height="65" alt="ILA Postcards logo" />
+            </td>
+            <td width="30%" align="right">
+              <img style="width:auto;max-width:80%" src="http://fitzroypress.com.au/wp-content/uploads/2015/05/ila-share.png" width="41" height="19" alt="ILA share" />
+              <a href="https://twitter.com/inlivingau"><img src="http://fitzroypress.com.au/wp-content/uploads/2015/05/ila-twitter.png" width="20" height="19" alt="ILA twitter" /></a>
+              <a href="https://business.facebook.com/pages/International-Living-Australia/853125994741375?business_id=860368987350409&ref=bookmarks"><img src="http://fitzroypress.com.au/wp-content/uploads/2015/05/ila-facebook.png" width="20" height="19" alt="ILA facebook" /></a>
+            </td>
+            <td width="10%">&nbsp;</td>            
+          </tr>        
+        </table>
+      </td>
+    </tr>
+    <tr>
+      <td width="80%" align="center">
+        <table width="80%" cellspacing="0" cellpadding="0" border="0" align="center" bgcolor="#353535">
+          <tr align="center">
+            <td width="10%">&nbsp;</td>
+            <td width="80%" align="left">
+              <p style="font-family:Calibri, sans-serif; font-size: 14px; text-align: left; line-height: 1; color:#ffffff;"><font face="Calibri, sans-serif">
+                <a style="color: #fd6804;" href="#">Terms and Conditions</a> | <a style="color: #fd6804;" href="#">Privacy Policy</a> | <a style="color: #fd6804;" href="#">Unsubscribe</a> | <a style="color: #fd6804;" href="#">FAQ</a>
+                <br /><br />
+                Talk to us: send your feedback, praise, barbs, thoughts and musings to <a style="color: #fd6804;" href="mailto:">postcards@internationalliving.com.au</a>
+                <br /><br />
+                To remove your name from Postcards and associated external offers, <a style="color: #fd6804;" href="#">unsubscribe</a> here.
+                <br />
+                To cancel by email, write us at: <a style="color: #fd6804;" href="mailto:">cs@fitzroypress.com.au</a>
+                <br /><br />
+                ACN: 117 765 009 ABN: 33 117 765 009
+              </font></p>								
+            </td>
+            <td width="10%">&nbsp;</td>
+          </tr>
+        </table>
+        <table width="80%" cellspacing="0" cellpadding="0" border="0" align="center" bgcolor="#353535">
+          <tr align="center">
+            <td width="10%">&nbsp;</td>
+            <td width="80%" align="left">
+              <p style="font-family:Calibri, sans-serif; font-size: 14px; text-align: left; line-height: 1; color:#ffffff;"><font face="Calibri, sans-serif">
+                Fitzroy Press
+                <br />
+                Attn: International Living Postcards (Australian Edition)
+                <br />
+                PO Box 713
+                <br />
+                South Melbourne VIC 3205  
+                <br /><br />
+                Tel: 1300 667 481
+                <br />
+                Fax: (03) 9558 2219
+                <br />
+              </font></p>	               
+            </td>
+            <td width="10%">&nbsp;</td>         
+          </tr>
+          <tr>
+            <td width="10%">&nbsp;</td>
+            <td width="80%">&nbsp;</td>
+            <td width="10%">&nbsp;</td>
+          </tr> 
+        </table>
+      </td>
+    </tr>
+</table>  
+<!-- end full paged footer component -->
+
+<!--  remove this -->  
+<table width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="#f2f2f2">  
+  <tr><td>&nbsp;</td></tr>
+  <tr>
+    <td width="100%" bgcolor="#000000" align="center"><span style="color:#ffffff;">SPAM FOOTER TEMPLATE</span></td>                   
+  </tr>
+  <tr><td>&nbsp;</td></tr>
+</table>
+<!-- end of remove -->
+
+<!-- start black backer footer component -->
+<!-- has a black background underneath the red to ensure white links don't get spam check errors -->
+<table align="center" width="100%" style="background-color: #ffffff;" cellspacing="0" cellpadding="0" border="0">
+  <tr>
+    <td width="10%">&nbsp;</td>
+    <td width="80%">
+<!-- black backer -->
+      <table width="100%" bgcolor="#000000" align="center" cellspacing="0" cellpadding="0" border="0" style="text-align: center;border-collapse:collapse; border: 1px solid #d67f91;background-color: #000000;">
+        <tr align="center">
+          <td width="100%">
+<!-- red table -->
+            <table width="100%" bgcolor="#ad0023" align="center" cellspacing="0" cellpadding="0" border="0" style="text-align: center;border-collapse:collapse; border: 1px solid #d67f91;background-color: ##ad0023;">	                              
+              <tr>
+                <td width="10%">&nbsp;</td>
+                <td width="60%">&nbsp;</td>
+                <td width="20%">&nbsp;</td>
+                <td width="10%">&nbsp;</td>
+              </tr> 
+              <tr align="center">
+                <td width="10%">&nbsp;</td>
+                <td width="60%" align="left">
+                  <img src="http://fitzroypress.com.au/wp-content/uploads/2015/07/biz-opp-footer-logo.png" width="160" height="65" alt="Biz-Opp footer logo" />
+                </td>	
+                <td width="20%">&nbsp;</td>
+                <td width="10%">&nbsp;</td>
+              </tr>
+<!-- footer main component -->          
+              <tr align="center">
+                <td width="10%">&nbsp;</td>
+                <td width="60%" align="left">
+                  <p style="font-family: Verdana, sans-serif; font-size: 12px; color: #ffffff;"><font face="Verdana, sans-serif">
+                    <a style="font-family: Verdana, sans-serif; font-size: 12px; color: #ffffff;" href="http://fitzroypress.com.au/terms-and-conditions/"><strong>Terms and Conditions</strong></a> | <a style="font-family: Verdana, sans-serif; font-size: 12px; color: #ffffff;" href="http://fitzroypress.com.au/privacy-policy/"><strong>Privacy Policy</strong></a> | <a style="font-family: Verdana, sans-serif; font-size: 12px; color: #ffffff;" href="http://fitzroypress.com.au/about/"><strong>FAQ</strong></a>
+                  </font></p>	
+                  <p style="font-family: Verdana, sans-serif; font-size: 12px; color: #ffffff;"><font face="Verdana, sans-serif"> 
+                    Talk to us: send your feedback, praise, barbs, thoughts and musings to <a style="font-family: Verdana, sans-serif; font-size: 12px; color: #ffffff;" href="mailto:cs@fitzroypress.com.au"><strong>cs@fitzroypress.com.au</strong></a>                        
+                  </font></p>	
+                  <p style="font-family: Verdana, sans-serif; font-size: 12px; color: #ffffff;"><font face="Verdana, sans-serif">  
+                    To stop getting the Biz Opp Detective Start&ndash;up eSeries, write to us at: <a style="font-family: Verdana, sans-serif; font-size: 12px; color: #ffffff;" href="mailto:cs@fitzroypress.com.au"><strong>cs@fitzroypress.com.au</strong></a>                        
+                  </font></p>	
+                  <p style="font-family: Verdana, sans-serif; font-size: 12px; color: #ffffff;"><font face="Verdana, sans-serif">  
+                    ACN: 117 765 009 ABN: 33 117 765 009
+                   </font></p>								
+                </td>
+                <td width="20%">&nbsp;</td>
+                <td width="10%">&nbsp;</td>
+              </tr>
+              <tr align="center">
+                <td width="10%">&nbsp;</td>
+                <td width="60%" align="left">
+                  <p style="font-family: Verdana, sans-serif; font-size: 12px; color: #ffffff;"><font face="Verdana, sans-serif">
+                    Fitzroy Press
+                    <br />
+                    Attn: Biz Opp Detective
+                    <br />
+                    PO Box 713
+                    <br />
+                    South Melbourne VIC 3205  
+                    <br /><br />
+                    Tel: 1300 559 359
+                    <br />
+                    Fax: (03) 9558 2219
+                  </font></p>								
+                </td>                
+                <td width="20%">
+                  <img src="http://fitzroypress.com.au/wp-content/uploads/2015/05/FP_logo-footer.png" width="83" height="100" alt="Fitzroy Press" />               
+                </td>
+                <td width="10%">&nbsp;</td>
+              </tr>
+              <tr>
+                <td width="10%">&nbsp;</td>
+                <td width="60%">&nbsp;</td>
+                <td width="20%">&nbsp;</td>                
+                <td width="10%">&nbsp;</td>
+              </tr>                      
+            </table>
+          </td>
+        </tr>       
+      </table>
+    </td>
+    <td width="10%">&nbsp;</td>
+  </tr>
+  <tr>
+    <td width="10%">&nbsp;</td>
+    <td width="80%">
+      <table width="100%" align="center" style="border-collapse:collapse; background-color: #0e0963;" style="text-align: center;" cellspacing="0" cellpadding="0" border="0">	            
+        <tr>
+          <td width="10%">&nbsp;</td>
+          <td width="80%">&nbsp;</td>
+          <td width="10%">&nbsp;</td>
+        </tr>
+        <tr>
+          <td width="10%">&nbsp;</td>     
+          <td width="80%" align="center">
+            <p style="font-family: Verdana, sans-serif; font-size: 12px; color: #ffffff;"><font face="Verdana, sans-serif">
+              All content is © 2015 Fitzroy Press All Rights Reserved
+            </font></p>
+          </td>
+          <td width="10%">&nbsp;</td>
+        </tr>
+        <tr>
+          <td width="10%">&nbsp;</td>
+          <td width="80%">&nbsp;</td>
+          <td width="10%">&nbsp;</td>
+        </tr>        
+      </table>
+    </td>
+    <td width="10%">&nbsp;</td>
+  </tr>
+</table>
+<!-- end red footer component --> 
+<!--  remove this -->  
+<table width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="#f2f2f2">  
+  <tr><td>&nbsp;</td></tr>
+  <tr>
+    <td width="100%" bgcolor="#000000" align="center"><span style="color:#ffffff;">END OF TEMPLATES</span></td>                   
+  </tr>
+  <tr><td>&nbsp;</td></tr>
+</table>
+<!-- end of remove -->
+<!-- universal closing html tags --> 
+</body>
+</html>

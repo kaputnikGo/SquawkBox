@@ -1,0 +1,163 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional //EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">	
+	<title>
+    Email Template One
+	</title> 
+	<meta name="keywords" content="">
+	<meta name="description" content=""> 
+<!-- limited header styles component -->	
+  <style type="text/css">
+    body {
+      color:#252525;
+      font-family: Arial, sans-serif; 
+      font-weight: normal; 
+      font-size: 16px;
+      line-height: 1.2;
+    }
+    a {
+      color: #0000ff;
+      text-decoration: underline;
+    }
+    a:hover {
+      color: #000000;
+    }
+    .preheader { 
+      display:none !important; 
+      visibility: hidden; 
+      opacity: 0; 
+      color: transparent; 
+      height: 0; 
+      width: 0;
+    } 
+	</style>
+<!-- end header styles component -->
+ 
+</head>
+<body>
+<!-- end universal html header component -->
+<!-- PRE-HEADER TEXT -->
+<span class="preheader" style="display: none !important; visibility: hidden; opacity: 0; color: transparent; height: 0; width: 0;">
+This pre-header text should show up in GMail, iOS, Mail.app, &amp; more: 75 char limit.
+</span>
+
+<!-- start of paged template -->
+<table align="center" width="880" style="background-color: #e9eae6;" cellspacing="0" cellpadding="0" border="0">
+	<tr>
+		<td align="center">
+			<table align="center" width="710" style="background-color: #ffffff;" cellspacing="0" cellpadding="0" border="0">
+<!-- email url  and top spacer component -->			
+        		<tr>
+					<td align="center" style="background-color: #e9eae6;">&nbsp;</td>
+				</tr>
+<!-- end component -->
+       
+<!-- banner component -->        
+        		<tr>
+					<td>
+						<table bgcolor="#ffffff" width="600" align="center" cellspacing="0" cellpadding="0" border="0">
+							<tr>
+                				<td bgcolor="#ffffff">&nbsp;</td>
+              				</tr>
+             				 <tr>
+								<td>
+                  					<img src="" width="600" height="84" alt="banner image">
+								</td>
+							</tr>          
+						</table>
+					</td>
+				</tr>        
+<!-- end component -->
+
+<!-- article components start -->				
+		        <tr>  
+		        	<td align="center">
+		
+<!-- article main body text -->
+		            	<table width="600" style="text-align: left;" cellspacing="0" cellpadding="0" border="0">
+		              		<tr>
+								<td>
+	                 				 <p style="font-family: Arial, sans-serif; font-size: 15px;"><font face="Arial, sans-serif">
+	                  				<div>
+					                    Dear [%= :subscriberName(E,Reader) %],
+					                    <br />
+					                    [ -- INSERT CONTENT HERE -- ]                   
+					                </div> 
+	                  				</font></p>								
+	                			</td>
+							</tr>
+							<tr>	
+	                			<td>&nbsp;</td>
+							</tr>              
+	            		</table>
+<!-- end component -->
+	
+<!-- hr line component -->
+	            		<table width="600" style="text-align: center;" cellspacing="0" cellpadding="0" border="0">
+							<tr>
+	                			<td>
+	                  				<hr>
+		                		</td>
+		              		</tr>
+		            	</table>
+<!-- end component -->
+	
+<!-- paged footer component -->
+						<table width="600" style="text-align: left;" cellspacing="0" cellpadding="0" border="0">
+							<tr>
+								<td>
+									<br />
+									<p style="font-family: Arial, sans-serif; font-size: 10px; line-height: 1.5;"><font face="Arial, sans-serif">
+		                  				All content is &copy; 2005 &ndash; 2015 <a href="http://www.portphillippublishing.com.au/" target="_blank">Port Phillip Publishing Pty Ltd</a> All Rights Reserved
+										<br /><br />
+						                  Port Phillip Publishing Pty Ltd holds an Australian Financial Services Licence: 323 988.
+						                  <br /><br />
+						                  ACN: 117 765 009 ABN: 33 117 765 009
+						                  <br /><br />
+						                  All advice is general advice and has not taken into account your personal circumstances. Please seek independent financial advice regarding your own situation, or if in doubt about the suitability of an investment.
+						                  <br /><br />
+						                  <strong>Calculating Your Future Returns:</strong> The value of any investment and the income derived from it can go down as well as up. Never invest more than you can afford to lose and keep in mind the ultimate risk is that you can lose whatever you've invested. While useful for detecting patterns, the past is not a guide to future performance. Some figures contained in this report are forecasts and may not be a reliable indicator of future results. Any potential gains in this letter do not include taxes, brokerage commissions, or associated fees. Please seek independent financial advice regarding your particular situation. Investments in foreign companies involve risk and may not be suitable for all investors. Specifically, changes in the rates of exchange between currencies may cause a divergence between your nominal gain and your currency-converted gain, making it possible to lose money once your total return is adjusted for currency.
+						                  <br /><br />
+						                  The Reader acknowledges that the contents of this newsletter and all associated intellectual property rights of Port Phillip Publishing Pty Ltd (PPP) including copyright, design rights, property rights, rights to data and databases, trademarks, service marks and any other rights created or developed in the course of the provision of the newsletter shall be and remain the sole and exclusive property of PPP. No person is permitted to copy, forward or reproduce the newsletter and/or its contents without express consent of PPP. Subscribers to the newsletter are permitted to use this material for their own personal and investment use.
+						                  <br /><br />
+						                  If you would like to contact us about your subscription please call us on 1300 308 726 or email us at <a href="mailto:cs@portphillippublishing.com.au">cs@portphillippublishing.com.au</a>
+						                  <br /><br />
+						                  Port Phillip Publishing
+						                  <br />
+						                  Attn: <em>Revolutionary Tech Investor</em>
+						                  <br />
+						                  PO Box 713 South Melbourne VIC 3205 
+						                  <br />
+						                  Tel: 1300 308 726
+						                  <br />
+						                  From overseas: +61 3 9037 8375
+						            </font></p>
+								</td>
+							</tr>
+						</table>            
+<!-- end component -->
+	
+<!-- closing paged template component -->
+					</td>
+				</tr>
+				<tr>
+					<td align="center" style="background-color: #e9eae6;">
+						<br />
+<!-- closing space -->
+						<br /><br />
+					</td>
+				</tr>            
+<!-- end component -->
+	 
+<!-- paged template closing tags -->
+	      	</table>
+		</td>
+	</tr>
+</table>      
+<!-- end closing tags --> 
+
+<!-- universal closing html tags --> 
+</body>
+</html>

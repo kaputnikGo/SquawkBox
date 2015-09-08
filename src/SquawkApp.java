@@ -15,6 +15,14 @@ public class SquawkApp {
 	
 	 //TODO
 	
+		// need to change from openx devices to email template - destroy
+	
+	// email version - list components, drag and drop with text edit
+	// divide template into discrete components
+	// create list of them
+	// allow select and place of components in new template file
+	
+	
 		// start up window in browser to display a resource file. - DONE
 		// reopen browser if user closes it. - DONE
 		// add button to add site wrapper to device for viewing pleasure.

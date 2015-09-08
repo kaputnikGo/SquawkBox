@@ -9,6 +9,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -18,6 +19,10 @@ import java.sql.Statement;
 
 
 public class Utilities {
+	
+	public static final String[] WEBCODE_LIST = new String[] {
+		"MM", "DR", "PTR", "ILA", "ESKY", "HSH", "ELH"};
+	// need to verbose these.
 	
 	public static boolean checkString (final String candidate) {
 		return candidate != null && !candidate.isEmpty();
@@ -112,8 +117,7 @@ public class Utilities {
 * 		// debug methods 
 * 
 *************************************************************/
-	public static void openInNotepad(final String filename) {
-		
+	public static void openInNotepad(final String filename) {		
 		// test opening the notepad program
 		if (!Desktop.isDesktopSupported()) {
 			System.out.println("Desktop run commands not supported.");
@@ -133,8 +137,54 @@ public class Utilities {
 		}
 	}
 	
-	public static void dumpTemplate(final String webcode, final String devicetype) {
+	public static boolean checkTableExists(final String dbname, final String tablename) {
+		if (!checkString(dbname)) return false;//return ("dump DB name not valid.");
+		if (!checkString(tablename)) return false;//return ("dump table name not valid.");
 		
+		Connection sqlConnection = null;
+		
+		try {
+			sqlConnection = getConnection(dbname);
+			DatabaseMetaData dbm;
+			
+			dbm = sqlConnection.getMetaData();
+			ResultSet rs = dbm.getTables(null,  null,  tablename, null);
+			if (rs.next()) {
+				//return("checkTables found table: " + tablename);
+				return true;
+			}
+			else {
+				//return("checkTable unable to find: " + tablename);
+				return false;
+			}
+		} 
+		catch (SQLException e1) {
+			e1.printStackTrace();
+			//return("checkTables SQL error.");
+			return false;
+		} 
+		catch (Exception e) {
+			e.printStackTrace();
+			//return("checkTables connection error.");
+			return false;
+		}
+		finally {
+			try {
+		        if(sqlConnection != null) {
+		        	sqlConnection.close();
+		        	//return("checkTables connection closed.");
+		        	return false;
+		        }
+			}
+		    catch(SQLException e) {
+		        System.err.println(e);
+		        //return("SQL connection close failure.");
+		        return false;
+		    }
+		}	
+	}
+	
+	public static void dumpTemplate(final String webcode, final String devicetype) {		
 		if (isValidWebcode(webcode) && isValidDevicetype(devicetype)) {		
 			String getHtml = Utilities.getTemplate(webcode, devicetype);
 			if (getHtml == null) 
@@ -146,9 +196,8 @@ public class Utilities {
 		
 	}
 	
-	//TODO
-	// these debug methods need to be a generic method that gets all from a user table
 	public static String debugDumpTableDB(final String dbname, final String tablename) {
+		System.out.println("debugDumpTableDB called for db: " + dbname + ", table: " + tablename);
 		if (!checkString(dbname)) return ("dump DB name not valid.");
 		if (!checkString(tablename)) return ("dump table name not valid.");
 		
@@ -181,16 +230,6 @@ public class Utilities {
 				}
 				stringBuilder.append("------------------------<br />");
 			}
-			/*
-			while (rs.next()) {
-				stringBuilder.append("------------------------<br />");				
-				stringBuilder.append("ID = " + rs.getInt("ID") + "<br />");
-				stringBuilder.append(rsMeta.getColumnName(counter) + "=");
-				// clearing
-				stringBuilder.append("------------------------<br />");
-				counter++;
-			}
-			*/
 
 			outputString = stringBuilder.toString();
 			rs.close();
@@ -214,102 +253,18 @@ public class Utilities {
 		return ("DebugAdminDB failure.");
 	}
 	
-	
-	public static String debugAdminDB(final String tablename) {
-		//print the db to console
-		// ID, WEBCODE, WEBURL, DEVICE_1(-4), STYLE_URL_1(-3)
-		Connection sqlConnection = null;
-		Statement sqlStatement = null;
-		String outputString = "";
+	public static String debugCountTableDB(final String dbname, final String tablename) {
+		System.out.println("debugCountTableDB called for db: " + dbname + ", table: " + tablename);
+		if (!checkString(dbname)) return ("dump DB name not valid.");
+		if (!checkString(tablename)) return ("dump table name not valid.");
 		
-		try {
-			sqlConnection = getConnection("squawk.db");
-		} 
-		catch (Exception e) {
-			e.printStackTrace();
-			return ("getConnection failure.");
-		}
-		
-		try {
-			sqlConnection.setAutoCommit(false);
-			sqlStatement = null;
-			sqlStatement = sqlConnection.createStatement();
-			ResultSet rs = sqlStatement.executeQuery("SELECT * FROM " + tablename);
-			StringBuilder stringBuilder = new StringBuilder();
-			
-			while (rs.next()) {
-				int id = rs.getInt("ID");
-				String webcode = rs.getString("WEBCODE");
-				String weburl = rs.getString("WEBURL");
-				// below can return null
-				String device_1 = rs.getString("DEVICE_1");
-				String device_2 = rs.getString("DEVICE_2");
-				String device_3 = rs.getString("DEVICE_3");
-				String device_4 = rs.getString("DEVICE_4");
-				String style_url_1 = rs.getString("STYLE_URL_1");
-				String style_url_2 = rs.getString("STYLE_URL_2");
-				String style_url_3 = rs.getString("STYLE_URL_3");
-				// dump to squawkBrowser
-				stringBuilder.append("------------------------<br />");				
-				stringBuilder.append("ID = " + id + "<br />");				
-				stringBuilder.append("WEBCODE = " + webcode + "<br />");
-				stringBuilder.append("WEBURL = " + weburl + "<br />");
-				
-				// this is bad code...
-				if (device_1 != null) {
-					stringBuilder.append("DEVICE_1 = " + device_1 + "<br />");
-				}
-				if (device_2 != null) {
-					stringBuilder.append("DEVICE_2 = " + device_2 + "<br />");
-				}
-				if (device_3 != null) {
-					stringBuilder.append("DEVICE_3 = " + device_3 + "<br />");
-				}				
-				if (device_4 != null) {
-					stringBuilder.append("DEVICE_4 = " + device_4 + "<br />");
-				}
-				if (style_url_1 != null) {
-					stringBuilder.append("STYLE_URL_1 = " + style_url_1 + "<br />");
-				}
-				if (style_url_2 != null) {
-					stringBuilder.append("STYLE_URL_2 = " + style_url_2 + "<br />");
-				}
-				if (style_url_3 != null) {
-					stringBuilder.append("STYLE_URL_3 = " + style_url_3 + "<br />");
-				}				
-				// clearing
-				stringBuilder.append("------------------------<br />");
-			}
-			outputString = stringBuilder.toString();
-			rs.close();
-			sqlStatement.close();	
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return ("SQL connection open failure.");
-		}
-		finally {
-			try {
-		        if(sqlConnection != null) {
-		        	sqlConnection.close();
-		        	return outputString;
-		        }
-			}
-		    catch(SQLException e) {
-		        System.err.println(e);
-		        return ("SQL connection close failure.");
-		    }
-		}
-		return ("DebugAdminDB failure.");
-	}
-	
-	public static String countAdminDB(final String adminDB) {
 		Connection sqlConnection = null;
 		Statement sqlStatement = null;
 		int rowCount = 0;
 		
 		
 		try {
-			sqlConnection = getConnection(adminDB);
+			sqlConnection = getConnection(dbname);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return ("getConnection failure.");
@@ -318,8 +273,9 @@ public class Utilities {
 			sqlConnection.setAutoCommit(false);
 			sqlStatement = null;
 			sqlStatement = sqlConnection.createStatement();
-			ResultSet rs = sqlStatement.executeQuery("SELECT * FROM ADMIN");
-			rs = sqlStatement.executeQuery("SELECT COUNT(*) FROM ADMIN");
+			ResultSet rs = sqlStatement.executeQuery("SELECT * FROM " + tablename);
+			rs = sqlStatement.executeQuery("SELECT COUNT(*) FROM " + tablename);
+			
 		    // get the number of rows from the result set
 		    rs.next();
 		    rowCount = rs.getInt(1);
@@ -336,7 +292,7 @@ public class Utilities {
 			try {
 		        if(sqlConnection != null) {
 		        	sqlConnection.close();
-		        	return ("DebugAdminDB closed with count: " + rowCount);
+		        	return ("DebugCountTableDB closed with count: " + rowCount);
 		        }
 			}
 		    catch(SQLException e) {
@@ -345,72 +301,7 @@ public class Utilities {
 		        return ("SQL connection close failure.");
 		    }
 		}
-		return ("CountAdminDB failure.");
-	}
-	
-	public static String debugDeviceDB(final String deviceDB) {
-		//print the db to console
-		// ID, WEBCODE, DEVICETYPE, DEVICE_HTML
-		Connection sqlConnection = null;
-		Statement sqlStatement = null;
-		String outputString = "";
+		return ("DebugCountTableDB failure.");
 		
-		try {
-			sqlConnection = getConnection(deviceDB);
-		} 
-		catch (Exception e) {
-			e.printStackTrace();
-			return ("getConnection failure.");
-		}
-		
-		try {
-			sqlConnection.setAutoCommit(false);
-			sqlStatement = null;
-			sqlStatement = sqlConnection.createStatement();
-			ResultSet rs = sqlStatement.executeQuery("SELECT * FROM DEVICES");
-			StringBuilder stringBuilder = new StringBuilder();
-			
-			while (rs.next()) {
-				int id = rs.getInt("ID");
-				String webcode = rs.getString("WEBCODE");
-				String devicetype = rs.getString("DEVICETYPE");
-				// below can return null
-				String device_html = rs.getString("DEVICE_HTML");
-				// dump to squawkBrowser
-				stringBuilder.append("------------------------<br />");
-				stringBuilder.append("ID = " + id + "<br />");				
-				stringBuilder.append("WEBCODE = " + webcode + "<br />");
-				stringBuilder.append("DEVICETYPE = " + devicetype + "<br />");
-				
-				if (device_html != null) 
-					stringBuilder.append("DEVICETYPE = " + devicetype + "<br />");
-				// clearing
-				stringBuilder.append("------------------------<br />");
-			}
-			outputString = stringBuilder.toString();
-			rs.close();
-			sqlStatement.close();	
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return ("SQL connection open failure.");
-		}
-		finally {
-			try {
-		        if(sqlConnection != null) {
-		        	sqlConnection.close();
-		        	return outputString;
-		        }
-			}
-		    catch(SQLException e) {
-		        System.err.println(e);
-		        return ("SQL connection close failure.");
-		    }
-		}
-		return ("DebugDeviceDB failure.");
-	}
-	
-	public static String debugWrapperDB(final String deviceDB) {
-		
-		return null;
 	}
 }

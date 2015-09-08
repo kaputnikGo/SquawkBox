@@ -50,10 +50,6 @@ public class SquawkBrowser {
 	protected String userPara1 = "default user paragraph 1";
 	protected String userPara2 = "default user paragraph 2";
 	protected String userPara3 = "default user paragraph 3";
-	protected int userCoverWidth = 180;
-	protected int userCoverHeight = 227;
-	protected String userReportUrl = "";
-	//"http://www.moneymorning.com.au/wp-content/uploads/2015/04/Top10MiningStocks-cover-sml.png";
 	protected String exportedDeviceHtml;
 	protected boolean shellOpen = false;
 	
@@ -76,10 +72,6 @@ public class SquawkBrowser {
 	    Image icon = new Image(this.squawkView.getDisplay(), getClass().getClassLoader().getResourceAsStream("resources/plug_icon.png"));
 	    shell.setImage(icon);
 	    
-	    // set the default report cover from resources folder
-	    URL defaultCoverFile = getClass().getClassLoader().getResource("resources/defaultCover.png");
-	    userReportUrl = defaultCoverFile.toString();
-	    
 		shell.addShellListener(new ShellListener() {
 			public void shellClosed(ShellEvent e) {
 				shellOpen = false;
@@ -89,26 +81,22 @@ public class SquawkBrowser {
 
 			@Override
 			public void shellActivated(ShellEvent arg0) {
-				// TODO Auto-generated method stub
-				
+				//
 			}
 
 			@Override
 			public void shellDeactivated(ShellEvent arg0) {
-				// TODO Auto-generated method stub
-				
+				//
 			}
 
 			@Override
 			public void shellDeiconified(ShellEvent arg0) {
-				// TODO Auto-generated method stub
-				
+				//
 			}
 
 			@Override
 			public void shellIconified(ShellEvent arg0) {
-				// TODO Auto-generated method stub
-				
+				//
 			}
 		});
 	}
@@ -158,7 +146,6 @@ public class SquawkBrowser {
 	}
 	
 	public void openResourcePage(final String userString) {
-		// ONLY called when opening a template dir/file from the template folders
 		debug("resource url: " + userString);
 		browser.setUrl(userString);
 	}
@@ -226,16 +213,17 @@ public class SquawkBrowser {
 		parseDevice();
 	}
 	
-	public void addWrapper() {
-		// specific webcode, specific devicetype
-		// this is where the style_urls are used.
-		debug("Device Wrapper coming soon...");
+	public void openEmailTemplate() {
+		debug("opening email responsive template...");
 		// get deviceHtml
-		// new String wrappedDevice = deviceWrapperStart + deviceHtml + deviceWrapperEnd
-		// browser.setText(deviceWrapped);
+		URL emailFile = getClass().getClassLoader().getResource("templates/EMAIL/Component_template-v2-responsive.html");
+		if (emailFile == null) 
+			debug("Email template file not found.");
+		else
+			openResourcePage(emailFile.toString());
 	}
 	
-	public String getDeviceHtml() {
+	public String getBrowserHtml() {
 		return browser.getText();
 	}
 	
@@ -244,7 +232,7 @@ public class SquawkBrowser {
 		browser.setText(htmlDump);
 	}
 	
-	public void exportDevice(final String savename) {
+	public void exportBrowser(final String savename) {
 		// yar
 		exportedDeviceHtml = browser.getText();
 		boolean saveDevice = (saveDeviceFile(saveDialog(savename)));		
@@ -355,8 +343,5 @@ public class SquawkBrowser {
 		browser.execute("document.getElementById(\"templatePara1\").innerHTML = '" + userPara1 + "';");
 		browser.execute("document.getElementById(\"templatePara2\").innerHTML = '" + userPara2 + "';");
 		browser.execute("document.getElementById(\"templatePara3\").innerHTML = '" + userPara3 + "';");
-		browser.execute("document.getElementById(\"templateCover\").src = '" + userReportUrl + "';");
-		browser.execute("document.getElementById(\"templateCover\").style.width = '" + userCoverWidth + "';");
-		browser.execute("document.getElementById(\"templateCover\").style.height = '" + userCoverHeight + "';");
 	}
 }
