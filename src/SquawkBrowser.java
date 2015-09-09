@@ -45,13 +45,16 @@ public class SquawkBrowser {
 	private static final int TYPE_WWW_UP = 2;
 	private static final int TYPE_WWW_DOWN = 3;
 	
-	protected String userByline = "default byline";
-	protected String userHeading = "default heading";
+	protected String userTitle = "default title";
+	protected String userPreheader = "default preheader";
 	protected String userPara1 = "default user paragraph 1";
-	protected String userPara2 = "default user paragraph 2";
-	protected String userPara3 = "default user paragraph 3";
+	protected String userSignoff = "default signoff";
+	protected String userFooter = "default footer";
+	protected String userBannerLogo = "";
+	
 	protected String exportedDeviceHtml;
 	protected boolean shellOpen = false;
+	protected boolean initPhase = false;
 	
 	SquawkBrowser(final SquawkView squawkView) {
 		// constructor
@@ -115,7 +118,8 @@ public class SquawkBrowser {
 			final SashForm form = new SashForm(comp, SWT.HORIZONTAL);
 			form.setLayout(new FillLayout());
 			
-			browser = new Browser(form, SWT.NONE);			    
+			browser = new Browser(form, SWT.NONE);	
+			initPhase = true;
 		    // browser title grab
 		    browser.addTitleListener(new TitleListener() {
 		    	public void changed(TitleEvent event) {
@@ -128,7 +132,9 @@ public class SquawkBrowser {
 		    		//
 		    	}
 		    	public void completed(ProgressEvent event) {
-		    		parseDevice();
+		    		//addUserContent();
+		    		debug("browser completed reached.");
+		    		getTemplateContent();
 		    	}
 		    });		   
 		    
@@ -144,8 +150,17 @@ public class SquawkBrowser {
 		}		
 		return true;
 	}
+	public void openInitPage(final String userString) {
+		// this opens the generic template for a given webcode	
+		debug("resource url: " + userString);
+		browser.setUrl(userString);
+		
+	}
 	
-	public void openResourcePage(final String userString) {
+	public void openTemplatePage(final String userString) {
+		//TODO
+		// this opens the generic template for a given webcode	
+		initPhase = false;
 		debug("resource url: " + userString);
 		browser.setUrl(userString);
 	}
@@ -210,7 +225,7 @@ public class SquawkBrowser {
 	public void processBrowser() {
 		// parse here as well
 		browser.refresh();
-		parseDevice();
+		addUserContent();
 	}
 	
 	public void openEmailTemplate() {
@@ -220,7 +235,7 @@ public class SquawkBrowser {
 		if (emailFile == null) 
 			debug("Email template file not found.");
 		else
-			openResourcePage(emailFile.toString());
+			openTemplatePage(emailFile.toString());
 	}
 	
 	public String getBrowserHtml() {
@@ -334,14 +349,45 @@ public class SquawkBrowser {
 		// 3. website down... get error code.
 	}
 	
-	private void parseDevice() {
-		// quotes to be escaped.
-		// must be better way...
+	private void getTemplateContent() {
+		//TODO
+		// is stopping at newlines...!!
+		
+		// only do this if parsing a template file
+		if (initPhase) 
+			return;
+		else {
+			debug("getTemplateContent called.");
+			boolean has = browser.execute("document.title");
+			debug("has: " + has);
+			
+			userTitle = (String)browser.evaluate("return document.title");
+			//userBannerLogo = (String)browser.evaluate("return document.getElementById('bannerLogo').childNodes[0].nodeValue;");
+			userPreheader = (String)browser.evaluate("return document.getElementById('templatePreheader').childNodes[0].nodeValue;");			
+			// again needs to be an array
+			userPara1 = (String)browser.evaluate("return document.getElementById('templatePara1').childNodes[0].nodeValue;");
+			userSignoff = (String)browser.evaluate("return document.getElementById('templateSignoff').childNodes[0].nodeValue;");
+			userFooter = (String)browser.evaluate("return document.getElementById('templateFooter').childNodes[0].nodeValue;");
+			
+			// update the view
+			squawkView.updateFormFields();
+		}
+	}
+	
+	private void addUserContent() {
 		// browser.execute(String script) is to run javascript
-		browser.execute("document.getElementById(\"templateByline\").innerHTML = '" + userByline + "';");
-		browser.execute("document.getElementById(\"templateHeading\").innerHTML = '" + userHeading + "';");
+		browser.execute("document.title = '" + userTitle + "';");
+		browser.execute("document.getElementById(\"bannerLogo\").src = '" + userBannerLogo + "';");
+		browser.execute("document.getElementById(\"templatePreheader\").innerHTML = '" + userPreheader + "';");
+		
+		// this needs to be an array or userPara[n]
 		browser.execute("document.getElementById(\"templatePara1\").innerHTML = '" + userPara1 + "';");
-		browser.execute("document.getElementById(\"templatePara2\").innerHTML = '" + userPara2 + "';");
-		browser.execute("document.getElementById(\"templatePara3\").innerHTML = '" + userPara3 + "';");
+		
+		browser.execute("document.getElementById(\"templateSignoff\").innerHTML = '" + userSignoff + "';");
+		browser.execute("document.getElementById(\"templateFooter\").innerHTML = '" + userFooter + "';");
+		
+		// eg. additions/rewrites to <head><style> - may not work...
+		//browser.execute("document.write(\"<style>body { background-color:#000 }</style>\");");
+
 	}
 }

@@ -24,6 +24,9 @@ public class Utilities {
 		"MM", "DR", "PTR", "ILA", "ESKY", "HSH", "ELH"};
 	// need to verbose these.
 	
+	public static String[] TEMPLATE_LIST = new String[] {
+		"default", "premium", "free", "endo"};
+	
 	public static boolean checkString (final String candidate) {
 		return candidate != null && !candidate.isEmpty();
 	}
@@ -61,6 +64,9 @@ public class Utilities {
 	}
 
 	public static boolean isValidWebcode(final String candidate) {
+		//TODO
+		// compare to string array WEBCODE_LIST
+		
 		// need to get an enum of valid webcodes
 		System.out.println("isvalidWeb: " + candidate);
 		if (candidate == null) 
@@ -137,10 +143,12 @@ public class Utilities {
 		}
 	}
 	
-	public static boolean checkTableExists(final String dbname, final String tablename) {
-		if (!checkString(dbname)) return false;//return ("dump DB name not valid.");
-		if (!checkString(tablename)) return false;//return ("dump table name not valid.");
+	public static String checkTableExistsOK(final String dbname, final String tablename) {
+		// returns OK or an error message string for console
+		if (!checkString(dbname)) return ("dump DB name not valid.");
+		if (!checkString(tablename)) return ("dump table name not valid.");
 		
+		String result = "start";
 		Connection sqlConnection = null;
 		
 		try {
@@ -151,37 +159,32 @@ public class Utilities {
 			ResultSet rs = dbm.getTables(null,  null,  tablename, null);
 			if (rs.next()) {
 				//return("checkTables found table: " + tablename);
-				return true;
+				result = "OK";
 			}
 			else {
-				//return("checkTable unable to find: " + tablename);
-				return false;
+				result = "checkTable unable to find: " + tablename;
 			}
 		} 
 		catch (SQLException e1) {
 			e1.printStackTrace();
-			//return("checkTables SQL error.");
-			return false;
+			result = "checkTables SQL error.";
 		} 
 		catch (Exception e) {
 			e.printStackTrace();
-			//return("checkTables connection error.");
-			return false;
+			result = "checkTables connection error.";
 		}
 		finally {
 			try {
 		        if(sqlConnection != null) {
 		        	sqlConnection.close();
-		        	//return("checkTables connection closed.");
-		        	return false;
 		        }
 			}
 		    catch(SQLException e) {
 		        System.err.println(e);
-		        //return("SQL connection close failure.");
-		        return false;
+		        result += " + SQL connection close failure.";
 		    }
-		}	
+		}
+		return result;	
 	}
 	
 	public static void dumpTemplate(final String webcode, final String devicetype) {		

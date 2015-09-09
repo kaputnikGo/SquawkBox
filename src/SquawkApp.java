@@ -16,6 +16,15 @@ public class SquawkApp {
 	 //TODO
 	
 		// need to change from openx devices to email template - destroy
+	// allow common templates to be included in a drop down
+	// method to create new templates to be added to drop down
+	// method to allow editing of existing templates (versioning)
+	
+	// div id == someName to be replaced with span id = someName for user editable content
+	// build simple version first, then add component drop-in later
+	
+	// allow a new webcode to be created that can look like MM-ENDO, or MM-PROMO etc.
+	// could have the button select the main owner site, then the combo drop down loads the template files for it.
 	
 	// email version - list components, drag and drop with text edit
 	// divide template into discrete components

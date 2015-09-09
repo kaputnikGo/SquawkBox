@@ -32,7 +32,7 @@ import org.eclipse.swt.widgets.Text;
 
 public class SquawkView {
 	private static final int SHELL_HEIGHT = 600;
-	private static final int SHELL_WIDTH = 720;
+	private static final int SHELL_WIDTH = 1100;
 	private static Image icon;
 	private SqlTalk squawk;
 	private SquawkBrowser squawkBrowser;
@@ -44,23 +44,22 @@ public class SquawkView {
 	// var strings
 	private String appName = "SQUAWK BOX.";
 
-	private String label1aString = "Subject:";
+	private String label1aString = "Title:";
 	private String label2aString = "Preheader:";
 	private String label3aString = "Paragraph1:";
-	private String label3bString = "Paragraph2:";
+	private String label3bString = "Sign off:";
 	private String label3cString = "Footer:";
 	private String label4aString = "Banner url:";
 
-	private String button1String = "no1";
-	private String button2String = "no2";
-	private String button3String = "no3";
-	private String button4String = "no4";
 	private String button5String = "process";
 	private String button6String = "EXPORT";
 	private String button7String = "browser";
 	private String button8String = "local open";
 	private String button9String = "dump";
 	private String button10String = "email";
+	
+	private String userWebcode = "";
+	private String userTemplateName = "";
 	
 	private Label label1a;
 	private Label label2a;
@@ -76,10 +75,11 @@ public class SquawkView {
 	private Text text3c;
 	private Text text4;
 	
-	private Button b1;
-	private Button b2;
-	private Button b3;
-	private Button b4;
+	private Composite rowComp1;
+	private Composite rowComp2;
+	private Composite rowComp3;
+	private Button[] webcodeButtons;
+	
 	private Button b5;
 	private Button b6;
 	private Button b7;
@@ -147,6 +147,19 @@ public class SquawkView {
 		squawkBrowser = null;
 	}
 	
+	public void updateFormFields() {
+		// hopefully called by browser, after it has
+		// loaded a template file
+		updateConsole("update form fields called.");
+		
+		text1.setText(squawkBrowser.userTitle);
+		text2.setText(squawkBrowser.userPreheader);
+		text3a.setText(squawkBrowser.userPara1);
+		text3b.setText(squawkBrowser.userSignoff);
+		text3c.setText(squawkBrowser.userFooter);
+		text4.setText(squawkBrowser.userBannerLogo);
+	}
+	
 	public void updateConsole(final String message) {
 		if (Utilities.checkString(message)) {
 			// TODO
@@ -156,6 +169,43 @@ public class SquawkView {
 		else {
 			
 		}
+	}
+		
+/************************************************************
+* 
+* 		// control methods 
+* 
+************************************************************/	
+	private void initBrowser() {
+		// first get the resource html file		
+		if (squawkBrowser.initBrowser()) {
+			URL initFile = getClass().getClassLoader().getResource("resources/index.html");
+			if (initFile == null) {
+				updateConsole("Init browser file not found. ");
+				return;
+			}
+			squawkBrowser.openInitPage(initFile.toString());
+			updateConsole("openResourcePage called.");
+		}
+	}
+	
+	private void openBrowser() {
+		// mainly to allow user to re-open if closed
+		if (squawkBrowser == null) {
+			squawkBrowser = new SquawkBrowser(this);
+			updateConsole("Browser created.");
+			initBrowser();
+		}
+		else {
+			updateConsole("browser not null.");
+		}
+	}
+	
+	private void userButtonPressed(Event event) {
+		// find out which button was pressed
+		Button button = ((Button) event.widget);
+		userWebcode = button.getText();
+		updateConsole("Button press: " + userWebcode);
 	}
 	
 /************************************************************
@@ -186,14 +236,14 @@ public class SquawkView {
 		outer.setLayout(formLayout);
 
 		Composite innerTop = new Composite(outer, SWT.BORDER);
-		innerTop.setLayout(new GridLayout());
+		innerTop.setLayout(new FillLayout());
 		innerTop.setBackground(new Color(null, 183, 183, 183)); // grey
 
 		FormData fData = new FormData();
 		fData.top = new FormAttachment(0); // (n) == percentage
 		fData.left = new FormAttachment(0);
 		fData.right = new FormAttachment(100);
-		fData.bottom = new FormAttachment(22);
+		fData.bottom = new FormAttachment(30);
 		innerTop.setLayoutData(fData);
 
 		Composite innerLow = new Composite(outer, SWT.BORDER);
@@ -201,27 +251,28 @@ public class SquawkView {
 		innerLow.setBackground(new Color(null, 88, 88, 88)); // dk grey
 
 		fData = new FormData();
-		fData.top = new FormAttachment(22);
+		fData.top = new FormAttachment(30);
 		fData.left = new FormAttachment(0);
 		fData.right = new FormAttachment(100);
 		fData.bottom = new FormAttachment(100);
 		innerLow.setLayoutData(fData);
 		
 		// top
-		Composite rowComp1 = new Composite(innerTop, SWT.NONE);
+		rowComp1 = new Composite(innerTop, SWT.NONE);
 		RowLayout rowLayout1 = new RowLayout();
 		rowLayout1.pack = false;
 		rowComp1.setLayout(rowLayout1); 
 		
-		Composite rowComp2 = new Composite(innerTop, SWT.NONE);
+		rowComp2 = new Composite(innerTop, SWT.NONE);
 		RowLayout rowLayout2 = new RowLayout();
 		rowLayout2.pack = false;
 		rowComp2.setLayout(rowLayout2);
 		
-		Composite rowComp3 = new Composite(innerTop, SWT.NONE);
+		rowComp3 = new Composite(innerTop, SWT.NONE);
 		RowLayout rowLayout3 = new RowLayout();
 		rowLayout3.pack = false;
 		rowComp3.setLayout(rowLayout3);
+		
 		
 		b9 = new Button(rowComp1, SWT.PUSH);
 		b9.setText(button9String);
@@ -232,42 +283,38 @@ public class SquawkView {
 		b8 = new Button(rowComp1, SWT.PUSH);
 		b8.setText(button8String);
 		
-	    // top
-		b1 = new Button(rowComp2, SWT.PUSH);
-		b1.setText(button1String);
-		b2 = new Button(rowComp2, SWT.PUSH);
-		b2.setText(button2String);
-		b3 = new Button(rowComp2, SWT.PUSH);
-		b3.setText(button3String);
-		b4 = new Button(rowComp2, SWT.PUSH);
-		b4.setText(button4String);
+		inflateButtons();
 		
 		b5 = new Button(rowComp3, SWT.PUSH);
 		b5.setText(button5String);
 		b6 = new Button(rowComp3, SWT.PUSH);
 		b6.setText(button6String);
-		
+  
 		addButtonListeners();
-	    
+		
 		// device list
-		Combo comboDevices = new Combo(rowComp2, SWT.DROP_DOWN | SWT.BORDER);
+		Combo comboTemplates = new Combo(rowComp2, SWT.DROP_DOWN | SWT.BORDER);
 	    SelectionListener selectionListener = new SelectionAdapter() {
 	    	public void widgetSelected(SelectionEvent event) {
 	    		Combo combo = ((Combo) event.widget);
-	    		/*
-	    		userDevice = combo.getText();
-	    		URL deviceFile = getClass().getClassLoader().getResource("templates/" + userWebcode + "/template_" + userDevice + ".html");
-	    		if (deviceFile == null) 
-	    			updateConsole("device file " + userDevice + " not found for site code " + userWebcode);	    		
-	    		squawkBrowser.openResourcePage(deviceFile.toString());
-	    		*/
+	    		
+	    		// this will load the template for a given webcode
+	    		userTemplateName = combo.getText();
+	    		URL templateFile = getClass().getClassLoader().getResource("templates/EMAIL/" + userWebcode + "/" + userTemplateName + ".html");
+	    		
+	    		if (templateFile == null) {
+	    			updateConsole("Template file not found for userWebcode " + userWebcode);
+	    			return;
+	    		}
+	    		else {
+	    			squawkBrowser.openTemplatePage(templateFile.toString());
+	    		}
 	    	}
 	    };
-	    comboDevices.addSelectionListener(selectionListener);
-	    comboDevices.setItems(Utilities.WEBCODE_LIST);
-	    comboDevices.select(0);
+	    comboTemplates.addSelectionListener(selectionListener);
+	    comboTemplates.setItems(Utilities.TEMPLATE_LIST);
+	    comboTemplates.select(0);
 	    
-	    // lower
 		// debugging console
 		debugText = new Text(innerLow, SWT.BORDER | SWT.WRAP | SWT.V_SCROLL);
 		debugText.setText("console waiting...\n");
@@ -330,11 +377,11 @@ public class SquawkView {
 		label4a.setLayoutData(data);
 		
 		GridData data2 = new GridData(GridData.FILL_HORIZONTAL);
-		data2.heightHint = 40;
+		data2.heightHint = 20;
 		text1.setLayoutData(data2);
 		
 		data2 = new GridData(GridData.FILL_HORIZONTAL);
-		data2.heightHint = 20;
+		data2.heightHint = 40;
 		text2.setLayoutData(data2);
 		
 		data2 = new GridData(GridData.FILL_HORIZONTAL);
@@ -359,89 +406,27 @@ public class SquawkView {
 		
 		addTextListeners();
 	}
-	
-	private void initBrowser() {
-		// first get the resource html file		
-		if (squawkBrowser.initBrowser()) {
-			URL initFile = getClass().getClassLoader().getResource("resources/index.html");
-			if (initFile == null) {
-				updateConsole("Init browser file not found. ");
-				return;
-			}
-			squawkBrowser.openResourcePage(initFile.toString());
-			updateConsole("openResourcePage called.");
-		}
-	}
-	
-	private void openBrowser() {
-		// mainly to allow user to re-open if closed
-		if (squawkBrowser == null) {
-			squawkBrowser = new SquawkBrowser(this);
-			updateConsole("Browser created.");
-			initBrowser();
-		}
-		else {
-			updateConsole("browser not null.");
-		}
+			
+	private void inflateButtons() {
+		// generate the number of buttons needed based upon Utilities.WEBCODE_LIST length.
+		int numButtons = Utilities.WEBCODE_LIST.length;
+		if (numButtons <= 0) numButtons = 1;		
+		webcodeButtons = new Button[numButtons];		
+		for (int i = 0; i < numButtons; i++) {
+			webcodeButtons[i] = new Button(rowComp2, SWT.PUSH);
+			webcodeButtons[i].setText(Utilities.WEBCODE_LIST[i]);
+			webcodeButtons[i].addListener(SWT.Selection,  new Listener() {
+				@Override
+				public void handleEvent(Event event) {
+					userButtonPressed(event);
+				}
+				
+			});
+		}		
 	}
 	
 	private void addButtonListeners() {
-		//TODO
-		// check if browser exists first...
-		
-	    b1.addListener(SWT.Selection,  new Listener() {
-	    	public void handleEvent(Event event) {
-	    		b1.setFocus();
-	    		/*
-	    		URL drFile = getClass().getClassLoader().getResource("templates/DR/template_" + userDevice + ".html");
-	    		if (drFile == null) 
-	    			updateConsole("DR device file not found: " + userDevice);	    		
-	    		squawkBrowser.openResourcePage(drFile.toString());
-	    		userWebcode = "DR";
-	    		drFile = null;
-	    		*/
-	    	}
-	    });
-	    b2.addListener(SWT.Selection,  new Listener() {
-	    	public void handleEvent(Event event) {
-	    		b2.setFocus();
-	    		/*
-	    		URL eskyFile = getClass().getClassLoader().getResource("templates/ESKY/template_" + userDevice + ".html");
-	    		if (eskyFile == null) 
-	    			updateConsole("ESKY device file not found: " + userDevice);	    		
-	    		squawkBrowser.openResourcePage(eskyFile.toString());
-	    		userWebcode = "ESKY";
-	    		eskyFile = null;
-	    		*/
-	    	}
-	    });
-	    b3.addListener(SWT.Selection,  new Listener() {
-	    	public void handleEvent(Event event) {
-	    		b3.setFocus();
-	    		/*
-	    		URL ilaFile = getClass().getClassLoader().getResource("templates/ILA/template_" + userDevice + ".html");
-	    		if (ilaFile == null) 
-	    			updateConsole("ILA device file not found: " + userDevice);	    		
-	    		squawkBrowser.openResourcePage(ilaFile.toString());
-	    		userWebcode = "ILA";
-	    		ilaFile = null;
-	    		*/
-	    	}
-	    });
-	    b4.addListener(SWT.Selection,  new Listener() {
-	    	public void handleEvent(Event event) {
-	    		b4.setFocus();
-	    		/*
-	    		URL mmFile = getClass().getClassLoader().getResource("templates/MM/template_" + userDevice + ".html");
-	    		if (mmFile == null) 
-	    			updateConsole("MM device file not found: " + userDevice);	    		
-	    		squawkBrowser.openResourcePage(mmFile.toString());
-	    		userWebcode = "MM";
-	    		mmFile = null;
-	    		*/
-	    	}
-	    });
-	    
+		//TODO	    
 	    b5.addListener(SWT.Selection,  new Listener() {
 	    	public void handleEvent(Event event) {
 	    		// re-process the current device with new vars
@@ -472,7 +457,7 @@ public class SquawkView {
 		// dump to squawkBrowser button
 	    b9.addListener(SWT.Selection, new Listener() {
 	    	public void handleEvent(Event e) {
-	    		squawkBrowser.dumpToBrowser(Utilities.debugDumpTableDB(squawk.getDefaultDB(), squawk.getAdminTable()));
+	    		squawkBrowser.dumpToBrowser(Utilities.debugDumpTableDB(squawk.getDefaultDB(), squawk.getTemplatesTable()));
 	    	}
 	    });
 		// add site specific wrapper to device in browser
@@ -482,16 +467,17 @@ public class SquawkView {
 	    	}
 	    });
 	}
-	
+		
 	private void addTextListeners() {
+		// these listen to the text boxes and update the browser vars
 		text1.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent event) {
-				squawkBrowser.userHeading = text1.getText();
+				squawkBrowser.userTitle = text1.getText();
 			}
 		});
 		text2.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent event) {
-				squawkBrowser.userByline = text2.getText();
+				squawkBrowser.userPreheader = text2.getText();
 			}
 		});
 		
@@ -503,18 +489,18 @@ public class SquawkView {
 		});
 		text3b.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent event) {
-				squawkBrowser.userPara2 = text3b.getText();
+				squawkBrowser.userSignoff = text3b.getText();
 			}
 		});
 		text3c.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent event) {
-				squawkBrowser.userPara3 = text3c.getText();
+				squawkBrowser.userFooter = text3c.getText();
 			}
 		});
 		// report url
 		text4.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent event) {
-				//squawkBrowser.userReportUrl = text4.getText();
+				squawkBrowser.userBannerLogo = text4.getText();
 			}
 		});
 		
