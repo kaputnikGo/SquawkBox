@@ -362,12 +362,12 @@ public class SquawkBrowser {
 			debug("has: " + has);
 			
 			userTitle = (String)browser.evaluate("return document.title");
-			//userBannerLogo = (String)browser.evaluate("return document.getElementById('bannerLogo').childNodes[0].nodeValue;");
-			userPreheader = (String)browser.evaluate("return document.getElementById('templatePreheader').childNodes[0].nodeValue;");			
+			userBannerLogo = (String)browser.evaluate("return document.getElementById('bannerLogo').src;");
+			userPreheader = (String)browser.evaluate("return document.getElementById('templatePreheader').innerHTML;");			
 			// again needs to be an array
-			userPara1 = (String)browser.evaluate("return document.getElementById('templatePara1').childNodes[0].nodeValue;");
-			userSignoff = (String)browser.evaluate("return document.getElementById('templateSignoff').childNodes[0].nodeValue;");
-			userFooter = (String)browser.evaluate("return document.getElementById('templateFooter').childNodes[0].nodeValue;");
+			userPara1 = (String)browser.evaluate("return document.getElementById('templatePara1').innerHTML;");
+			userSignoff = (String)browser.evaluate("return document.getElementById('templateSignoff').innerHTML;");
+			userFooter = (String)browser.evaluate("return document.getElementById('templateFooter').innerHTML;");
 			
 			// update the view
 			squawkView.updateFormFields();
