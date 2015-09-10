@@ -7,6 +7,7 @@ import java.net.URL;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTError;
+import org.eclipse.swt.SWTException;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.browser.ProgressEvent;
 import org.eclipse.swt.browser.ProgressListener;
@@ -39,11 +40,12 @@ public class SquawkBrowser {
 	private Shell shell;
 	
 	private static String[] urls;
-	
+
 	private static final int TYPE_UNKNOWN = 0;
 	private static final int TYPE_LOCAL = 1;
 	private static final int TYPE_WWW_UP = 2;
 	private static final int TYPE_WWW_DOWN = 3;
+	
 	
 	protected String userTitle = "default title";
 	protected String userPreheader = "default preheader";
@@ -52,9 +54,10 @@ public class SquawkBrowser {
 	protected String userFooter = "default footer";
 	protected String userBannerLogo = "";
 	
-	protected String exportedDeviceHtml;
+	protected String exportHtml;
 	protected boolean shellOpen = false;
 	protected boolean initPhase = false;
+	protected boolean gridTog = false;
 	
 	SquawkBrowser(final SquawkView squawkView) {
 		// constructor
@@ -242,6 +245,10 @@ public class SquawkBrowser {
 		return browser.getText();
 	}
 	
+	public void setBrowserText(String message) {
+		browser.setText("<html><body><br />" + message + "  <br /></body></html>");		
+	}
+	
 	public void dumpToBrowser(final String htmlDump) {
 		debug("html dump to browser called.");
 		browser.setText(htmlDump);
@@ -249,15 +256,43 @@ public class SquawkBrowser {
 	
 	public void exportBrowser(final String savename) {
 		// yar
-		exportedDeviceHtml = browser.getText();
-		boolean saveDevice = (saveDeviceFile(saveDialog(savename)));		
-        if ( saveDevice == false) { 
-            debug("device save fail with name: " + savename);
+		// load the var with the browser html first
+		exportHtml = browser.getText();
+		
+        if (!saveTemplateFile(saveDialog(savename))) { 
+            debug("exportHtml save fail with name: " + savename);
         	return; 
         } 
         else {
-        	debug ("device saved with name: " + savename);
+        	debug ("exportHtml saved with name: " + savename);
         }
+	}
+	
+	public void toggleGrid() {
+		// dem blue lines all over the place...
+	    gridTog = true;
+	    debug("toggle called...");
+	    
+	    try {
+	    
+		    if (!gridTog) {
+		    	browser.execute("(\"head\").append(\"<style type='text/css'>table, th, td {border: 1px solid #99CCFF;}</style>\")");
+		    }
+		    else {
+		    	//browser.execute("document.head.append(\"<style type='text/css'>table, th, td {border: 0;}</style>\")");
+		    	browser.execute("(\"head\").append(\"<style type='text/css'>table, th, td {border: 0;}</style>\")");
+		    }
+		    //regardless of state, refresh browser
+		    //TODO
+		    // this is incorrect call - it reloads the old template file
+		    // possibly need to load the html into tmep string, add teh new style, send to browser....
+		    browser.refresh();
+		    
+		    
+		} catch (SWTException e) {
+			// caused by js returning an error.
+			debug("toggle error: " + e);
+		}
 	}
 
 /************************************************************
@@ -275,7 +310,7 @@ public class SquawkBrowser {
 		dialog.setFilterNames(new String[] {"Text Files", "HTML Files"});
 		dialog.setFilterExtensions(new String[] { "*.txt", ".html"});
 		dialog.setFilterPath("c:\\"); // windows...
-		dialog.setFileName(savename + ".txt");
+		dialog.setFileName(savename + ".html");
 		dialog.setOverwrite(true);
 		debug("Save dialog open...");
 		
@@ -283,7 +318,7 @@ public class SquawkBrowser {
 		return filename;
 	}
 	
-	private boolean saveDeviceFile(final String fileName) {
+	private boolean saveTemplateFile(final String fileName) {
 		if (fileName == null || fileName == "") {
 			debug("fileName is null or empty.");
 			return false;
@@ -291,7 +326,7 @@ public class SquawkBrowser {
         final File outputFile = new File(fileName);	
         try {
 			FileWriter fw = new FileWriter(outputFile);
-			fw.write(exportedDeviceHtml);
+			fw.write(exportHtml);
 			fw.close();
 			debug("device saved.");
 			return true;
@@ -302,6 +337,7 @@ public class SquawkBrowser {
 		}		
 		return false;
 	}
+	
 	
 	private int checkWebpageType(final String urlCandidate) {
 		// need to check if a local page or a www
@@ -351,33 +387,38 @@ public class SquawkBrowser {
 	
 	private void getTemplateContent() {
 		//TODO
-		// is stopping at newlines...!!
-		
 		// only do this if parsing a template file
-		if (initPhase) 
+		// these needs to handle nulls - else crash the app
+		if ((initPhase) || (gridTog)) 
 			return;
 		else {
-			debug("getTemplateContent called.");
-			boolean has = browser.execute("document.title");
-			debug("has: " + has);
-			
-			userTitle = (String)browser.evaluate("return document.title");
-			userBannerLogo = (String)browser.evaluate("return document.getElementById('bannerLogo').src;");
-			userPreheader = (String)browser.evaluate("return document.getElementById('templatePreheader').innerHTML;");			
-			// again needs to be an array
-			userPara1 = (String)browser.evaluate("return document.getElementById('templatePara1').innerHTML;");
-			userSignoff = (String)browser.evaluate("return document.getElementById('templateSignoff').innerHTML;");
-			userFooter = (String)browser.evaluate("return document.getElementById('templateFooter').innerHTML;");
-			
-			// update the view
-			squawkView.updateFormFields();
+			try {
+				debug("getTemplateContent called.");
+				userTitle = (String)browser.evaluate("return document.title");
+				
+				// sometimes err..unable to get property src from null
+				userBannerLogo = (String)browser.evaluate("return document.getElementById('templateLogo').src;");
+				
+				userPreheader = (String)browser.evaluate("return document.getElementById('templatePreheader').innerHTML;");			
+				// again needs to be an array
+				userPara1 = (String)browser.evaluate("return document.getElementById('templatePara1').innerHTML;");
+				userSignoff = (String)browser.evaluate("return document.getElementById('templateSignoff').innerHTML;");
+				userFooter = (String)browser.evaluate("return document.getElementById('templateFooter').innerHTML;");
+				
+				// update the view
+				squawkView.updateFormFields();
+			} catch (SWTException e) {
+				// caused by js returning an error.
+				debug("browser.evalute error: " + e);
+				squawkView.disableFormFields();
+			}			
 		}
 	}
 	
 	private void addUserContent() {
 		// browser.execute(String script) is to run javascript
 		browser.execute("document.title = '" + userTitle + "';");
-		browser.execute("document.getElementById(\"bannerLogo\").src = '" + userBannerLogo + "';");
+		browser.execute("document.getElementById(\"templateLogo\").src = '" + userBannerLogo + "';");
 		browser.execute("document.getElementById(\"templatePreheader\").innerHTML = '" + userPreheader + "';");
 		
 		// this needs to be an array or userPara[n]
@@ -385,9 +426,12 @@ public class SquawkBrowser {
 		
 		browser.execute("document.getElementById(\"templateSignoff\").innerHTML = '" + userSignoff + "';");
 		browser.execute("document.getElementById(\"templateFooter\").innerHTML = '" + userFooter + "';");
-		
+	}
+	
+	private void addTemplateHeadCSS(String cssLine) {		
+		//TODO
 		// eg. additions/rewrites to <head><style> - may not work...
+		
 		//browser.execute("document.write(\"<style>body { background-color:#000 }</style>\");");
-
 	}
 }

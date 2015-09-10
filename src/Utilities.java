@@ -24,6 +24,8 @@ public class Utilities {
 		"MM", "DR", "PTR", "ILA", "ESKY", "HSH", "ELH"};
 	// need to verbose these.
 	
+	// to be replaced with a DB entry
+	// still called at init so needs a nominal entry
 	public static String[] TEMPLATE_LIST = new String[] {
 		"default", "premium", "free", "endo"};
 	
@@ -64,56 +66,50 @@ public class Utilities {
 	}
 
 	public static boolean isValidWebcode(final String candidate) {
+		if (candidate == null) 
+			return false;
+	
+		System.out.println("isvalidWeb: " + candidate);		 
+		for (String element : WEBCODE_LIST) {
+			if (element.equals(candidate)) 
+				return true;
+		}
+		return false;	
+	}
+	
+	public static String getTemplateHtml(final String webcode, final String name) {
 		//TODO
-		// compare to string array WEBCODE_LIST
-		
-		// need to get an enum of valid webcodes
-		System.out.println("isvalidWeb: " + candidate);
-		if (candidate == null) 
-			return false;
-		else { 
-			return (candidate.equals("DR") || candidate.equals("ESKY") 
-				|| candidate.equals("ILA") || candidate.equals("MM"));
-		}
-	}
-	
-	public static boolean isValidDevicetype(final String candidate) {
-		// need to get an enum of valid devicetype
-		System.out.println("isvalidDevice: " + candidate);
-		if (candidate == null) 
-			return false;
-		else {
-			return (candidate.equals("EOA") || candidate.equals("IF") 
-				|| candidate.equals("PU") || candidate.equals("SF"));	
-		}
-	}
-	
-	public static String getTemplate(final String webcode, final String devicetype) {
-		if (Utilities.isValidWebcode(webcode) == false) {
-			return ("ERROR: bad webcode - " + webcode);
-		}
-		if (Utilities.isValidDevicetype(devicetype) == false) {
-			return ("ERROR: bad devicetype - " + devicetype);
-		}
-		
 		String htmlString = "";
+		if (!isValidWebcode(webcode)) {
+			System.out.println("ERROR: getTemplateHtml bad webcode - " + webcode);
+			htmlString = null;
+			return htmlString;
+		}
+		
 		try {
 			// construct the path string
-			String seek = "templates" + File.separator + webcode + File.separator + "template_" + devicetype + ".html";			
-		    InputStream inputStream = Utilities.class.getClassLoader().getResourceAsStream(seek);		    
-		    BufferedReader in = new BufferedReader(new InputStreamReader(inputStream));
-			String inputLine;
-		 
-			// TODO: is reading the first line at start and again at end...
-		    while ((inputLine = in.readLine()) != null) {
-		        System.out.println(inputLine);
-		        htmlString += inputLine;
-		    }		 
-		    in.close();	
+			String seek = "templates/EMAIL/" + webcode + "/" + name + ".html";
+			//TODO
+			System.out.println("template string: " + seek);			
+			// need to check for file extension (html or htm)
+		    InputStream inputStream = Utilities.class.getClassLoader().getResourceAsStream(seek);
+		    if (inputStream == null) {
+		    	System.out.println("inputStream is null.");
+		    	htmlString = null;
+		    }
+		    else {
+			    BufferedReader in = new BufferedReader(new InputStreamReader(inputStream));
+				String inputLine;
+			    while ((inputLine = in.readLine()) != null) {
+			        htmlString += inputLine;
+			    }		 
+			    in.close();	
+		    }
 		}
 		catch (IOException e) {
 		    e.printStackTrace();
-		    return ("getTemplate IO exception.");
+		    System.out.println("ERROR: getTemplateHtml IO exception for: " + webcode + ", " + name);
+		    htmlString = null;
 		}
 		return htmlString;
 	}
@@ -158,7 +154,6 @@ public class Utilities {
 			dbm = sqlConnection.getMetaData();
 			ResultSet rs = dbm.getTables(null,  null,  tablename, null);
 			if (rs.next()) {
-				//return("checkTables found table: " + tablename);
 				result = "OK";
 			}
 			else {
@@ -185,18 +180,6 @@ public class Utilities {
 		    }
 		}
 		return result;	
-	}
-	
-	public static void dumpTemplate(final String webcode, final String devicetype) {		
-		if (isValidWebcode(webcode) && isValidDevicetype(devicetype)) {		
-			String getHtml = Utilities.getTemplate(webcode, devicetype);
-			if (getHtml == null) 
-				System.out.println("getHtml template dump is null.");
-			else
-				System.out.println(getHtml);
-		}
-		else System.out.println("dump template webcode and or devicetype not valid.");
-		
 	}
 	
 	public static String debugDumpTableDB(final String dbname, final String tablename) {
@@ -257,7 +240,6 @@ public class Utilities {
 	}
 	
 	public static String debugCountTableDB(final String dbname, final String tablename) {
-		System.out.println("debugCountTableDB called for db: " + dbname + ", table: " + tablename);
 		if (!checkString(dbname)) return ("dump DB name not valid.");
 		if (!checkString(tablename)) return ("dump table name not valid.");
 		
@@ -295,7 +277,7 @@ public class Utilities {
 			try {
 		        if(sqlConnection != null) {
 		        	sqlConnection.close();
-		        	return ("DebugCountTableDB closed with count: " + rowCount);
+		        	return ("DebugCountTableDB of table " + tablename + " closed with count: " + rowCount);
 		        }
 			}
 		    catch(SQLException e) {

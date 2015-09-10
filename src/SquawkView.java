@@ -37,6 +37,8 @@ public class SquawkView {
 	private SqlTalk squawk;
 	private SquawkBrowser squawkBrowser;
 	
+	private static final String errorString = "n/a";
+	
 	//layout structure elements
 	private Display display;
 	private Shell shell;
@@ -57,6 +59,7 @@ public class SquawkView {
 	private String button8String = "local open";
 	private String button9String = "dump";
 	private String button10String = "email";
+	private String button11String = "grid";
 	
 	private String userWebcode = "";
 	private String userTemplateName = "";
@@ -79,6 +82,7 @@ public class SquawkView {
 	private Composite rowComp2;
 	private Composite rowComp3;
 	private Button[] webcodeButtons;
+	private Combo comboTemplates;
 	
 	private Button b5;
 	private Button b6;
@@ -86,6 +90,7 @@ public class SquawkView {
 	private Button b8;
 	private Button b9;
 	private Button b10;
+	private Button b11;
 	private Text debugText;
 
 	
@@ -149,15 +154,38 @@ public class SquawkView {
 	
 	public void updateFormFields() {
 		// hopefully called by browser, after it has
-		// loaded a template file
-		updateConsole("update form fields called.");
-		
+		// loaded a template file	
 		text1.setText(squawkBrowser.userTitle);
+		text1.setEnabled(true);
 		text2.setText(squawkBrowser.userPreheader);
+		text2.setEnabled(true);
 		text3a.setText(squawkBrowser.userPara1);
+		text3a.setEnabled(true);
 		text3b.setText(squawkBrowser.userSignoff);
+		text3b.setEnabled(true);
 		text3c.setText(squawkBrowser.userFooter);
+		text3c.setEnabled(true);
 		text4.setText(squawkBrowser.userBannerLogo);
+		text4.setEnabled(true);
+		updateConsole("update form fields called.");
+	}
+	
+	public void disableFormFields() {
+		// called due to template parse error
+		// no editable span divs found
+		text1.setText(errorString);
+		text1.setEnabled(false);		
+		text2.setText(errorString);
+		text2.setEnabled(false);		
+		text3a.setText(errorString);
+		text3a.setEnabled(false);		
+		text3b.setText(errorString);
+		text3b.setEnabled(false);		
+		text3c.setText(errorString);
+		text3c.setEnabled(false);		
+		text4.setText(errorString);
+		text4.setEnabled(false);
+		updateConsole("Not an editable template.");
 	}
 	
 	public void updateConsole(final String message) {
@@ -205,6 +233,7 @@ public class SquawkView {
 		// find out which button was pressed
 		Button button = ((Button) event.widget);
 		userWebcode = button.getText();
+		comboTemplates.setItems(squawk.getTemplateList(userWebcode));
 		updateConsole("Button press: " + userWebcode);
 	}
 	
@@ -289,11 +318,13 @@ public class SquawkView {
 		b5.setText(button5String);
 		b6 = new Button(rowComp3, SWT.PUSH);
 		b6.setText(button6String);
+		b11 = new Button(rowComp3, SWT.PUSH);
+		b11.setText(button11String);
   
 		addButtonListeners();
 		
 		// device list
-		Combo comboTemplates = new Combo(rowComp2, SWT.DROP_DOWN | SWT.BORDER);
+		comboTemplates = new Combo(rowComp2, SWT.DROP_DOWN | SWT.BORDER);
 	    SelectionListener selectionListener = new SelectionAdapter() {
 	    	public void widgetSelected(SelectionEvent event) {
 	    		Combo combo = ((Combo) event.widget);
@@ -304,10 +335,15 @@ public class SquawkView {
 	    		
 	    		if (templateFile == null) {
 	    			updateConsole("Template file not found for userWebcode " + userWebcode);
+	    			//TODO
+	    			// reset the form and the browser window
+	    			disableFormFields();
+	    			squawkBrowser.setBrowserText("Template file " + userTemplateName + " not found for userWebcode " + userWebcode);
 	    			return;
 	    		}
 	    		else {
 	    			squawkBrowser.openTemplatePage(templateFile.toString());
+	    			updateFormFields();
 	    		}
 	    	}
 	    };
@@ -436,10 +472,8 @@ public class SquawkView {
 	    b6.addListener(SWT.Selection,  new Listener() {
 	    	public void handleEvent(Event event) {
 	    		// export the finished device as a text file
-	    		squawkBrowser.exportBrowser("test_device");
-	    		
-	    		// here tell sqltalk to save a record of the device	    		
-	    		//squawk.saveDeviceRecord(userWebcode, userDevice, squawkBrowser.getDeviceHtml());
+	    		// send default save name string to browser
+	    		squawkBrowser.exportBrowser("test_save");
 	    	}
 	    });
 	    b7.addListener(SWT.Selection,  new Listener() {
@@ -457,13 +491,19 @@ public class SquawkView {
 		// dump to squawkBrowser button
 	    b9.addListener(SWT.Selection, new Listener() {
 	    	public void handleEvent(Event e) {
-	    		squawkBrowser.dumpToBrowser(Utilities.debugDumpTableDB(squawk.getDefaultDB(), squawk.getTemplatesTable()));
+	    		squawkBrowser.dumpToBrowser(Utilities.debugDumpTableDB(squawk.getDefaultDB(), squawk.getAdminTable()));
 	    	}
 	    });
 		// add site specific wrapper to device in browser
 	    b10.addListener(SWT.Selection, new Listener() {
 	    	public void handleEvent(Event e) {
 	    		squawkBrowser.openEmailTemplate();
+	    	}
+	    });
+		// toggle grid lines of blue
+	    b11.addListener(SWT.Selection, new Listener() {
+	    	public void handleEvent(Event e) {
+	    		squawkBrowser.toggleGrid();
 	    	}
 	    });
 	}
