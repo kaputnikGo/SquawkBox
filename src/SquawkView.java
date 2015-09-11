@@ -31,8 +31,8 @@ import org.eclipse.swt.widgets.Text;
 // view and controller...
 
 public class SquawkView {
-	private static final int SHELL_HEIGHT = 600;
 	private static final int SHELL_WIDTH = 1100;
+	private static final int SHELL_HEIGHT = 1000;
 	private static Image icon;
 	private SqlTalk squawk;
 	private SquawkBrowser squawkBrowser;
@@ -52,6 +52,10 @@ public class SquawkView {
 	private String label3bString = "Sign off:";
 	private String label3cString = "Footer:";
 	private String label4aString = "Banner url:";
+	private String label12String = "Date";
+	private String label13String = "Heading";
+	private String label14String = "Author url";
+	private String label15String = "Intro";
 
 	private String button5String = "process";
 	private String button6String = "EXPORT";
@@ -70,6 +74,11 @@ public class SquawkView {
 	private Label label3b;
 	private Label label3c;
 	private Label label4a;
+	private Label label12;
+	private Label label13;
+	private Label label14;
+	private Label label15;
+	
 	
 	private Text text1;
 	private Text text2;
@@ -77,6 +86,10 @@ public class SquawkView {
 	private Text text3b;
 	private Text text3c;
 	private Text text4;
+	private Text text12;
+	private Text text13;
+	private Text text14;
+	private Text text15;
 	
 	private Composite rowComp1;
 	private Composite rowComp2;
@@ -167,6 +180,15 @@ public class SquawkView {
 		text3c.setEnabled(true);
 		text4.setText(squawkBrowser.userBannerLogo);
 		text4.setEnabled(true);
+		text12.setText(squawkBrowser.userDate);
+		text12.setEnabled(true);
+		text13.setText(squawkBrowser.userHeading);
+		text13.setEnabled(true);
+		text14.setText(squawkBrowser.userAuthor);
+		text14.setEnabled(true);
+		text15.setText(squawkBrowser.userIntro);
+		text15.setEnabled(true);
+		
 		updateConsole("update form fields called.");
 	}
 	
@@ -185,6 +207,15 @@ public class SquawkView {
 		text3c.setEnabled(false);		
 		text4.setText(errorString);
 		text4.setEnabled(false);
+		text12.setText(errorString);
+		text12.setEnabled(false);
+		text13.setText(errorString);
+		text13.setEnabled(false);
+		text14.setText(errorString);
+		text14.setEnabled(false);
+		text15.setText(errorString);
+		text15.setEnabled(false);
+		
 		updateConsole("Not an editable template.");
 	}
 	
@@ -369,7 +400,27 @@ public class SquawkView {
 		
 		label2a = new Label(gridComp, SWT.NONE);
 		label2a.setText(label2aString);
-		text2 = new Text(gridComp, SWT.BORDER);
+		text2 = new Text(gridComp, SWT.BORDER);		
+		//banner url		
+		label4a = new Label(gridComp, SWT.NONE);
+		label4a.setText(label4aString);
+		text4 = new Text(gridComp, SWT.BORDER);
+		//date
+		label12 = new Label(gridComp, SWT.NONE);
+		label12.setText(label12String);
+		text12 = new Text(gridComp, SWT.BORDER);
+		//heading
+		label13 = new Label(gridComp, SWT.NONE);
+		label13.setText(label13String);
+		text13 = new Text(gridComp, SWT.BORDER);
+		// author avatar url
+		label14 = new Label(gridComp, SWT.NONE);
+		label14.setText(label14String);
+		text14 = new Text(gridComp, SWT.BORDER);
+		// intro (para)
+		label15 = new Label(gridComp, SWT.NONE);
+		label15.setText(label15String);
+		text15 = new Text(gridComp, SWT.MULTI | SWT.BORDER | SWT.WRAP | SWT.V_SCROLL);
 		
 		label3a = new Label(gridComp, SWT.NONE);
 		label3a.setText(label3aString);
@@ -382,10 +433,6 @@ public class SquawkView {
 		label3c = new Label(gridComp, SWT.NONE);
 		label3c.setText(label3cString);
 		text3c = new Text(gridComp, SWT.MULTI | SWT.BORDER | SWT.WRAP | SWT.V_SCROLL);
-				
-		label4a = new Label(gridComp, SWT.NONE);
-		label4a.setText(label4aString);
-		text4 = new Text(gridComp, SWT.BORDER);
 		
 		GridData data = new GridData();
 		data.widthHint = 60;
@@ -405,12 +452,27 @@ public class SquawkView {
 		
 		data = new GridData();
 		data.widthHint = 60;
-		label3c.setLayoutData(data);
-		
+		label3c.setLayoutData(data);		
 		
 		data = new GridData();
 		data.widthHint = 60;
 		label4a.setLayoutData(data);
+		
+		data = new GridData();
+		data.widthHint = 60;
+		label12.setLayoutData(data);
+		
+		data = new GridData();
+		data.widthHint = 60;
+		label13.setLayoutData(data);
+		
+		data = new GridData();
+		data.widthHint = 60;
+		label14.setLayoutData(data);
+		
+		data = new GridData();
+		data.widthHint = 60;
+		label15.setLayoutData(data);
 		
 		GridData data2 = new GridData(GridData.FILL_HORIZONTAL);
 		data2.heightHint = 20;
@@ -423,15 +485,33 @@ public class SquawkView {
 		data2 = new GridData(GridData.FILL_HORIZONTAL);
 		data2.heightHint = 120;
 		text3a.setLayoutData(data2);
+		
 		data2 = new GridData(GridData.FILL_HORIZONTAL);
 		data2.heightHint = 120;
 		text3b.setLayoutData(data2);
+		
 		data2 = new GridData(GridData.FILL_HORIZONTAL);
 		data2.heightHint = 120;
 		text3c.setLayoutData(data2);
+		
+		data2 = new GridData(GridData.FILL_HORIZONTAL);
+		data2.heightHint = 120;
+		text15.setLayoutData(data2);
 				
 		data2 = new GridData(GridData.FILL_HORIZONTAL);
 		text4.setLayoutData(data2);
+		
+		data2 = new GridData(GridData.FILL_HORIZONTAL);
+		text12.setLayoutData(data2);
+		
+		data2 = new GridData(GridData.FILL_HORIZONTAL);
+		text13.setLayoutData(data2);
+		
+		data2 = new GridData(GridData.FILL_HORIZONTAL);
+		text14.setLayoutData(data2);
+		
+		data2 = new GridData(GridData.FILL_HORIZONTAL);
+		text15.setLayoutData(data2);
 
 		FormData formGrid = new FormData();
 		formGrid.top = new FormAttachment(0, 10);
@@ -543,6 +623,29 @@ public class SquawkView {
 				squawkBrowser.userBannerLogo = text4.getText();
 			}
 		});
-		
+		//
+		text12.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent event) {
+				squawkBrowser.userDate = text12.getText();
+			}
+		});
+		//
+		text13.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent event) {
+				squawkBrowser.userHeading = text13.getText();
+			}
+		});
+		//
+		text14.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent event) {
+				squawkBrowser.userAuthor = text14.getText();
+			}
+		});
+		//
+		text15.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent event) {
+				squawkBrowser.userIntro = text15.getText();
+			}
+		});
 	}
 }

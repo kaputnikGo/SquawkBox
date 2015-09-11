@@ -52,7 +52,11 @@ public class SquawkBrowser {
 	protected String userPara1 = "default user paragraph 1";
 	protected String userSignoff = "default signoff";
 	protected String userFooter = "default footer";
-	protected String userBannerLogo = "";
+	protected String userBannerLogo = "default url";
+	protected String userDate = "default date";
+	protected String userHeading = "default heading";
+	protected String userAuthor = "default avatar url";
+	protected String userIntro ="default intro";
 	
 	protected String exportHtml;
 	protected boolean shellOpen = false;
@@ -389,7 +393,7 @@ public class SquawkBrowser {
 		//TODO
 		// only do this if parsing a template file
 		// these needs to handle nulls - else crash the app
-		if ((initPhase) || (gridTog)) 
+		if (initPhase) 
 			return;
 		else {
 			try {

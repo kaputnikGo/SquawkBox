@@ -15,6 +15,8 @@ public class SquawkApp {
 	
 	 //TODO
 	
+	// get inflate view components into separate file, called by SquawkView
+	
 	// allow common templates to be included in a drop down
 	// method to create new templates to be added to drop down
 	// method to allow editing of existing templates (versioning)
