@@ -1,3 +1,5 @@
+import UI.SquawkView;
+
 
 public class SquawkApp {
 
@@ -14,15 +16,12 @@ public class SquawkApp {
 	 */	
 	
 	 //TODO
-	
-	// get inflate view components into separate file, called by SquawkView
-	
-	// allow common templates to be included in a drop down
 	// method to create new templates to be added to drop down
 	// method to allow editing of existing templates (versioning)
 	
-	// div id == someName to be replaced with span id = someName for user editable content
-	// build simple version first, then add component drop-in later
+	// method to trawl a template folder for file names.
+	
+	// squawkBrowser reload causes the doctype to change to something swt browser or IE sets
 		
 	// email version - list components, drag and drop with text edit
 	// divide template into discrete components
@@ -42,18 +41,5 @@ public class SquawkApp {
 	 * 	<img id="templateAuthorAvatar"...>
 	 * 	<span id="templateIntro">
 	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 */
-	
-		// start up window in browser to display a resource file. - DONE
-		// reopen browser if user closes it. - DONE
-		// add button to add site wrapper to device for viewing pleasure.
-		// allow a given template file to load into browser and get parsed into the squawkBox view form fields
-		
-		// get sqltalk into several diff classes.
-	
+	 */	
 }
