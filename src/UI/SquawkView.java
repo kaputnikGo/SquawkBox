@@ -28,7 +28,7 @@ import MAIN.Utilities;
 // view and controller...
 
 public class SquawkView {
-	private static final int SHELL_WIDTH = 1100;
+	private static final int SHELL_WIDTH = 1200;
 	private static final int SHELL_HEIGHT = 1000;
 	private static final boolean DEBUG = true;
 	private static Image icon;
@@ -47,6 +47,7 @@ public class SquawkView {
 	
 	protected String userWebcode = "";
 	protected String userTemplateName = "";
+	protected String userComponentName = "";
 	
 	// changeable UI elements
 	protected Text text1;
@@ -62,7 +63,9 @@ public class SquawkView {
 
 	protected Button[] webcodeButtons;
 	protected Combo comboTemplates;
+	protected Combo componentTemplates;
 	protected Composite rowComp2;
+	protected Composite rowComp3;
 	
 	
 	protected Button b5;
@@ -72,27 +75,36 @@ public class SquawkView {
 	protected Button b9;
 	protected Button b10;
 	protected Button b11;
+	protected Button b12;
+	protected Button b13;
 	protected Text debugText;
 
 	
 	public SquawkView() {
 		// constructor
-		// init the display window
+		// init the display window		
 		display = new Display();		
 		shell = new Shell(display);
 		shell.setSize(SHELL_WIDTH, SHELL_HEIGHT);
 		shell.setMinimumSize(SHELL_WIDTH, SHELL_HEIGHT);
 		shell.setText(appName);
 		shell.setLayout(new FormLayout());
-
 		icon = new Image(display, getClass().getClassLoader().getResourceAsStream("resources/plug_icon.png"));
 	    shell.setImage(icon); 
-
+	    
 	    viewInflate = new ViewInflate();
-		viewInflate.initView(this);		
-		squawk = new SqlTalk(this);
-		squawkBrowser = new SquawkBrowser(this);
+		viewInflate.initView(this);	
 		
+		squawk = new SqlTalk(this);
+		updateConsole("Squawk says install DB...");
+		squawk.installDB();
+		updateConsole("Squawk says finished DB.");
+		
+		addButtonListeners();		
+		addComboElements();
+		addTextListeners();
+		
+		squawkBrowser = new SquawkBrowser(this);		
 		updateConsole("Browser created.");
 		initBrowser();
 		
@@ -114,10 +126,6 @@ public class SquawkView {
 ************************************************************/		
 	public void run() {				
 		shell.open();
-		updateConsole("Squawk says install...");
-		squawk.installDB();		
-		updateConsole("Squawk says finished.");
-		
 		while(!shell.isDisposed()) {
 			if(!display.readAndDispatch()) {
 				display.sleep();
@@ -294,6 +302,18 @@ public class SquawkView {
 	    		squawkBrowser.toggleGrid();
 	    	}
 	    });
+		// add selected component to browser
+	    b12.addListener(SWT.Selection, new Listener() {
+	    	public void handleEvent(Event e) {    		
+	    		squawkBrowser.addComponentToPage(userComponentName);	    		
+	    	}
+	    });
+		// clear browser browser to allow creating component template
+	    b13.addListener(SWT.Selection, new Listener() {
+	    	public void handleEvent(Event e) {    		
+	    		squawkBrowser.clearBrowser();	    		
+	    	}
+	    });
 	}
 	
 	void addWebcodeButtons() {
@@ -376,7 +396,7 @@ public class SquawkView {
 	
 	void addComboElements() {	
 		comboTemplates = new Combo(rowComp2, SWT.DROP_DOWN | SWT.BORDER);
-	    SelectionListener selectionListener = new SelectionAdapter() {
+	    SelectionListener comboListener = new SelectionAdapter() {
 	    	public void widgetSelected(SelectionEvent event) {
 	    		Combo combo = ((Combo) event.widget);
 	    		
@@ -398,8 +418,28 @@ public class SquawkView {
 	    		}
 	    	}
 	    };
-	    comboTemplates.addSelectionListener(selectionListener);
+	    comboTemplates.addSelectionListener(comboListener);
 	    comboTemplates.setItems(Utilities.TEMPLATE_LIST);
 	    comboTemplates.select(0);
+	    
+	    //TODO
+	    // component selector
+		componentTemplates = new Combo(rowComp3, SWT.DROP_DOWN | SWT.BORDER);
+	    SelectionListener componentListener = new SelectionAdapter() {
+	    	public void widgetSelected(SelectionEvent event) {
+	    		Combo combo = ((Combo) event.widget);
+	    		userComponentName = combo.getText();
+	    	}
+	    };
+	    componentTemplates.addSelectionListener(componentListener);
+	    // need a string[] of the component names.
+	    // this can only take place after db is ready...
+	    String[] compList = squawk.getComponentList();
+	    if (compList == null) {
+	    	compList = new String[1];
+	    	compList[1] = "not loaded";
+	    }
+	    componentTemplates.setItems(compList);
+	    componentTemplates.select(0);
 	}
 }

@@ -149,7 +149,7 @@ public class SquawkBrowser {
 		    	}
 		    	public void completed(ProgressEvent event) {
 		    		//addUserContent();
-		    		debug("browser completed reached.");
+		    		debug("browser processing complete reached.");
 		    		getTemplateContent();
 		    	}
 		    });		   
@@ -204,6 +204,32 @@ public class SquawkBrowser {
 		debug("resource url: " + userString);
 		browser.setUrl(userString);
 		editingHtml = browser.getText();
+	}
+	
+	public void clearBrowser() {
+		//TODO
+		// clear browser contents, ready for adding components
+		// this will add its own crappy tags regardless
+		// try loading the head.html
+		browser.setText("");
+		debug("browser window cleared");
+	}
+	
+	public void addComponentToPage(final String userComponentName) {
+		// append a component to current existing browser page.
+		// getText append to text
+		//TODO
+		URL componentFile = getClass().getClassLoader().getResource("templates/EMAIL/components/" + userComponentName);		
+		if (componentFile == null) {
+			debug("Component file not found: " + userComponentName);
+			//disableFormFields();
+			return;
+		}		
+		// adding the filename not the contents...
+		String componentHtml = Utilities.returnComponentFileHtml(userComponentName);
+		String currentPage = browser.getText();
+		currentPage += componentHtml;
+		browser.setText(currentPage);
 	}
 	
 	public void openWebpage(final String userString) {
@@ -310,7 +336,8 @@ public class SquawkBrowser {
 		// dem blue lines all over the place...
 	    debug("toggle called...");
 	    boolean result;
-
+	    //TODO
+	    // not working for the component view
 	    try {
 	    
 		    if (!gridTog) {
@@ -330,8 +357,8 @@ public class SquawkBrowser {
 		    // this is incorrect call - it reloads the old template file
 		    // possibly need to load the html into tmep string, add teh new style, send to browser....
 		    editingHtml = browser.getText();
-		    System.out.println("edit html: " + editingHtml);
 		    browser.setText(editingHtml);
+		    
 		    //browser.refresh();
 		    
 		    

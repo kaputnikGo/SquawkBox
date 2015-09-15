@@ -37,6 +37,10 @@ public class ViewInflate {
 	private String button10String = "email";
 	private String button11String = "grid";
 	
+	private String label16String = "Component List:";
+	private String button12String = "add component";
+	private String button13String = "clear browser";
+	
 	public void initView(final SquawkView squawkView) {
 		this.squawkView = squawkView;
 		initLeftPanel();
@@ -92,10 +96,10 @@ public class ViewInflate {
 		rowLayout2.pack = false;
 		squawkView.rowComp2.setLayout(rowLayout2);
 		
-		Composite rowComp3 = new Composite(innerTop, SWT.NONE);
+		squawkView.rowComp3 = new Composite(innerTop, SWT.NONE);
 		RowLayout rowLayout3 = new RowLayout();
 		rowLayout3.pack = false;
-		rowComp3.setLayout(rowLayout3);
+		squawkView.rowComp3.setLayout(rowLayout3);
 		
 		
 		squawkView.b9 = new Button(rowComp1, SWT.PUSH);
@@ -109,16 +113,20 @@ public class ViewInflate {
 		
 		squawkView.addWebcodeButtons();
 		
-		squawkView.b5 = new Button(rowComp3, SWT.PUSH);
+		squawkView.b5 = new Button(rowComp1, SWT.PUSH);
 		squawkView.b5.setText(button5String);
-		squawkView.b6 = new Button(rowComp3, SWT.PUSH);
+		squawkView.b6 = new Button(rowComp1, SWT.PUSH);
 		squawkView.b6.setText(button6String);
-		squawkView.b11 = new Button(rowComp3, SWT.PUSH);
+		squawkView.b11 = new Button(rowComp1, SWT.PUSH);
 		squawkView.b11.setText(button11String);
   
-		squawkView.addButtonListeners();
-		
-		squawkView.addComboElements();
+		// rowComp3 reserved for drop down component list
+		Label label16 = new Label(squawkView.rowComp3, SWT.NONE);
+		label16.setText(label16String);
+		squawkView.b13 = new Button(squawkView.rowComp3, SWT.PUSH);
+		squawkView.b13.setText(button13String);
+		squawkView.b12 = new Button(squawkView.rowComp3, SWT.PUSH);
+		squawkView.b12.setText(button12String);
 
 		// debugging console
 	    squawkView.debugText = new Text(innerLow, SWT.BORDER | SWT.WRAP | SWT.V_SCROLL);
@@ -257,7 +265,5 @@ public class ViewInflate {
 		formGrid.right = new FormAttachment(100, -10);
 		formGrid.bottom = new FormAttachment(gridComp, 10, SWT.BOTTOM);
 		gridComp.setLayoutData(formGrid);
-		
-		squawkView.addTextListeners();
 	}
 }

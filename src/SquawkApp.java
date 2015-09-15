@@ -19,9 +19,8 @@ public class SquawkApp {
 	// method to create new templates to be added to drop down
 	// method to allow editing of existing templates (versioning)
 	
-	// method to trawl a template folder for file names.
-	
 	// squawkBrowser reload causes the doctype to change to something swt browser or IE sets
+	// need to ensure the character encoding is added in the head.html
 		
 	// email version - list components, drag and drop with text edit
 	// divide template into discrete components

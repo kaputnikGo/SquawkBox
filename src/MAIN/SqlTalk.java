@@ -72,6 +72,13 @@ public class SqlTalk {
 		}
 	}
 	
+	public String[] getComponentList() {
+		String[] stringArray = new String[1];
+		List<String> list = getComponentListArray();
+		stringArray = list.toArray(new String[list.size()]);
+		return stringArray;
+	}
+	
 	protected void addNewTemplate(final String webcode, final String name, final String templateHtml) {		
 		//TODO
 		// expecting a fully constructed template with correct <div> id's for templates
@@ -106,6 +113,8 @@ public class SqlTalk {
 			debug("Check for table result: " + check);
 		}		
 	}
+	
+	
 	
 /************************************************************
 * 
@@ -242,42 +251,35 @@ public class SqlTalk {
 		    
 		    query.setString(1, "DR");
 		    query.setString(2, "endo");	    
-		    query.addBatch();
-		    debug("Admin Record for DR batched.");		    
+		    query.addBatch();		    
 		    //
 		    query.setString(1, "ELH");
 		    query.setString(2, "bulletin");	    
-		    query.addBatch();
-		    debug("Admin Record for ELH batched.");		    
+		    query.addBatch();	    
 		    //
 		    query.setString(1, "ESKY");
 		    query.setString(2, "escapologist");	    
-		    query.addBatch();
-		    debug("Admin Record for ESKY batched.");		    
+		    query.addBatch();	    
 		    //
 		    query.setString(1, "HSH");
 		    query.setString(2, "bulletin");
-		    query.addBatch();
-		    debug("Admin Record for HSH batched.");		    
+		    query.addBatch();	    
 		    //
 		    query.setString(1, "ILA");
 		    query.setString(2, "postcards");	    
-		    query.addBatch();
-		    debug("Admin Record for ILA batched.");		    
+		    query.addBatch();	    
 		    //
 			query.setString(1, "MM");
 		    query.setString(2, "premium");
-		    query.addBatch();
-		    debug("Admin Record for MM batched.");		    
+		    query.addBatch();	    
 		    // 
 		    query.setString(1, "PTR");
 		    query.setString(2, "generic");
 		    query.addBatch();
-		    debug("Admin Record for PTR batched.");
 		    
 		    int[] updateCounts = query.executeBatch();
 		    if (updateCounts != null) {		    	
-		    	debug("Install DB batch count: " + updateCounts.length);		    	
+		    	debug("Install admin into DB batch count: " + updateCounts.length);		    	
 		    }
 		    
 		    sqlConnection.commit();
@@ -392,47 +394,40 @@ public class SqlTalk {
 		    query.setString(2, "endo");
 		    query.setString(3, str[0]);
 		    query.addBatch();
-		    debug("Template Record for DR batched.");
 		    //
 		    query.setString(1, "ELH");
 		    query.setString(2, "bulletin");
 		    query.setString(3, str[1]);		    
-		    query.addBatch();
-		    debug("Template Record for ELH batched.");		    
+		    query.addBatch();		    
 		    //
 		    query.setString(1, "ESKY");
 		    query.setString(2, "escapologist");
 		    query.setString(3, str[2]);		    
-		    query.addBatch();
-		    debug("Template Record for ESKY batched.");		    
+		    query.addBatch();	    
 		    //
 		    query.setString(1, "HSH");
 		    query.setString(2, "bulletin");
 		    query.setString(3, str[3]);
-		    query.addBatch();
-		    debug("Template Record for HSH batched.");		    
+		    query.addBatch();		    
 		    //
 		    query.setString(1, "ILA");
 		    query.setString(2, "postcards");
 		    query.setString(3, str[4]);
-		    query.addBatch();
-		    debug("Template Record for ILA batched.");		    
+		    query.addBatch();	    
 		    //
 			query.setString(1, "MM");
 		    query.setString(2, "premium");
 		    query.setString(3, str[5]);
-		    query.addBatch();
-		    debug("Template Record for MM batched.");		    
+		    query.addBatch();		    
 		    // 
 		    query.setString(1, "PTR");
 		    query.setString(2, "generic");
 		    query.setString(3, str[6]);
 		    query.addBatch();
-		    debug("Template Record for PTR batched.");
 		    
 		    int[] updateCounts = query.executeBatch();
 		    if (updateCounts != null) {		    	
-		    	debug("Install DB batch count: " + updateCounts.length);		    	
+		    	debug("Install templates into DB batch count: " + updateCounts.length);		    	
 		    }
 		    
 		    sqlConnection.commit();
@@ -652,7 +647,7 @@ public class SqlTalk {
 		    	debug("load component resource list error for: " + path);
 		    	return false;
 		    }
-		    //TODO add component html to this db
+		  
 		    if (fileNames.size() != Utilities.fileNameHtml.size()) {
 		    	debug("file name list count does not match file html count");
 		    }
@@ -695,6 +690,56 @@ public class SqlTalk {
 		    }
 		}
 		return false;
+	}
+	
+	private List<String> getComponentListArray() {
+		// return all the records of a given webcode
+		//TODO
+		// hardcoded for this method, make generic
+		List<String> componentList = new ArrayList<String>();
+		
+		sqlConnection = null;
+		try {
+			sqlConnection = Utilities.getConnection(DEFAULT_DB);
+		} catch (Exception e) {
+			debug("getConnection failure.");
+			e.printStackTrace();
+		}
+		try {
+			if (sqlConnection != null) {
+				debug("sqlConnection made...");
+			}			
+			sqlConnection.setAutoCommit(false);
+
+			String selectSQL = "SELECT COMPONENT_NAME FROM " + COMPONENT_TABLE;					
+		    PreparedStatement query = sqlConnection.prepareStatement(selectSQL);		    
+		    ResultSet rs = query.executeQuery();
+		    
+		    while (rs.next()) {
+		    	componentList.add(rs.getString(1));
+		    }		    
+		    sqlConnection.commit();
+		    sqlConnection.setAutoCommit(true);
+		    rs.close();
+		    query.close();
+	
+		} catch (SQLException e) {
+			debug("Get componentList SQL connection open failure.");
+			e.printStackTrace();
+		}
+		finally {
+			try {
+		        if(sqlConnection != null) {
+		        	sqlConnection.close();
+		        	debug("Get componentList SQL connection closed.");		            
+		        }
+			}
+		    catch(SQLException e) {
+		    	debug("Get componentList for SQL connection close failure.");
+		        System.err.println(e);		        
+		    }
+		}		
+		return componentList;
 	}
 	
 /*******************************/

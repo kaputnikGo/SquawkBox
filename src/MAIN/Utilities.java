@@ -71,7 +71,6 @@ public class Utilities {
 	//TODO clunky
 	public static String returnComponentFileHtml(String filename) {
 		String path = "templates/EMAIL/components/" +  filename;		
-		System.out.println("component file path: " + path);
 		String fileHtml = "";
 		
 		try {
