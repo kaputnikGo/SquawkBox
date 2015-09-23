@@ -36,7 +36,6 @@ public class Utilities {
 	public static String[] TEMPLATE_LIST = new String[] {
 		"default", "premium", "free", "endo"};
 	
-	
 	public static List<String> getComponentFileNameList(String path) {
 		// returns list of names and adds their contents to the fileNameHtml List
 		List<String> fileNameList = new ArrayList<String>();
@@ -129,6 +128,7 @@ public class Utilities {
 	@SuppressWarnings("unused")
 	public static boolean isValidUrl(final String candidate) {
 		// this returns only if it appears to be a valid url string
+		// suppression is cos we only test if can get a URI, not do anything with it
 		try {
 			URI uri = new URI(candidate);
 			return true;
@@ -381,5 +381,16 @@ public class Utilities {
 		}
 		return ("DebugCountTableDB failure.");
 		
+	}
+	
+	public static void dumpStringList(List<String> list) {
+		if (list.isEmpty()) 
+			System.out.println("list empty");
+		else {
+			System.out.println("Start list dump: ");
+			for (String element : list) {
+				System.out.println(element);
+			}
+		}		
 	}
 }

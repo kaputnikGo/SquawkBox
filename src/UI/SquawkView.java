@@ -1,8 +1,11 @@
 package UI;
 
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -21,7 +24,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 import MAIN.SqlTalk;
-import MAIN.SquawkBrowser;
 import MAIN.Utilities;
 
 
@@ -37,6 +39,9 @@ public class SquawkView {
 	
 	private static final String errorString = "n/a";
 	
+	public static final int VIEW_TEMPLATE = 0;
+	public static final int VIEW_COMPONENT = 1;
+	
 	//layout structure elements
 	protected Display display;
 	protected Shell shell;
@@ -49,24 +54,18 @@ public class SquawkView {
 	protected String userTemplateName = "";
 	protected String userComponentName = "";
 	
-	// changeable UI elements
-	protected Text text1;
-	protected Text text2;
-	protected Text text3a;
-	protected Text text3b;
-	protected Text text3c;
-	protected Text text4;
-	protected Text text12;
-	protected Text text13;
-	protected Text text14;
-	protected Text text15;
+	// get them from the squawk
+	protected Text[] formTextFields;
+	protected Map<String, String> FORM_FIELDS;
+	//protected int numFormFields;
 
 	protected Button[] webcodeButtons;
 	protected Combo comboTemplates;
 	protected Combo componentTemplates;
 	protected Composite rowComp2;
 	protected Composite rowComp3;
-	
+	protected Composite rightPanel;
+	protected StackLayout stackLayout;	
 	
 	protected Button b5;
 	protected Button b6;
@@ -82,6 +81,7 @@ public class SquawkView {
 	
 	public SquawkView() {
 		// constructor
+		
 		// init the display window		
 		display = new Display();		
 		shell = new Shell(display);
@@ -91,15 +91,21 @@ public class SquawkView {
 		shell.setLayout(new FormLayout());
 		icon = new Image(display, getClass().getClassLoader().getResourceAsStream("resources/plug_icon.png"));
 	    shell.setImage(icon); 
+	    	    
+		//rightPanel = new Composite(shell, SWT.NONE);
+		//stackLayout = new StackLayout();
+		//rightPanel.setLayout(stackLayout);
+	    squawk = new SqlTalk(this);
+	    FORM_FIELDS = new HashMap<String, String>(squawk.initForDisplays());	    
 	    
 	    viewInflate = new ViewInflate();
-		viewInflate.initView(this);	
-		
-		squawk = new SqlTalk(this);
+		viewInflate.initView(this, VIEW_TEMPLATE);
+		updateConsole("formfield size: " + FORM_FIELDS.size());
+		//squawk = new SqlTalk(this);
 		updateConsole("Squawk says install DB...");
-		squawk.installDB();
+		squawk.installDB();				
 		updateConsole("Squawk says finished DB.");
-		
+
 		addButtonListeners();		
 		addComboElements();
 		addTextListeners();
@@ -153,56 +159,33 @@ public class SquawkView {
 	}
 	
 	public void updateFormFields() {
-		// hopefully called by browser, after it has
-		// loaded a template file	
-		text1.setText(squawkBrowser.userTitle);
-		text1.setEnabled(true);
-		text2.setText(squawkBrowser.userPreheader);
-		text2.setEnabled(true);
-		text3a.setText(squawkBrowser.userPara1);
-		text3a.setEnabled(true);
-		text3b.setText(squawkBrowser.userSignoff);
-		text3b.setEnabled(true);
-		text3c.setText(squawkBrowser.userFooter);
-		text3c.setEnabled(true);
-		text4.setText(squawkBrowser.userBannerLogo);
-		text4.setEnabled(true);
-		text12.setText(squawkBrowser.userDate);
-		text12.setEnabled(true);
-		text13.setText(squawkBrowser.userHeading);
-		text13.setEnabled(true);
-		text14.setText(squawkBrowser.userAuthor);
-		text14.setEnabled(true);
-		text15.setText(squawkBrowser.userIntro);
-		text15.setEnabled(true);
-		
+		//TODO
+		// need to be able to add new fields here..
+		// fields are not the labels of div ids... :)
+		updateConsole("form field size: " + squawkBrowser.formFields.size());
+
+		for (int i = 0; i < squawkBrowser.formFields.size(); i++) {
+			formTextFields[i].setText(squawkBrowser.formFields.get(i));
+			formTextFields[i].setEnabled(true);
+		}
+
 		updateConsole("update form fields called.");
+	}
+	
+	public void clearFormFields() {
+		for (int i = 0; i < FORM_FIELDS.size(); i++) {
+			formTextFields[i].setText("");
+			formTextFields[i].setEnabled(true);
+		}
 	}
 	
 	public void disableFormFields() {
 		// called due to template parse error
 		// no editable span divs found
-		text1.setText(errorString);
-		text1.setEnabled(false);		
-		text2.setText(errorString);
-		text2.setEnabled(false);		
-		text3a.setText(errorString);
-		text3a.setEnabled(false);		
-		text3b.setText(errorString);
-		text3b.setEnabled(false);		
-		text3c.setText(errorString);
-		text3c.setEnabled(false);		
-		text4.setText(errorString);
-		text4.setEnabled(false);
-		text12.setText(errorString);
-		text12.setEnabled(false);
-		text13.setText(errorString);
-		text13.setEnabled(false);
-		text14.setText(errorString);
-		text14.setEnabled(false);
-		text15.setText(errorString);
-		text15.setEnabled(false);
-		
+		for (int i = 0; i < FORM_FIELDS.size(); i++) {
+			formTextFields[i].setText(errorString);
+			formTextFields[i].setEnabled(false);
+		}
 		updateConsole("Not an editable template.");
 	}
 	
@@ -219,6 +202,7 @@ public class SquawkView {
 * 		// control methods 
 * 
 ************************************************************/	
+	
 	private void initBrowser() {
 		// first get the resource html file		
 		if (squawkBrowser.initBrowser()) {
@@ -250,6 +234,13 @@ public class SquawkView {
 		userWebcode = button.getText();
 		comboTemplates.setItems(squawk.getTemplateList(userWebcode));
 		updateConsole("Button press: " + userWebcode);
+	}
+	
+	//TODO - which one is it..?
+	void updateTextField(ModifyEvent event) {
+		Text text = ((Text) event.widget);	
+		//squawkBrowser.userTitle = text.getText();
+		
 	}
 	
 /************************************************************
@@ -305,13 +296,15 @@ public class SquawkView {
 		// add selected component to browser
 	    b12.addListener(SWT.Selection, new Listener() {
 	    	public void handleEvent(Event e) {    		
-	    		squawkBrowser.addComponentToPage(userComponentName);	    		
+	    		squawkBrowser.addComponentToPage(userComponentName);
+	    		updateFormFields();
 	    	}
 	    });
 		// clear browser browser to allow creating component template
 	    b13.addListener(SWT.Selection, new Listener() {
 	    	public void handleEvent(Event e) {    		
-	    		squawkBrowser.clearBrowser();	    		
+	    		squawkBrowser.startComponents();
+	    		viewInflate.switchViewType(VIEW_COMPONENT);
 	    	}
 	    });
 	}
@@ -335,63 +328,13 @@ public class SquawkView {
 		
 	void addTextListeners() {
 		// these listen to the text boxes and update the browser vars
-		text1.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent event) {
-				squawkBrowser.userTitle = text1.getText();
-			}
-		});
-		text2.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent event) {
-				squawkBrowser.userPreheader = text2.getText();
-			}
-		});
-		
-		// need to break this down into the 3 paras on the Viewer.
-		text3a.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent event) {
-				squawkBrowser.userPara1 = text3a.getText();
-			}
-		});
-		text3b.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent event) {
-				squawkBrowser.userSignoff = text3b.getText();
-			}
-		});
-		text3c.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent event) {
-				squawkBrowser.userFooter = text3c.getText();
-			}
-		});
-		// report url
-		text4.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent event) {
-				squawkBrowser.userBannerLogo = text4.getText();
-			}
-		});
-		//
-		text12.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent event) {
-				squawkBrowser.userDate = text12.getText();
-			}
-		});
-		//
-		text13.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent event) {
-				squawkBrowser.userHeading = text13.getText();
-			}
-		});
-		//
-		text14.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent event) {
-				squawkBrowser.userAuthor = text14.getText();
-			}
-		});
-		//
-		text15.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent event) {
-				squawkBrowser.userIntro = text15.getText();
-			}
-		});
+		for (int i = 0; i < FORM_FIELDS.size(); i++) {
+			formTextFields[i].addModifyListener(new ModifyListener() {
+				public void modifyText(ModifyEvent event) {
+					updateTextField(event);
+				}
+			});			
+		}
 	}
 	
 	void addComboElements() {	
@@ -414,7 +357,6 @@ public class SquawkView {
 	    		}
 	    		else {
 	    			squawkBrowser.openTemplatePage(templateFile.toString());
-	    			updateFormFields();
 	    		}
 	    	}
 	    };
@@ -440,6 +382,6 @@ public class SquawkView {
 	    	compList[1] = "not loaded";
 	    }
 	    componentTemplates.setItems(compList);
-	    componentTemplates.select(0);
+	    //componentTemplates.select(0);
 	}
 }

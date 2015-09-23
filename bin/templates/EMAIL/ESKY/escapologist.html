@@ -67,7 +67,7 @@
   <tr>
     <td width="100%" align="center" style="display:none">
       <div class="preheader" style="display: none !important; visibility: hidden; opacity: 0; color: transparent; height: 0; width: 0;">
-<span id="templatePreheader">       
+<span id="#PREHEADER#">       
         This pre-header text should show up in GMail, iOS, Mail.app, &amp; more: 75 chars max - some only see 40 chars max . Chkd: ios web gmail, ios web yahoo, ios web outlook, android 4.1.1. mail apps
 </span>      
       </div>
@@ -84,7 +84,7 @@
           <tr>
             <td width="10%">&nbsp;</td>
             <td width="80%" align="center">
-              <img id="templateLogo" width="" style="width:100%;max-width:600px;" align="middle" src="http://escapologist.com.au/wp-content/uploads/2015/06/esky_email_banner-wide.jpg" alt="Escapologist" />
+              <img id="#LOGOURL#" width="" style="width:100%;max-width:600px;" align="middle" src="http://escapologist.com.au/wp-content/uploads/2015/06/esky_email_banner-wide.jpg" alt="Escapologist" />
             </td>
             <td width="10%">&nbsp;</td>
           </tr>
@@ -108,7 +108,7 @@
             <td width="10%">&nbsp;</td>
             <td width="80%" align="left">
               <p style="font-family:Calibri, sans-serif; font-size: 14px; text-align: left; line-height: 1;"><font face="Calibri, sans-serif">
-<span id="templatePara1">                
+<span id="#PARA1#">                
                 Dear [%= :subscriberName(E,Reader) %],
 				<br />
 				[ -- INSERT CONTENT HERE -- ] 
@@ -125,7 +125,7 @@
 
 <!-- author sign off component -->
                 <br /><br />
-<span id="templateSignoff">                 
+<span id="#SIGNOFF#">                 
                 <img style="width:auto;max-width:140px" src="http://escapologist.com.au/images/simonMuntonSignatureEmailSml.jpg" width="140" alt="signature" />
                 <br />               
                 Simon
@@ -186,7 +186,7 @@
 				<td width="50%">
 					<br />
                   <p style="font-family: Georgia, serif; font-size: 12px; color: #ffffff;"><font face="Georgia, serif">
-<span id="templateFooter">                   
+<span id="#FOOTER#">                   
                     <a style="color:#ffffff;" href="http://escapologist.com.au/terms-conditions/">Terms and Conditions</a> | <a style="color:#ffffff;" href="http://escapologist.com.au/privacy-policy/">Privacy Policy</a> | [%= :Unsub(<span style="color: #99d1db; font-family: arial, sans-serif; font-size:12px;">Unsubscribe</span>) %] | <a style="color:#ffffff;" href="http://escapologist.com.au/faq/">FAQ</a>
                     <br /><br />
                     Talk to us: send your feedback, praise, barbs, thoughts and musings to <a style="color:#ffffff;" href="mailto:esky@escapologist.com.au">esky@escapologist.com.au</a>
@@ -242,7 +242,9 @@
             <td width="10%">&nbsp;</td>
             <td width="80%" align="center">
               <p style="font-family: Georgia, serif; font-size: 12px; color: #ffffff"><font face="Georgia, serif">
+<span id="#COPYRIGHT#">             
                 All content is &copy; 2015 Fitzroy Press All Rights Reserved
+</span>               
               </font></p>
             </td>
             <td width="10%">&nbsp;</td>

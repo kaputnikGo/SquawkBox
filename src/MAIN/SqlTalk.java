@@ -5,7 +5,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import UI.SquawkView;
 
@@ -15,10 +17,26 @@ public class SqlTalk {
 	private SquawkView squawkView;
 	
 	private static final String DEFAULT_DB = "squawk.db";	
-	private static final String ADMIN_TABLE = "ADMIN"; // not in use yet
+	private static final String ADMIN_TABLE = "ADMIN";
 	private static final String COMPONENT_TABLE = "COMPONENTS";
 	private static final String TEMPLATES_TABLE = "TEMPLATES";
 	//private static final String TEMPLATE_TAGS = "TEMPLATE_TAGS";
+	
+	
+	// this list should match the actual div id name
+	/*
+	private String[] FORM_FIELD_LABEL_LIST = new String[] {
+		"title", "templatePreHeader", "templatePara1", "templateSignoff", "templateFooter",
+		"templateLogo", "templateDate", "templateHeading", "templateAuthor", "templateIntro"
+	};
+	private String[] FORM_FIELD_LIST = new String[] {
+		"userTitle", "userPreheader", "userPara1", "userSignoff", "userFooter", 
+		"userBannerLogo", "userDate", "userHeading", "userAuthor", "userIntro"
+	};
+	*/
+	
+	
+	private Map<String, String> FORM_FIELDS;
 	
 	private Connection sqlConnection = null;
 	private Statement sqlStatement = null;
@@ -40,18 +58,48 @@ public class SqlTalk {
 	 public String getComponentTable() {
 		return COMPONENT_TABLE;
 	}
+	 
+	/*
+	public int getNumFormFields() {
+		return FORM_FIELDS.size();		
+	}
+	
+	public String[] getFormFieldList() {
+		return FORM_FIELD_LIST;
+	}
+
+	public String[] getFormFieldLabelList() {
+		return FORM_FIELD_LABEL_LIST;
+	}
+	*/
+	public Map<String, String> getFormFields() {
+		// has a label and a value (Title : title)
+		// form-field-label-list : form-field-list
+		return FORM_FIELDS;
+	}
+	
 	
 /************************************************************
 * 
 * 		// public methods 
 * 
 ************************************************************/		
+	public Map<String, String> initForDisplays() {
+		//TODO create a pool of fields of default or max size
+		FORM_FIELDS = new HashMap<String, String>();		
+		//FORM_FIELDS.put("default label", "default field");
+		for (int i = 0; i < 10; i++) {
+			FORM_FIELDS.put("default " + i, "default field");
+		}
+		return FORM_FIELDS;
+	}
+	
 	public void installDB() {
 		installAdminTable();		
 		installTemplatesTable();
 		installComponentsTable();
 		// debug routines
-		debug(Utilities.debugCountTableDB(DEFAULT_DB, TEMPLATES_TABLE));
+		//debug(Utilities.debugCountTableDB(DEFAULT_DB, TEMPLATES_TABLE));
 	}
 	
 	public String[] getTemplateList(String webcode) {
@@ -679,7 +727,7 @@ public class SqlTalk {
 			try {
 		        if(sqlConnection != null) {
 		        	sqlConnection.close();
-		        	debug("Database " + DEFAULT_DB + " and Table " + TEMPLATES_TABLE + " connection closed.");
+		        	debug("Database " + DEFAULT_DB + " and Table " + COMPONENT_TABLE + " connection closed.");
 		            return true;
 		        }
 			}

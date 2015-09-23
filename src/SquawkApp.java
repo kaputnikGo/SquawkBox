@@ -19,6 +19,18 @@ public class SquawkApp {
 	// method to create new templates to be added to drop down
 	// method to allow editing of existing templates (versioning)
 	
+	//squawkView to load view for rightPanel depending on mode (templates or components)
+
+	// need to be able to parse a given component looking for ANY span id's with the prefix "template" or similar
+	
+	// need a id key:value pair for text fields : title:The title, footer:the footer text etc.
+	// Map<String, String>
+	// start implementing interfaces for the main package classes...
+	// need a component class with a name and its content?
+	
+	// needs to work: load component, parse component for id=templateX add to list, add a form field
+	
+	
 	// squawkBrowser reload causes the doctype to change to something swt browser or IE sets
 	// need to ensure the character encoding is added in the head.html
 		
