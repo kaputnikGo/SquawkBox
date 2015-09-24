@@ -21,21 +21,7 @@ public class SqlTalk {
 	private static final String COMPONENT_TABLE = "COMPONENTS";
 	private static final String TEMPLATES_TABLE = "TEMPLATES";
 	//private static final String TEMPLATE_TAGS = "TEMPLATE_TAGS";
-	
-	
-	// this list should match the actual div id name
-	/*
-	private String[] FORM_FIELD_LABEL_LIST = new String[] {
-		"title", "templatePreHeader", "templatePara1", "templateSignoff", "templateFooter",
-		"templateLogo", "templateDate", "templateHeading", "templateAuthor", "templateIntro"
-	};
-	private String[] FORM_FIELD_LIST = new String[] {
-		"userTitle", "userPreheader", "userPara1", "userSignoff", "userFooter", 
-		"userBannerLogo", "userDate", "userHeading", "userAuthor", "userIntro"
-	};
-	*/
-	
-	
+
 	private Map<String, String> FORM_FIELDS;
 	
 	private Connection sqlConnection = null;
@@ -59,22 +45,8 @@ public class SqlTalk {
 		return COMPONENT_TABLE;
 	}
 	 
-	/*
-	public int getNumFormFields() {
-		return FORM_FIELDS.size();		
-	}
-	
-	public String[] getFormFieldList() {
-		return FORM_FIELD_LIST;
-	}
-
-	public String[] getFormFieldLabelList() {
-		return FORM_FIELD_LABEL_LIST;
-	}
-	*/
 	public Map<String, String> getFormFields() {
 		// has a label and a value (Title : title)
-		// form-field-label-list : form-field-list
 		return FORM_FIELDS;
 	}
 	
@@ -88,8 +60,8 @@ public class SqlTalk {
 		//TODO create a pool of fields of default or max size
 		FORM_FIELDS = new HashMap<String, String>();		
 		//FORM_FIELDS.put("default label", "default field");
-		for (int i = 0; i < 10; i++) {
-			FORM_FIELDS.put("default " + i, "default field");
+		for (int i = 0; i < Utilities.DEFAULT_FIELD_MAX; i++) {
+			FORM_FIELDS.put("empty " + i, "empty field");
 		}
 		return FORM_FIELDS;
 	}

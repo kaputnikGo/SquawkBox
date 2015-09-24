@@ -23,6 +23,11 @@ import java.util.List;
 public class Utilities {
 	// db and general utilities
 	
+	// this number is problematic... need dynamically allocate
+	public static final int DEFAULT_FIELD_MAX = 12;
+	public static final int FORM_FIELD_HEIGHT = 60;
+	public static final int FORM_LABEL_WIDTH = 120;
+	
 	public static final String[] WEBCODE_LIST = new String[] {
 		"MM", "DR", "PTR", "ILA", "ESKY", "HSH", "ELH"};
 	
@@ -161,8 +166,7 @@ public class Utilities {
 	public static boolean isValidWebcode(final String candidate) {
 		if (candidate == null) 
 			return false;
-	
-		System.out.println("isvalidWeb: " + candidate);		 
+	 
 		for (String element : WEBCODE_LIST) {
 			if (element.equals(candidate)) 
 				return true;

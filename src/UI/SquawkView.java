@@ -1,7 +1,8 @@
 package UI;
 
 import java.net.URL;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.swt.SWT;
@@ -13,11 +14,13 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FormLayout;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
@@ -46,6 +49,7 @@ public class SquawkView {
 	protected Display display;
 	protected Shell shell;
 	protected ViewInflate viewInflate;
+	protected Composite gridComp; 
 	
 	// var strings
 	private String appName = "SQUAWK BOX.";
@@ -55,9 +59,9 @@ public class SquawkView {
 	protected String userComponentName = "";
 	
 	// get them from the squawk
-	protected Text[] formTextFields;
+	protected List<Text> formTextFields;
+	protected List<Label> formFieldLabels;
 	protected Map<String, String> FORM_FIELDS;
-	//protected int numFormFields;
 
 	protected Button[] webcodeButtons;
 	protected Combo comboTemplates;
@@ -96,13 +100,15 @@ public class SquawkView {
 		//stackLayout = new StackLayout();
 		//rightPanel.setLayout(stackLayout);
 	    squawk = new SqlTalk(this);
-	    FORM_FIELDS = new HashMap<String, String>(squawk.initForDisplays());	    
+	    
+	    // this may need to be a LinkedHashMap to preserve insertion order.
+	    FORM_FIELDS = new LinkedHashMap<String, String>(squawk.initForDisplays());	    
+	    
+	    // populate the formField ArrayLists with the values from FORM_FIELDS
 	    
 	    viewInflate = new ViewInflate();
 		viewInflate.initView(this, VIEW_TEMPLATE);
 		updateConsole("formfield size: " + FORM_FIELDS.size());
-		//squawk = new SqlTalk(this);
-		updateConsole("Squawk says install DB...");
 		squawk.installDB();				
 		updateConsole("Squawk says finished DB.");
 
@@ -148,9 +154,7 @@ public class SquawkView {
 	public void browserClosed() {
 		squawkBrowser = null;
 	}
-	
-	
-	
+		
 	public Shell getShell() {
 		if (shell != null) 
 			return shell;
@@ -158,33 +162,74 @@ public class SquawkView {
 			return null;		
 	}
 	
-	public void updateFormFields() {
-		//TODO
-		// need to be able to add new fields here..
-		// fields are not the labels of div ids... :)
-		updateConsole("form field size: " + squawkBrowser.formFields.size());
+	public void updateFormFieldMap(List<String> foundTags, List<String> foundContent) {
+		// squawkbrowser has parsed the html content and found
+		// valid tags to display to the user - not the tag contents.
+		if (foundTags == null || foundTags.isEmpty()) return;
+		if (foundContent == null || foundContent.isEmpty()) return;
 
-		for (int i = 0; i < squawkBrowser.formFields.size(); i++) {
-			formTextFields[i].setText(squawkBrowser.formFields.get(i));
-			formTextFields[i].setEnabled(true);
+		FORM_FIELDS.clear();
+		resetFormFieldsDisplay();
+		
+		int i = 0;
+		for (String key : foundTags) {	
+			FORM_FIELDS.putIfAbsent(key, foundContent.get(i));
+			i++;
 		}
-
-		updateConsole("update form fields called.");
+		updateConsole("updated form field size: " + FORM_FIELDS.size());
+	}
+	
+	public void updateFormFieldsDisplay() {
+		// fields are not the labels of div ids... :)
+		// this is a bit loopy between here and browser	
+		// TODO
+		// here is a problem if number of fields found exceeds number 
+		// created by default in squawk
+		int fieldNum = FORM_FIELDS.size();
+		
+		if (fieldNum > Utilities.DEFAULT_FIELD_MAX) {
+			updateConsole("ERROR: form field size " + fieldNum + ", exceeds default allocation " + Utilities.DEFAULT_FIELD_MAX);
+			// for each one
+			System.out.println("ERROR: formField num request exceeds default allocation.");
+			return;
+			/*
+			if (allocateNewFields(fieldNum - Utilities.DEFAULT_FIELD_MAX)) {
+				updateConsole("added new formFields");
+			}
+			else {
+				System.out.println("ERROR in allocate new");
+			}
+			*/
+		}
+				
+		int i = 0;
+		for (String key : FORM_FIELDS.keySet()) {
+			// get the value associated with the key
+			formTextFields.get(i).setText(FORM_FIELDS.get(key));
+			formTextFields.get(i).setEnabled(true);
+			formTextFields.get(i).setVisible(true);
+			// get the key
+			formFieldLabels.get(i).setText(key);
+			formFieldLabels.get(i).setVisible(true);
+			i++;
+		}
+		// for remainder of formfields not used, can:
+		formTextFields.get(i).setVisible(false);
 	}
 	
 	public void clearFormFields() {
-		for (int i = 0; i < FORM_FIELDS.size(); i++) {
-			formTextFields[i].setText("");
-			formTextFields[i].setEnabled(true);
+		for (int i = 0; i < formTextFields.size(); i++) {
+			formTextFields.get(i).setText("");
+			formTextFields.get(i).setEnabled(true);
 		}
 	}
 	
 	public void disableFormFields() {
 		// called due to template parse error
 		// no editable span divs found
-		for (int i = 0; i < FORM_FIELDS.size(); i++) {
-			formTextFields[i].setText(errorString);
-			formTextFields[i].setEnabled(false);
+		for (int i = 0; i < formTextFields.size(); i++) {
+			formTextFields.get(i).setText(errorString);
+			formTextFields.get(i).setEnabled(false);
 		}
 		updateConsole("Not an editable template.");
 	}
@@ -236,11 +281,64 @@ public class SquawkView {
 		updateConsole("Button press: " + userWebcode);
 	}
 	
-	//TODO - which one is it..?
+
 	void updateTextField(ModifyEvent event) {
-		Text text = ((Text) event.widget);	
+		//TODO - which one is it..?
+		//Text text = ((Text) event.widget);	
 		//squawkBrowser.userTitle = text.getText();
+		// generic load them all regardless...
+	}
+	
+	private void resetFormFieldsDisplay() {
+		// changed the template etc, so clear ALL the form field texts and labels
+		for (int i = 0; i < formFieldLabels.size(); i++) {
+			formFieldLabels.get(i).setText("empty " + i);
+			formFieldLabels.get(i).setVisible(false);
+			formTextFields.get(i).setText("empty field");	
+			formTextFields.get(i).setVisible(false);
+		}
+	}
+	
+	private boolean allocateNewFields(int numFields) {
+		// template/component page has found more tags than default allocation
+		// add another numFields number here.
+		System.out.println("allocate new, total fields: " + (formFieldLabels.size() + numFields));
+
+		Label label;
+		Text text;
+		GridData data;
+		GridData data2;
 		
+		shell.open();
+		shell.layout(true);
+		gridComp.layout(true);
+		//Control[] children = gridComp.getChildren();
+
+		for (int i = 0; i < formFieldLabels.size() + numFields; i++) { 			
+			label = new Label(gridComp, SWT.NONE);
+			label.setText("empty");
+			data = new GridData();
+			data.widthHint = Utilities.FORM_LABEL_WIDTH;
+			label.setLayoutData(data);
+			formFieldLabels.add(label);
+
+			text = new Text(gridComp, SWT.MULTI | SWT.BORDER | SWT.WRAP | SWT.V_SCROLL);
+			text.setText("empty field");
+			text.setEnabled(true);
+			data2 = new GridData(GridData.FILL_HORIZONTAL);
+			data2.heightHint = Utilities.FORM_FIELD_HEIGHT;
+			// width will be remainder of gridComp after labels
+			text.setLayoutData(data2);
+			text.addModifyListener(new ModifyListener() {
+				public void modifyText(ModifyEvent event) {
+					updateTextField(event);
+				}
+			});	
+			formTextFields.add(text);
+		}
+		gridComp.pack();
+		shell.pack();
+		return true;
 	}
 	
 /************************************************************
@@ -297,7 +395,7 @@ public class SquawkView {
 	    b12.addListener(SWT.Selection, new Listener() {
 	    	public void handleEvent(Event e) {    		
 	    		squawkBrowser.addComponentToPage(userComponentName);
-	    		updateFormFields();
+	    		updateFormFieldsDisplay();
 	    	}
 	    });
 		// clear browser browser to allow creating component template
@@ -329,7 +427,7 @@ public class SquawkView {
 	void addTextListeners() {
 		// these listen to the text boxes and update the browser vars
 		for (int i = 0; i < FORM_FIELDS.size(); i++) {
-			formTextFields[i].addModifyListener(new ModifyListener() {
+			formTextFields.get(i).addModifyListener(new ModifyListener() {
 				public void modifyText(ModifyEvent event) {
 					updateTextField(event);
 				}

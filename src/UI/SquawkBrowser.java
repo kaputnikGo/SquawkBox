@@ -58,9 +58,6 @@ public class SquawkBrowser {
 	private static final int GET_FORM = 0;
 	private static final int SET_FORM = 1;
 	
-	//public String[] userFormFields;
-	public List<String> formFields;
-	
 	protected String exportHtml;
 	protected String editingHtml;
 	protected String gridOnString;
@@ -125,7 +122,7 @@ public class SquawkBrowser {
 ************************************************************/	
 	public boolean initBrowser() {
 		try {
-			initUserFormFields();
+			//initUserFormFields();
 			
 			Composite comp = new Composite(shell, SWT.NONE);
 			GridData data = new GridData(GridData.FILL_BOTH);
@@ -227,9 +224,8 @@ public class SquawkBrowser {
 			return;
 		}		
 		//
-		String componentHtml = Utilities.returnComponentFileHtml(userComponentName);
 		String currentPage = browser.getText();
-		currentPage += componentHtml;
+		currentPage += Utilities.returnComponentFileHtml(userComponentName);
 		browser.setText(currentPage);
 	}
 	
@@ -385,13 +381,6 @@ public class SquawkBrowser {
 		squawkView.updateConsole(message);
 	}
 	
-	private void initUserFormFields() {
-		formFields = new ArrayList<String>();
-		for (int i = 0; i < squawkView.FORM_FIELDS.size(); i++) {
-			formFields.add("initialise");// + squawkView.FORM_FIELDS.get(i);
-		}		
-	}
-	
 	private String saveDialog(final String savename) {
 		// this will save with correct extension...even though can't see it in dialog.
 		FileDialog dialog = new FileDialog(shell, SWT.SAVE); 
@@ -484,27 +473,82 @@ public class SquawkBrowser {
 		// after user loads component,
 		// parse the browser html and get all div id="#NAME#"
 		
-		// add to squawkView.formFields so it can update the gui.
-		debug("searchBrowserContent called...");
-		
-		// this is the only way to not have exception errors when 
-		// calling getTemplateContent();
-		formFields = new ArrayList<String>();
+		// TODO
+		// url don't use a span
+		// title neither
+		debug("searchBrowserContent called...");		
+		List<String> formFieldNames = new ArrayList<String>();
+		List<String> formFieldContent = new ArrayList<String>();
 		String currentBrowserContent = browser.getText();
 		// look for str "# and #" with a word in between...
-		String start = "\"#";
-		String end = "#\"";
-
-		Pattern pattern = Pattern.compile(start + "(.*?)" + end);
+		String startToken = "id=\"#";
+		String endToken = "#\"";
+		String closingTag = "</span>";
+		String content;
+		
+		// add title, is between <head> and </head>
+		formFieldNames.add("title");
+		formFieldContent.add(patternMatchTitle(currentBrowserContent));
+		
+		// look for image urls
+		Pattern pattern = Pattern.compile(startToken + "(.*?)" + endToken);
 		Matcher matcher = pattern.matcher(currentBrowserContent);
 		while (matcher.find()) {
-			formFields.add(matcher.group());
-		}		
-		debug("dumping list...");
-		for (String element : formFields) {
-			debug(element);
+			formFieldNames.add(matcher.group());
+			
+			if (matcher.group().contains("URL")) {
+				debug("have found an url" + matcher.group());
+				formFieldContent.add(patternMatchImageTag(matcher.group(), currentBrowserContent));
+			}
+			else {
+				// trawl for chars until closingTag
+				// account for closing angle bracket
+				content = currentBrowserContent.substring(matcher.end() + 1, 
+						currentBrowserContent.indexOf(closingTag, matcher.end() + 1));
+				// maybe needs a strip tabs
+				content = content.replaceAll("\t", "");
+				formFieldContent.add(content);
+			}
 		}
-		//update the squawkView.FORM_FIELDS 
+		squawkView.updateFormFieldMap(formFieldNames, formFieldContent);
+	}
+	
+	private String patternMatchTitle(final String htmlContent) {
+		String title = "default title";
+		String startToken = "<title>";
+		String endToken = "</title>";
+		
+		Pattern pattern = Pattern.compile(startToken + "(.*?)" + endToken);
+		Matcher matcher = pattern.matcher(htmlContent);
+		
+		if (matcher.find()) {
+			title = matcher.group();
+			// strip the tokens from it
+			title = title.substring(title.indexOf(startToken) + startToken.length(), title.indexOf(endToken));
+		}
+		return title;
+	}
+	
+	private String patternMatchImageTag(final String imageTag, final String htmlContent) {
+		// imageTagContent starts with any imageTag (#NAMEURL#) and ends with either ">" or "/>" 
+		// can include styling elements too.
+		if (imageTag == null || imageTag == "") return "no image tag";
+		
+		String imageTagContent = "";
+		String startToken = imageTag;
+		String endToken = ">";
+		
+		Pattern pattern = Pattern.compile(startToken + "(.*?)" + endToken);
+		Matcher matcher = pattern.matcher(htmlContent);
+		if (matcher.find()) {
+			imageTagContent = matcher.group();
+			// strip the tokens from it
+			imageTagContent = imageTagContent.substring(
+					imageTagContent.indexOf(startToken) + startToken.length(), 
+					imageTagContent.indexOf(endToken));
+		}
+		
+		return imageTagContent;
 	}
 	
 	private void iterateFormFields(int type) {
@@ -581,7 +625,7 @@ public class SquawkBrowser {
 				//squawkView.disableFormFields();
 				
 			}
-			squawkView.updateFormFields();
+			squawkView.updateFormFieldsDisplay();
 		}
 	}
 	
