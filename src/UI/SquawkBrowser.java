@@ -58,12 +58,11 @@ public class SquawkBrowser {
 	private static final int GET_FORM = 0;
 	private static final int SET_FORM = 1;
 	
+	protected String currentBrowserHtml;
 	protected String exportHtml;
-	protected String editingHtml;
 	protected String gridOnString;
 	protected String gridOffString;
 	
-	protected boolean shellOpen = false;
 	protected boolean initPhase = false;
 	protected boolean gridTog = true;
 	
@@ -88,7 +87,6 @@ public class SquawkBrowser {
 	    
 		shell.addShellListener(new ShellListener() {
 			public void shellClosed(ShellEvent e) {
-				shellOpen = false;
 				debug("Browser shell closed.");
 				squawkView.browserClosed();
 			}
@@ -121,19 +119,18 @@ public class SquawkBrowser {
 * 
 ************************************************************/	
 	public boolean initBrowser() {
-		try {
-			//initUserFormFields();
-			
+		try {			
 			Composite comp = new Composite(shell, SWT.NONE);
 			GridData data = new GridData(GridData.FILL_BOTH);
 			comp.setLayoutData(data);
 			comp.setLayout(new FillLayout());
 			final SashForm form = new SashForm(comp, SWT.HORIZONTAL);
 			form.setLayout(new FillLayout());
-			
+
+			// SWT.MOZILLA is slow (old version) and no source view
+			debug("SWT version: " + SWT.getVersion());
 			browser = new Browser(form, SWT.NONE);	
-			initPhase = true;
-			
+			initPhase = true;			
 			debug("Squawk Box Browser opened with type: " + browser.getBrowserType() +  " and js: " + browser.getJavascriptEnabled() + " - ");
 		    // browser title grab
 		    browser.addTitleListener(new TitleListener() {
@@ -147,37 +144,20 @@ public class SquawkBrowser {
 		    		//
 		    	}
 		    	public void completed(ProgressEvent event) {
-		    		//addUserContent();
 		    		debug("browser processing complete reached.");
 		    		searchBrowserContent();
-		    		getTemplateContent();
+		    		
+		    		if (!initPhase) {				
+		    			iterateFormFields(GET_FORM);
+		    			squawkView.updateFormFieldsDisplay();
+		    		}
 		    	}
 		    });		   
 		    
-			shell.open();
-			shellOpen = true;
-			
+			shell.open();	
 			// grid blue thing
-			gridOnString = "var css = 'table, th, td {border: 1px solid #99CCFF;}' ,"
-					+ "head = document.head || document.getElementByTagName('head')[0],"
-					+ "style = document.createElement('style');"
-					+ "style.type = 'text/css';"
-					+ "if (style.styleSheet) {"
-					+ "style.styleSheet.cssText = css;"
-					+ "} else {"
-					+ "style.appendChild(document.createTextNode(css));"
-					+ "}"
-					+ "head.appendChild(style);";
-			gridOffString = "var css = 'table, th, td {border: 0;}' ,"
-					+ "head = document.head || document.getElementByTagName('head')[0],"
-					+ "style = document.createElement('style');"
-					+ "style.type = 'text/css';"
-					+ "if (style.styleSheet) {"
-					+ "style.styleSheet.cssText = css;"
-					+ "} else {"
-					+ "style.appendChild(document.createTextNode(css));"
-					+ "}"
-					+ "head.appendChild(style);";
+			gridOnString = Utilities.DESIGN_GRID_ON;
+			gridOffString = Utilities.DESIGN_GRID_OFF;
 		}
 		catch (SWTError e) {
 			MessageBox messageBox = new MessageBox(shell, SWT.ICON_ERROR | SWT.OK);
@@ -202,7 +182,6 @@ public class SquawkBrowser {
 		initPhase = false;
 		debug("resource url: " + userString);
 		browser.setUrl(userString);
-		editingHtml = browser.getText();
 	}
 	
 	public void startComponents() {
@@ -287,9 +266,8 @@ public class SquawkBrowser {
 	}
 	
 	public void processBrowser() {
-		// parse here as well
-		browser.refresh();
-		addUserContent();
+		debug("processBrowser called.");
+		iterateFormFields(SET_FORM);
 	}
 	
 	public void openEmailTemplate() {
@@ -349,16 +327,10 @@ public class SquawkBrowser {
 		    //flip it
 		    gridTog = !gridTog;
 		    
-		    //regardless of state, refresh browser
-		    //TODO
-		    // this is incorrect call - it reloads the old template file
-		    // possibly need to load the html into tmep string, add teh new style, send to browser....
-		    editingHtml = browser.getText();
-		    browser.setText(editingHtml);
-		    
-		    //browser.refresh();
-		    
-		    
+		    //regardless of state, refresh browser, one way or another
+		    currentBrowserHtml = browser.getText();
+		    browser.setText(currentBrowserHtml);		    
+		    //browser.refresh();		    
 		} catch (SWTException e) {
 			// caused by js returning an error.
 			debug("toggle error: " + e);
@@ -370,6 +342,14 @@ public class SquawkBrowser {
 		if (result) debug("Browser execute js success.");
 		else
 			debug("Browser execute js fail.");
+	}
+	
+	public void refreshBrowser() {
+		searchBrowserContent();
+		if (!initPhase) {				
+			iterateFormFields(GET_FORM);
+			squawkView.updateFormFieldsDisplay();
+		}
 	}
 
 /************************************************************
@@ -472,14 +452,11 @@ public class SquawkBrowser {
 	private void searchBrowserContent() {
 		// after user loads component,
 		// parse the browser html and get all div id="#NAME#"
-		
-		// TODO
-		// url don't use a span
-		// title neither
 		debug("searchBrowserContent called...");		
 		List<String> formFieldNames = new ArrayList<String>();
 		List<String> formFieldContent = new ArrayList<String>();
-		String currentBrowserContent = browser.getText();
+		currentBrowserHtml = "";
+		currentBrowserHtml = browser.getText();
 		// look for str "# and #" with a word in between...
 		String startToken = "id=\"#";
 		String endToken = "#\"";
@@ -488,48 +465,52 @@ public class SquawkBrowser {
 		
 		// add title, is between <head> and </head>
 		formFieldNames.add("title");
-		formFieldContent.add(patternMatchTitle(currentBrowserContent));
+		formFieldContent.add(patternMatchTitle());
 		
 		// look for image urls
 		Pattern pattern = Pattern.compile(startToken + "(.*?)" + endToken);
-		Matcher matcher = pattern.matcher(currentBrowserContent);
+		Matcher matcher = pattern.matcher(currentBrowserHtml);
+		String tag;
 		while (matcher.find()) {
-			formFieldNames.add(matcher.group());
+			// here remove the id= part
+			tag = matcher.group().toString();
+			tag = tag.substring(4, tag.length()-1);
+			formFieldNames.add(tag);
 			
 			if (matcher.group().contains("URL")) {
-				debug("have found an url" + matcher.group());
-				formFieldContent.add(patternMatchImageTag(matcher.group(), currentBrowserContent));
+				formFieldContent.add(patternMatchImageTag(matcher.group()));
 			}
 			else {
 				// trawl for chars until closingTag
 				// account for closing angle bracket
-				content = currentBrowserContent.substring(matcher.end() + 1, 
-						currentBrowserContent.indexOf(closingTag, matcher.end() + 1));
+				content = currentBrowserHtml.substring(matcher.end() + 1, 
+						currentBrowserHtml.indexOf(closingTag, matcher.end() + 1));
 				// maybe needs a strip tabs
-				content = content.replaceAll("\t", "");
+				content = stripFormatting(content);
 				formFieldContent.add(content);
 			}
 		}
 		squawkView.updateFormFieldMap(formFieldNames, formFieldContent);
 	}
 	
-	private String patternMatchTitle(final String htmlContent) {
+	private String patternMatchTitle() {
 		String title = "default title";
 		String startToken = "<title>";
 		String endToken = "</title>";
 		
 		Pattern pattern = Pattern.compile(startToken + "(.*?)" + endToken);
-		Matcher matcher = pattern.matcher(htmlContent);
+		Matcher matcher = pattern.matcher(currentBrowserHtml);
 		
 		if (matcher.find()) {
 			title = matcher.group();
 			// strip the tokens from it
 			title = title.substring(title.indexOf(startToken) + startToken.length(), title.indexOf(endToken));
 		}
+		debug("patternMatch title: " + title);
 		return title;
 	}
 	
-	private String patternMatchImageTag(final String imageTag, final String htmlContent) {
+	private String patternMatchImageTag(final String imageTag) {
 		// imageTagContent starts with any imageTag (#NAMEURL#) and ends with either ">" or "/>" 
 		// can include styling elements too.
 		if (imageTag == null || imageTag == "") return "no image tag";
@@ -539,7 +520,7 @@ public class SquawkBrowser {
 		String endToken = ">";
 		
 		Pattern pattern = Pattern.compile(startToken + "(.*?)" + endToken);
-		Matcher matcher = pattern.matcher(htmlContent);
+		Matcher matcher = pattern.matcher(currentBrowserHtml);
 		if (matcher.find()) {
 			imageTagContent = matcher.group();
 			// strip the tokens from it
@@ -552,22 +533,16 @@ public class SquawkBrowser {
 	}
 	
 	private void iterateFormFields(int type) {
-		//TODO
-		// this should be better implemented
-		// can have a dummy section of the component in the browser that
-		// has defaults for every field that are at the end of file, this way
-		// the try/catch will always get some value
-		
 		// CHECK THE SPELLING & CASE OF THE ELEMENT ID!!
+		
+		//TODO
+		// html entities and special chars are gobbleygook
 		
 		Iterator<Entry<String, String>> entries = squawkView.FORM_FIELDS.entrySet().iterator();
 		String key;
 		String value;
 		while (entries.hasNext()) {
-			Map.Entry<String, String> entry = (Map.Entry<String, String>)entries.next();
-			// do something of use here
-			// we don't know the order either...
-			// can't change a map key...			
+			Map.Entry<String, String> entry = (Map.Entry<String, String>)entries.next();			
 			key = entry.getKey();
 			value = entry.getValue();
 			if (type == GET_FORM) {
@@ -575,24 +550,42 @@ public class SquawkBrowser {
 				if (key.equals("title")) {
 					value = (String)browser.evaluate("return document.title");
 				}
-				else if (key.equals("templateLogo")) {
-					value = (String)browser.evaluate("return document.getElementById('" + key + "').src;");
-				}
 				else {
 					value = (String)browser.evaluate("return document.getElementById('" + key + "').innerHTML;");
-				}
-				
+				}				
 			}
 			else if (type == SET_FORM) {
-				// set the div id data from the Map
+				// set the div id data from the Map				
+				value = stripFormatting(value);
+				value = replaceWithHtmlEntity(value);
+				boolean done = false;
+				String changer = "";
+				
 				if (key.equals("title")) {
-					browser.execute("document.title = '" + value + "';");
+					changer = "document.title = \"" + value + "\";";
+					done = false;
+					try {
+						done = browser.execute(changer);
+					}
+					catch (SWTError e) {
+						debug("browser execute error: " + e.getMessage());
+					}
+					if (!done) {
+						debug("execute fail for key title: " + value + ", possibly due to special chars - use html entities only.");
+					}					
 				}
-				else if (key.equals("templateLogo")) {
-					browser.execute("document.getElementById('" + key + "').src = '" + value + "';");
-				}
-				else {
-					browser.execute("document.getElementById('" + key + "').innerHTML = '" + value + "';");
+				else {									
+					changer = "document.getElementById('" + key + "').innerHTML = '" + value + "';";					
+					done = false;
+					try {
+						done = browser.execute(changer);
+					}
+					catch (SWTError e) {
+						debug("browser execute error: " + e.getMessage());
+					}					
+					if (!done) {
+						debug("execute innerHTML fail for " + key + ", possibly due to special chars - use html entities only.");
+					}
 				}
 			}
 		}
@@ -610,29 +603,21 @@ public class SquawkBrowser {
 	}
 	*/
 	
-	private void getTemplateContent() {
-		// these needs to handle nulls
-		if (initPhase) 
-			return;
-		else {
-			try {
-				debug("getTemplateContent called.");				
-				// sometimes err..unable to get property src from null
-				iterateFormFields(GET_FORM);
-			} catch (SWTException e) {
-				// will not continue if error on a given evaluate
-				debug("browser.evalute error: " + e);
-				//squawkView.disableFormFields();
-				
-			}
-			squawkView.updateFormFieldsDisplay();
-		}
+	private String stripFormatting(String original) {
+		String changed = original;
+		changed = changed.replaceAll("\n", "");
+		changed = changed.replaceAll("\t", "");
+		changed = changed.replaceAll("\r", ""); 
+		
+		return changed;
 	}
 	
-	private void addUserContent() {
-		// browser.execute(String script) is to run javascript
-		debug("addUserContent called.");
-		iterateFormFields(SET_FORM);
+	private String replaceWithHtmlEntity(String original) {
+		// may need to only look for ' as it is also the closing element for js
+		String changed = original;
+		changed = changed.replaceAll("'", "&rsquo;");
+		changed = changed.replaceAll("’", "&rsquo;");		
+		return changed;
 	}
 	
 	/*

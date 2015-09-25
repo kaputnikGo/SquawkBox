@@ -14,7 +14,6 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FormLayout;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
@@ -101,11 +100,11 @@ public class SquawkView {
 		//rightPanel.setLayout(stackLayout);
 	    squawk = new SqlTalk(this);
 	    
-	    // this may need to be a LinkedHashMap to preserve insertion order.
+	    // LinkedHashMap to preserve insertion order.
+	    // if other methods access this map (even get()), then use:
+	    // Map m = Collections.synchronizedMap(new LinkedHashMap(...));
 	    FORM_FIELDS = new LinkedHashMap<String, String>(squawk.initForDisplays());	    
-	    
-	    // populate the formField ArrayLists with the values from FORM_FIELDS
-	    
+
 	    viewInflate = new ViewInflate();
 		viewInflate.initView(this, VIEW_TEMPLATE);
 		updateConsole("formfield size: " + FORM_FIELDS.size());
@@ -173,7 +172,8 @@ public class SquawkView {
 		
 		int i = 0;
 		for (String key : foundTags) {	
-			FORM_FIELDS.putIfAbsent(key, foundContent.get(i));
+			//FORM_FIELDS.putIfAbsent(key, foundContent.get(i));
+			FORM_FIELDS.put(key, foundContent.get(i));
 			i++;
 		}
 		updateConsole("updated form field size: " + FORM_FIELDS.size());
@@ -283,10 +283,21 @@ public class SquawkView {
 	
 
 	void updateTextField(ModifyEvent event) {
-		//TODO - which one is it..?
-		//Text text = ((Text) event.widget);	
-		//squawkBrowser.userTitle = text.getText();
-		// generic load them all regardless...
+		//TODO - got the id num	
+		// this called every char...
+		//	
+		
+		Text text = ((Text) event.widget);		
+		int id = ((int)event.widget.getData());
+		//updateConsole("text field updated id: " + id);
+		
+		//String what = text.getText();
+		//updateConsole("widget text: " + what);
+		//updateConsole("formfield: " + formTextFields.get(id).getText());
+		// no way
+		//formTextFields.get(id).setText(what);
+		
+		
 	}
 	
 	private void resetFormFieldsDisplay() {
@@ -299,6 +310,23 @@ public class SquawkView {
 		}
 	}
 	
+	private boolean preProcessFormFields() {
+		//TODO
+		// make sure FORM_FIELDS map has been updated by formfield list
+		// use formlabels as key
+		updateConsole("preprocess formfields now...");
+		int i = 0;
+		for (String key : FORM_FIELDS.keySet()) {
+			FORM_FIELDS.put(key, formTextFields.get(i).getText());
+			if (key.toString().equals("title")) {
+				updateConsole("title from text field: " + formTextFields.get(i).getText());
+			}
+			i++;
+		}
+		return true;
+	}
+	
+	/*
 	private boolean allocateNewFields(int numFields) {
 		// template/component page has found more tags than default allocation
 		// add another numFields number here.
@@ -340,6 +368,7 @@ public class SquawkView {
 		shell.pack();
 		return true;
 	}
+	*/
 	
 /************************************************************
 * 
@@ -351,7 +380,8 @@ public class SquawkView {
 	    b5.addListener(SWT.Selection,  new Listener() {
 	    	public void handleEvent(Event event) {
 	    		// re-process the current device with new vars
-	    		squawkBrowser.processBrowser();
+	    		if (preProcessFormFields())
+	    			squawkBrowser.processBrowser();
 	    	}
 	    });
 	    b6.addListener(SWT.Selection,  new Listener() {
@@ -382,7 +412,9 @@ public class SquawkView {
 		// add site specific wrapper to device in browser
 	    b10.addListener(SWT.Selection, new Listener() {
 	    	public void handleEvent(Event e) {
-	    		squawkBrowser.openEmailTemplate();
+	    		//squawkBrowser.openEmailTemplate();
+	    		squawkBrowser.refreshBrowser();
+	    		
 	    	}
 	    });
 		// toggle grid lines of blue
@@ -431,7 +463,9 @@ public class SquawkView {
 				public void modifyText(ModifyEvent event) {
 					updateTextField(event);
 				}
-			});			
+			});
+			// give it some form of id
+			formTextFields.get(i).setData(i);
 		}
 	}
 	

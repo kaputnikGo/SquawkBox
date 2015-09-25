@@ -19,6 +19,11 @@ public class SquawkApp {
 	// method to create new templates to be added to drop down
 	// method to allow editing of existing templates (versioning)
 	
+	// make the template editable !!
+	// sort out the weirdo formatting of html to java to html
+	
+	// need a class diagram...
+	
 	// squawkView to load view for rightPanel depending on mode (templates or components)
 	
 	// what happens when there are more form fields that default number - have an error message. can create more dynamically?	
@@ -26,7 +31,6 @@ public class SquawkApp {
 	 * problematic dynamic creation of new formfields for composite. 
 	 * 
 	 * alts: create a very large pool, 
-	 * 
 	 * switch "views" so fieldnum is broken up into chunks of 12 fields.  
 	 * 
 	 */

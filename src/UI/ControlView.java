@@ -19,7 +19,7 @@ public class ControlView {
 	private static String button7String = "browser";
 	private static String button8String = "local open";
 	private static String button9String = "dump";
-	private static String button10String = "email";
+	private static String button10String = "refresh";
 	private static String button11String = "grid";
 	
 	private static String label16String = "Component List:";

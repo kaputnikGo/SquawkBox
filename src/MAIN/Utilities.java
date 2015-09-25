@@ -41,6 +41,29 @@ public class Utilities {
 	public static String[] TEMPLATE_LIST = new String[] {
 		"default", "premium", "free", "endo"};
 	
+	// grid blue thing
+	public static final String DESIGN_GRID_ON = "var css = 'table, th, td {border: 1px solid #99CCFF;}' ,"
+			+ "head = document.head || document.getElementByTagName('head')[0],"
+			+ "style = document.createElement('style');"
+			+ "style.type = 'text/css';"
+			+ "if (style.styleSheet) {"
+			+ "style.styleSheet.cssText = css;"
+			+ "} else {"
+			+ "style.appendChild(document.createTextNode(css));"
+			+ "}"
+			+ "head.appendChild(style);";
+	
+	public static final String DESIGN_GRID_OFF = "var css = 'table, th, td {border: 0;}' ,"
+			+ "head = document.head || document.getElementByTagName('head')[0],"
+			+ "style = document.createElement('style');"
+			+ "style.type = 'text/css';"
+			+ "if (style.styleSheet) {"
+			+ "style.styleSheet.cssText = css;"
+			+ "} else {"
+			+ "style.appendChild(document.createTextNode(css));"
+			+ "}"
+			+ "head.appendChild(style);";
+	
 	public static List<String> getComponentFileNameList(String path) {
 		// returns list of names and adds their contents to the fileNameHtml List
 		List<String> fileNameList = new ArrayList<String>();
