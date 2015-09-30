@@ -224,6 +224,11 @@ public class SquawkView {
 		}
 	}
 	
+	public void enableAddComponent(boolean enable) {
+		if (enable) b12.setEnabled(true);
+		else b12.setEnabled(true);
+	}
+	
 	public void disableFormFields() {
 		// called due to template parse error
 		// no editable span divs found
@@ -311,9 +316,6 @@ public class SquawkView {
 	}
 	
 	private boolean preProcessFormFields() {
-		//TODO
-		// make sure FORM_FIELDS map has been updated by formfield list
-		// use formlabels as key
 		updateConsole("preprocess formfields now...");
 		int i = 0;
 		for (String key : FORM_FIELDS.keySet()) {
@@ -406,7 +408,8 @@ public class SquawkView {
 		// dump to squawkBrowser button
 	    b9.addListener(SWT.Selection, new Listener() {
 	    	public void handleEvent(Event e) {
-	    		squawkBrowser.dumpToBrowser(Utilities.debugDumpTableDB(squawk.getDefaultDB(), squawk.getComponentTable()));
+	    		//squawkBrowser.dumpToBrowser(Utilities.debugDumpTableDB(squawk.getDefaultDB(), squawk.getComponentTable()));
+	    		squawkBrowser.dumpToBrowser(squawkBrowser.getBrowserHtml());
 	    	}
 	    });
 		// add site specific wrapper to device in browser
@@ -470,19 +473,16 @@ public class SquawkView {
 	}
 	
 	void addComboElements() {	
+		// full template selector
 		comboTemplates = new Combo(rowComp2, SWT.DROP_DOWN | SWT.BORDER);
 	    SelectionListener comboListener = new SelectionAdapter() {
 	    	public void widgetSelected(SelectionEvent event) {
-	    		Combo combo = ((Combo) event.widget);
-	    		
-	    		// this will load the template for a given webcode
+	    		Combo combo = ((Combo) event.widget);	    		
 	    		userTemplateName = combo.getText();
 	    		URL templateFile = getClass().getClassLoader().getResource("templates/EMAIL/" + userWebcode + "/" + userTemplateName + ".html");
 	    		
 	    		if (templateFile == null) {
 	    			updateConsole("Template file not found for userWebcode " + userWebcode);
-	    			//TODO
-	    			// reset the form and the browser window
 	    			disableFormFields();
 	    			squawkBrowser.setBrowserText("Template file " + userTemplateName + " not found for userWebcode " + userWebcode);
 	    			return;
@@ -496,24 +496,21 @@ public class SquawkView {
 	    comboTemplates.setItems(Utilities.TEMPLATE_LIST);
 	    comboTemplates.select(0);
 	    
-	    //TODO
 	    // component selector
 		componentTemplates = new Combo(rowComp3, SWT.DROP_DOWN | SWT.BORDER);
 	    SelectionListener componentListener = new SelectionAdapter() {
 	    	public void widgetSelected(SelectionEvent event) {
 	    		Combo combo = ((Combo) event.widget);
 	    		userComponentName = combo.getText();
+	    		enableAddComponent(true);
 	    	}
 	    };
 	    componentTemplates.addSelectionListener(componentListener);
-	    // need a string[] of the component names.
-	    // this can only take place after db is ready...
 	    String[] compList = squawk.getComponentList();
 	    if (compList == null) {
 	    	compList = new String[1];
 	    	compList[1] = "not loaded";
 	    }
 	    componentTemplates.setItems(compList);
-	    //componentTemplates.select(0);
 	}
 }

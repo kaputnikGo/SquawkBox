@@ -22,6 +22,17 @@ public class SquawkApp {
 	// make the template editable !!
 	// sort out the weirdo formatting of html to java to html
 	
+	/*****************************/
+	// project setting character 
+	// encodings needs to be UTF-8 !!!!!!!
+	/*****************************/
+	
+	// trial jsoup for html parsing in java library
+	// may need to drop swt browser all together. get jsoup to be the squawkbrowser 
+	//		that displays in just a simple shell
+	// or combine the form fields and the browser into a JEditorPane of the jsoup doc
+	
+	
 	// need a class diagram...
 	
 	// squawkView to load view for rightPanel depending on mode (templates or components)

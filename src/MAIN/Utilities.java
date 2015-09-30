@@ -18,7 +18,9 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
+import org.jsoup.safety.Whitelist;
 
 public class Utilities {
 	// db and general utilities
@@ -63,6 +65,10 @@ public class Utilities {
 			+ "style.appendChild(document.createTextNode(css));"
 			+ "}"
 			+ "head.appendChild(style);";
+	
+	public static final String DOCTYPE_DECLARE_EMAIL = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n";
+	public static final String DOCTYPE_DECLARE_HTML3 = "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 3.2 Final//EN\">";
+	public static final String DOCTYPE_DECLARE_HTML5 = "<!DOCTYPE html>";
 	
 	public static List<String> getComponentFileNameList(String path) {
 		// returns list of names and adds their contents to the fileNameHtml List
@@ -232,6 +238,79 @@ public class Utilities {
 		    htmlString = null;
 		}
 		return htmlString;
+	}
+	
+	public static String unicodeToEntities(String str) {
+		StringBuffer strBuf = new StringBuffer();
+		for (int i = 0; i < str.length(); i++) {
+			char ch = str.charAt(i);
+			// non-ASCII char
+			//if ((ch >= 0x2013) && (ch <= 0x2026)) {			
+			if (!((ch >= 0x0020) && (ch <= 0x007e))) {
+				strBuf.append("&#x");
+				String hex = Integer.toHexString(str.charAt(i) & 0xFFFF);
+				if (hex.length() == 2)
+					strBuf.append("00");
+				strBuf.append(hex.toUpperCase(Locale.ENGLISH));
+				strBuf.append(";");
+			}
+			else {
+				// ASCII char
+				strBuf.append(ch);
+			}
+		}
+		return new String(strBuf);
+	}
+	
+	public static String replaceWithHtmlEntity(String inputString) { 
+		//  this is to catch the use of entities in user added content	
+		// 	(&amp; &lsquo; &rsquo; &ldquo; &rdquo &mdash; &ndash; &copy; etc)
+		//  avoid <!-- --> comments !		
+		
+		//TODO
+		// some way to add this to the database so user can add new.		
+		
+		inputString = inputString.replaceAll("'", "&apos;");
+		inputString = inputString.replaceAll("�", "&lsquo;");
+		inputString = inputString.replaceAll("�", "&rsquo;");
+		inputString = inputString.replaceAll("�", "&ldquo;");
+		inputString = inputString.replaceAll("�", "&rdquo;");
+		inputString = inputString.replaceAll("�", "&hellip;");
+		inputString = inputString.replaceAll("�", "&ndash;");
+		inputString = inputString.replaceAll("�", "&mdash;");
+		inputString = inputString.replaceAll("�", "&copy;");
+		inputString = inputString.replaceAll("�", "&bull;");
+		
+		// xml versions entity
+		/*
+		inputString = inputString.replaceAll("&#x02018;", "&lsquo;");		
+		inputString = inputString.replaceAll("&#x02019;", "&rsquo;");		
+		inputString = inputString.replaceAll("&#x0201C;", "&ldquo;");		
+		inputString = inputString.replaceAll("&#x0201D;", "&rdquo;");		
+		inputString = inputString.replaceAll("&#x02026;", "&hellip;");
+		inputString = inputString.replaceAll("&#x02010;", "&ndash;");				
+		inputString = inputString.replaceAll("&#x02014;", "&mdash;");		
+		inputString = inputString.replaceAll("&#x000A9;", "&copy;");		
+		inputString = inputString.replaceAll("&#x02022;", "&bull;");
+		*/	
+		return inputString;		
+	}
+	
+	
+	public static Whitelist getDocumentWhitelist() {		
+		Whitelist whitelist = new Whitelist();
+		whitelist = Whitelist.relaxed();		
+		// example use:
+		//String cleaned = Jsoup.clean(browser.getText(), whitelist);		
+		return whitelist;
+	}
+	
+	public static String stripFormatting(String inputString) {
+		inputString = inputString.replaceAll("\n", "");
+		inputString = inputString.replaceAll("\t", "");
+		inputString = inputString.replaceAll("\r", ""); 
+		
+		return inputString;
 	}
 	
 /************************************************************
@@ -420,4 +499,24 @@ public class Utilities {
 			}
 		}		
 	}
+	
+	/*
+	public static String replaceHtmlEntityWithChar(String inputString) {
+		// get any html entities from content and turn into their chars
+		//inputString = inputString.replaceAll("&apos;", "'");
+		inputString = inputString.replaceAll("&lsquo;", "�");
+		inputString = inputString.replaceAll("&rsquo;", "�");
+		inputString = inputString.replaceAll("&ldquo;", "�");
+		inputString = inputString.replaceAll("&rdquo;", "�");
+		inputString = inputString.replaceAll("&hellip;", "�");
+		inputString = inputString.replaceAll("&ndash;", "�");
+		inputString = inputString.replaceAll("&mdash;", "�");
+		inputString = inputString.replaceAll("&copy;", "�");
+		inputString = inputString.replaceAll("&bull;", "�");
+		inputString = inputString.replaceAll("&amp;", "&");
+		inputString = inputString.replaceAll("&commat;", "@");
+		return inputString;	
+	}
+	*/
+	
 }

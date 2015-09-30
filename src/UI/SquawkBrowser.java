@@ -35,6 +35,10 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Monitor;
 import org.eclipse.swt.widgets.Shell;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import MAIN.Utilities;
 
@@ -146,6 +150,7 @@ public class SquawkBrowser {
 		    	public void completed(ProgressEvent event) {
 		    		debug("browser processing complete reached.");
 		    		searchBrowserContent();
+		    		//searchBrowserDocument();
 		    		
 		    		if (!initPhase) {				
 		    			iterateFormFields(GET_FORM);
@@ -175,10 +180,7 @@ public class SquawkBrowser {
 		
 	}
 	
-	public void openTemplatePage(final String userString) {
-		//TODO
-		// this opens the generic template for a given webcode
-		// change to load the url to a var for editing in squawk.		
+	public void openTemplatePage(final String userString) {		
 		initPhase = false;
 		debug("resource url: " + userString);
 		browser.setUrl(userString);
@@ -189,8 +191,10 @@ public class SquawkBrowser {
 		initPhase = false;
 		// clear formfields in case templates were used
 		squawkView.clearFormFields();
-		browser.setText(Utilities.returnComponentFileHtml("head.html"));
+		squawkView.enableAddComponent(true);
+		browser.setText(Utilities.returnComponentFileHtml("head.html"), true);
 		searchBrowserContent();
+		//searchBrowserDocument();
 		debug("browser window cleared with head.html");
 	}
 	
@@ -202,10 +206,15 @@ public class SquawkBrowser {
 			debug("Component file not found: " + userComponentName);
 			return;
 		}		
-		//
-		String currentPage = browser.getText();
+		//TODO
+		// need to check if already has basic template
+		Document doc = Jsoup.parse(browser.getText());		
+		//exportHtml += doc.html();
+		
+		String currentPage = doc.html();
+		
 		currentPage += Utilities.returnComponentFileHtml(userComponentName);
-		browser.setText(currentPage);
+		browser.setText(currentPage, true);
 	}
 	
 	public void openWebpage(final String userString) {
@@ -285,19 +294,18 @@ public class SquawkBrowser {
 	}
 	
 	public void setBrowserText(String message) {
-		browser.setText("<html><body><br />" + message + "  <br /></body></html>");		
+		browser.setText("<html><body><br />" + message + "  <br /></body></html>", true);		
 	}
 	
 	public void dumpToBrowser(final String htmlDump) {
 		debug("html dump to browser called.");
-		browser.setText(htmlDump);
+		browser.setText(htmlDump, true);
 	}
 	
 	public void exportBrowser(final String savename) {
-		// yar
-		// load the var with the browser html first
-		exportHtml = browser.getText();
-		
+		exportHtml = Utilities.DOCTYPE_DECLARE_EMAIL;
+		Document doc = Jsoup.parse(browser.getText());		
+		exportHtml += doc.html();
         if (!saveTemplateFile(saveDialog(savename))) { 
             debug("exportHtml save fail with name: " + savename);
         	return; 
@@ -311,10 +319,7 @@ public class SquawkBrowser {
 		// dem blue lines all over the place...
 	    debug("toggle called...");
 	    boolean result;
-	    //TODO
-	    // not working for the component view
-	    try {
-	    
+	    try {	    
 		    if (!gridTog) {
 		    	result = browser.execute(gridOnString);
 		    }
@@ -329,8 +334,7 @@ public class SquawkBrowser {
 		    
 		    //regardless of state, refresh browser, one way or another
 		    currentBrowserHtml = browser.getText();
-		    browser.setText(currentBrowserHtml);		    
-		    //browser.refresh();		    
+		    browser.setText(currentBrowserHtml, true);		    		    
 		} catch (SWTException e) {
 			// caused by js returning an error.
 			debug("toggle error: " + e);
@@ -346,6 +350,7 @@ public class SquawkBrowser {
 	
 	public void refreshBrowser() {
 		searchBrowserContent();
+		//searchBrowserDocument();
 		if (!initPhase) {				
 			iterateFormFields(GET_FORM);
 			squawkView.updateFormFieldsDisplay();
@@ -416,19 +421,19 @@ public class SquawkBrowser {
 	// set some sort of html here, then open browser - Unicode only for string
 	private void unknownPagetype(final String unknown) {
 		// case of string not resolving as www or local html
-		browser.setText("<html><body><br />The requested url is of unknown type: " + unknown + "  <br /></body></html>");
+		browser.setText("<html><body><br />The requested url is of unknown type: " + unknown + "  <br /></body></html>", true);
 	}
 	
 	private void loadLocalWebpage(final String localpage) {
 		// is on local machine, hopefully an html file....
-		browser.setText("<html><body><br />Loading local webpage... <br /></body></html>");
+		browser.setText("<html><body><br />Loading local webpage... <br /></body></html>", true);
 		// then...
 		browser.setUrl(localpage);
 	}
 	
 	private void loadWWWpage(final String wwwpage) {
 		// load it up kiddo...
-		browser.setText("<html><body><br />Fetching webpage... <br /></body></html>");
+		browser.setText("<html><body><br />Fetching webpage... <br /></body></html>", true);
 		//then...
 		browser.setUrl(wwwpage);
 	}
@@ -436,7 +441,7 @@ public class SquawkBrowser {
 	private void websiteNoConnection(final String userString) {
 		// Utilities said: HttpURLConnection.HTTP_OK == false;
 		// reasons list:
-		browser.setText("<html><body><br />Error fetching webpage: " + userString + " <br /></body></html>");
+		browser.setText("<html><body><br />Error fetching webpage: " + userString + " <br /></body></html>", true);
 		// 1. your connection to wan
 		// 2. isp thru
 		// 3. website down... get error code.
@@ -455,8 +460,12 @@ public class SquawkBrowser {
 		debug("searchBrowserContent called...");		
 		List<String> formFieldNames = new ArrayList<String>();
 		List<String> formFieldContent = new ArrayList<String>();
-		currentBrowserHtml = "";
-		currentBrowserHtml = browser.getText();
+		currentBrowserHtml = "";		
+		Document doc = Jsoup.parse(browser.getText());		
+		currentBrowserHtml = doc.html();
+		
+//TODO
+// maybe add the jsoup here as well, currently using a String			
 		// look for str "# and #" with a word in between...
 		String startToken = "id=\"#";
 		String endToken = "#\"";
@@ -486,12 +495,46 @@ public class SquawkBrowser {
 				content = currentBrowserHtml.substring(matcher.end() + 1, 
 						currentBrowserHtml.indexOf(closingTag, matcher.end() + 1));
 				// maybe needs a strip tabs
-				content = stripFormatting(content);
+				content = Utilities.stripFormatting(content);
+				content = Utilities.replaceWithHtmlEntity(content);
 				formFieldContent.add(content);
 			}
 		}
 		squawkView.updateFormFieldMap(formFieldNames, formFieldContent);
 	}
+	
+	/*
+	private void searchBrowserDocument() {
+		// after user loads component,
+		// parse the browser html and get all div id="#NAME#"
+		debug("searchBrowserDocument called...");		
+		List<String> formFieldNames = new ArrayList<String>();
+		List<String> formFieldContent = new ArrayList<String>();
+		
+		Document doc = Jsoup.parse(browser.getText());
+		Elements elems = new Elements();
+		
+		//String startToken = "id=\"#";
+		String startToken = "\"#";
+		String endToken = "#\"";
+		//String closingTag = "</span>";
+		//String content;
+				
+		// add title
+		formFieldNames.add("title");
+		formFieldContent.add(doc.title());
+		
+		// look for all ids with the template start and end tokens
+		Pattern pattern = Pattern.compile(startToken + "(.*?)" + endToken);
+		String key = "id";
+		elems = doc.getElementsByAttributeValueMatching(key, pattern);
+		for (Element el : elems) {
+			formFieldNames.add(el.toString());
+			formFieldContent.add(doc.getElementById(el.toString()).html());
+		}
+		squawkView.updateFormFieldMap(formFieldNames, formFieldContent);
+	}
+	*/
 	
 	private String patternMatchTitle() {
 		String title = "default title";
@@ -515,7 +558,11 @@ public class SquawkBrowser {
 		// can include styling elements too.
 		if (imageTag == null || imageTag == "") return "no image tag";
 		
+		// need to look for this: src=" as start token
+		// end token will be n chars sequence until "
+		
 		String imageTagContent = "";
+		String imageSrc = "";
 		String startToken = imageTag;
 		String endToken = ">";
 		
@@ -527,20 +574,38 @@ public class SquawkBrowser {
 			imageTagContent = imageTagContent.substring(
 					imageTagContent.indexOf(startToken) + startToken.length(), 
 					imageTagContent.indexOf(endToken));
-		}
+			
+			// now look only for the src part
+			imageSrc = getSrcFromTag(imageTagContent);
+		}		
+		return imageSrc;
+	}
+	
+	private String getSrcFromTag(String imageTagContent) {
+		if (imageTagContent == null || imageTagContent == "") return "no image tag content";
 		
-		return imageTagContent;
+		String imageSrc = "";
+		String startToken = "src=\"";
+		String endToken = "\"";
+		
+		Pattern pattern = Pattern.compile(startToken + "(.*?)" + endToken);
+		Matcher matcher = pattern.matcher(imageTagContent);
+		if (matcher.find()) {
+			imageSrc = matcher.group();
+			// strip the tokens from it
+			imageSrc = imageSrc.substring(imageSrc.indexOf(startToken) + startToken.length(), imageSrc.length() - 1);
+		}
+		return imageSrc;
 	}
 	
 	private void iterateFormFields(int type) {
 		// CHECK THE SPELLING & CASE OF THE ELEMENT ID!!
-		
-		//TODO
-		// html entities and special chars are gobbleygook
+		Document doc = Jsoup.parse(browser.getText());
 		
 		Iterator<Entry<String, String>> entries = squawkView.FORM_FIELDS.entrySet().iterator();
 		String key;
 		String value;
+		
 		while (entries.hasNext()) {
 			Map.Entry<String, String> entry = (Map.Entry<String, String>)entries.next();			
 			key = entry.getKey();
@@ -548,82 +613,69 @@ public class SquawkBrowser {
 			if (type == GET_FORM) {
 				// get the div id data and add to the Map
 				if (key.equals("title")) {
-					value = (String)browser.evaluate("return document.title");
+					value = doc.title();
 				}
 				else {
-					value = (String)browser.evaluate("return document.getElementById('" + key + "').innerHTML;");
+					value = doc.getElementById(key).html();
+					//value = Utilities.replaceWithHtmlEntity(value);
 				}				
 			}
 			else if (type == SET_FORM) {
 				// set the div id data from the Map				
-				value = stripFormatting(value);
-				value = replaceWithHtmlEntity(value);
-				boolean done = false;
-				String changer = "";
-				
+				//value = Utilities.stripFormatting(value);
+				//value = Utilities.replaceWithHtmlEntity(value);
 				if (key.equals("title")) {
-					changer = "document.title = \"" + value + "\";";
-					done = false;
-					try {
-						done = browser.execute(changer);
-					}
-					catch (SWTError e) {
-						debug("browser execute error: " + e.getMessage());
-					}
-					if (!done) {
-						debug("execute fail for key title: " + value + ", possibly due to special chars - use html entities only.");
-					}					
+					doc.title(value);
 				}
-				else {									
-					changer = "document.getElementById('" + key + "').innerHTML = '" + value + "';";					
-					done = false;
-					try {
-						done = browser.execute(changer);
-					}
-					catch (SWTError e) {
-						debug("browser execute error: " + e.getMessage());
-					}					
-					if (!done) {
-						debug("execute innerHTML fail for " + key + ", possibly due to special chars - use html entities only.");
-					}
+				else if (key.contains("URL")) {
+					doc.getElementById(key).attr(value);
 				}
+				else {												
+					doc.getElementById(key).html(value);
+				}				
+				// here set the jsoup doc to the browser
+				browser.setText(doc.html());				
 			}
 		}
 	}
 	
 	/*
-	  
-	//not yet...
-	  
+	private String parseDocumentElements8() {
+		Document doc = Jsoup.parse(browser.getText());
+		
+		Iterator<Entry<String, String>> entries = squawkView.FORM_FIELDS.entrySet().iterator();
+		String key;
+		//String value;
+		String elementString = "";
+		Element element;
+		
+		while (entries.hasNext()) {
+			Map.Entry<String, String> entry = (Map.Entry<String, String>)entries.next();			
+			key = entry.getKey();
+			//value = entry.getValue();
+			if ((!key.equals("title")) || (!key.contains("URL"))) {
+				debug("key: " + key);
+				element = doc.getElementById(key);
+				elementString = element.html();
+				
+				//elementString = Utilities.replaceWithHtmlEntity(elementString);				
+				//element.html(elementString);
+				
+				//elementString = doc.getElementById(key).html();
+				//elementString = Utilities.replaceWithHtmlEntity(elementString);
+			}
+		}
+		return doc.html();
+	}
+	*/
+	
+	/*	  
+	//not yet...	  
 	private void changeSingleFormField(String key, String newValue) {
 		// alt method of key based search
 		if (squawkView.FORM_FIELDS.containsKey(key)) {
 			squawkView.FORM_FIELDS.put(key, newValue);
 		}
-	}
-	*/
-	
-	private String stripFormatting(String original) {
-		String changed = original;
-		changed = changed.replaceAll("\n", "");
-		changed = changed.replaceAll("\t", "");
-		changed = changed.replaceAll("\r", ""); 
-		
-		return changed;
-	}
-	
-	private String replaceWithHtmlEntity(String original) {
-		// may need to only look for ' as it is also the closing element for js
-		String changed = original;
-		changed = changed.replaceAll("'", "&rsquo;");
-		changed = changed.replaceAll("’", "&rsquo;");		
-		return changed;
-	}
-	
-	/*
-	private void addTemplateHeadCSS(String cssLine) {		
-		// eg. additions/rewrites to <head><style> - may not work...		
-		//browser.execute("document.write(\"<style>body { background-color:#000 }</style>\");");
 	}
 	*/
 	

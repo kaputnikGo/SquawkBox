@@ -106,6 +106,7 @@ public class ControlView {
 		squawkView.b13.setText(button13String);
 		squawkView.b12 = new Button(squawkView.rowComp3, SWT.PUSH);
 		squawkView.b12.setText(button12String);
+		squawkView.b12.setEnabled(false);
 
 		// debugging console
 	    squawkView.debugText = new Text(innerLow, SWT.BORDER | SWT.WRAP | SWT.V_SCROLL);
