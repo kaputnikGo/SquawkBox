@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.GridData;
@@ -18,15 +19,26 @@ import MAIN.Utilities;
 
 public class TemplateView {
 	
-	public static void loadView(final SquawkView squawkView) {
-		squawkView.gridComp = new Composite(squawkView.shell, SWT.NONE);
+	public static void loadView(SquawkView squawkView) {
+		squawkView.scrollComp = new ScrolledComposite(squawkView.shell, SWT.V_SCROLL);		
+		squawkView.scrollComp.setExpandHorizontal(true);
+		squawkView.scrollComp.setExpandVertical(true);
+		squawkView.scrollComp.setMinWidth((Utilities.SHELL_WIDTH / 2) - Utilities.SHELL_PADDING);
+		squawkView.scrollComp.setMinHeight(Utilities.SHELL_HEIGHT - Utilities.SHELL_PADDING);
+		
+		squawkView.gridComp = new Composite(squawkView.scrollComp, SWT.NONE);
+		squawkView.scrollComp.setContent(squawkView.gridComp);
+		
 		GridLayout gridLayout = new GridLayout();
 		gridLayout.numColumns = 2;
-		squawkView.gridComp.setLayout(gridLayout);
+		squawkView.gridComp.setLayout(gridLayout);		
+		/*
+		FillLayout fillLayout = new FillLayout();
+		fillLayout.type = SWT.VERTICAL;
+		squawkView.gridComp.setLayout(fillLayout);
+		*/
 
 		Map.Entry<String, String> entry;
-		GridData data;
-		GridData data2;
 		Label label;
 		Text text;
 		squawkView.formTextFields = new ArrayList<Text>(squawkView.FORM_FIELDS.size());
@@ -36,20 +48,13 @@ public class TemplateView {
 		while (entries.hasNext()) {
 			entry = (Map.Entry<String, String>)entries.next();
 			
-			label = new Label(squawkView.gridComp, SWT.NONE);
+			label = getFormFieldLabel(squawkView);
 			label.setText(entry.getKey());
-			data = new GridData();
-			data.widthHint = Utilities.FORM_LABEL_WIDTH;
-			label.setLayoutData(data);
 			squawkView.formFieldLabels.add(label);
 
-			text = new Text(squawkView.gridComp, SWT.MULTI | SWT.BORDER | SWT.WRAP | SWT.V_SCROLL);
+			text = getFormFieldText(squawkView);
 			text.setText(entry.getValue());
 			text.setEnabled(true);
-			data2 = new GridData(GridData.FILL_HORIZONTAL);
-			data2.heightHint = Utilities.FORM_FIELD_HEIGHT;
-			// width will be remainder of gridComp after labels
-			text.setLayoutData(data2);
 			squawkView.formTextFields.add(text);
 		}
 		
@@ -59,5 +64,24 @@ public class TemplateView {
 		formGrid.right = new FormAttachment(100, -10);
 		formGrid.bottom = new FormAttachment(squawkView.gridComp, 10, SWT.BOTTOM);
 		squawkView.gridComp.setLayoutData(formGrid);	
+	}
+	
+	public static Text getFormFieldText(SquawkView squawkView) {
+		Text text = new Text(squawkView.gridComp, SWT.MULTI | SWT.BORDER | SWT.WRAP | SWT.V_SCROLL);
+		GridData data2;
+		data2 = new GridData(GridData.FILL_HORIZONTAL);
+		data2.heightHint = Utilities.FORM_FIELD_HEIGHT;
+		data2.minimumHeight = Utilities.FORM_FIELD_HEIGHT;
+		text.setLayoutData(data2);
+		return text;
+	}
+	
+	public static Label getFormFieldLabel(final SquawkView squawkView) {
+		Label label = new Label(squawkView.gridComp, SWT.NONE);
+		GridData data;
+		data = new GridData();
+		data.widthHint = Utilities.FORM_LABEL_WIDTH;
+		label.setLayoutData(data);
+		return label;
 	}
 }

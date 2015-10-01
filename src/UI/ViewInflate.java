@@ -5,12 +5,9 @@ public class ViewInflate {
 		
 	public void initView(final SquawkView squawkView, int viewType) {
 		this.squawkView = squawkView;
-
 		
-		ControlView.loadView(squawkView);
-		
+		ControlView.loadView(squawkView);		
 		TemplateView.loadView(squawkView);
-
 		//switchViewType(viewType);
 	}
 	

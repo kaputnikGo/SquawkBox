@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -32,12 +33,12 @@ import MAIN.Utilities;
 // view and controller...
 
 public class SquawkView {
-	private static final int SHELL_WIDTH = 1200;
-	private static final int SHELL_HEIGHT = 1000;
 	private static final boolean DEBUG = true;
 	private static Image icon;
 	private SqlTalk squawk;
 	private SquawkBrowser squawkBrowser;
+	private String appName = "SQUAWK BOX.";
+	private int currentFieldsNum = Utilities.DEFAULT_FIELD_MAX;
 	
 	private static final String errorString = "n/a";
 	
@@ -48,11 +49,10 @@ public class SquawkView {
 	protected Display display;
 	protected Shell shell;
 	protected ViewInflate viewInflate;
+	protected ScrolledComposite scrollComp;
 	protected Composite gridComp; 
 	
 	// var strings
-	private String appName = "SQUAWK BOX.";
-	
 	protected String userWebcode = "";
 	protected String userTemplateName = "";
 	protected String userComponentName = "";
@@ -88,8 +88,8 @@ public class SquawkView {
 		// init the display window		
 		display = new Display();		
 		shell = new Shell(display);
-		shell.setSize(SHELL_WIDTH, SHELL_HEIGHT);
-		shell.setMinimumSize(SHELL_WIDTH, SHELL_HEIGHT);
+		shell.setSize(Utilities.SHELL_WIDTH, Utilities.SHELL_HEIGHT);
+		shell.setMinimumSize(Utilities.SHELL_WIDTH, Utilities.SHELL_HEIGHT);
 		shell.setText(appName);
 		shell.setLayout(new FormLayout());
 		icon = new Image(display, getClass().getClassLoader().getResourceAsStream("resources/plug_icon.png"));
@@ -100,9 +100,6 @@ public class SquawkView {
 		//rightPanel.setLayout(stackLayout);
 	    squawk = new SqlTalk(this);
 	    
-	    // LinkedHashMap to preserve insertion order.
-	    // if other methods access this map (even get()), then use:
-	    // Map m = Collections.synchronizedMap(new LinkedHashMap(...));
 	    FORM_FIELDS = new LinkedHashMap<String, String>(squawk.initForDisplays());	    
 
 	    viewInflate = new ViewInflate();
@@ -176,30 +173,29 @@ public class SquawkView {
 			FORM_FIELDS.put(key, foundContent.get(i));
 			i++;
 		}
+		
+		// recalculate widget display of form fields		
+		scrollComp.setMinSize(gridComp.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+        gridComp.layout();
+        
 		updateConsole("updated form field size: " + FORM_FIELDS.size());
 	}
 	
 	public void updateFormFieldsDisplay() {
-		// fields are not the labels of div ids... :)
-		// this is a bit loopy between here and browser	
 		// TODO
 		// here is a problem if number of fields found exceeds number 
 		// created by default in squawk
 		int fieldNum = FORM_FIELDS.size();
-		
-		if (fieldNum > Utilities.DEFAULT_FIELD_MAX) {
-			updateConsole("ERROR: form field size " + fieldNum + ", exceeds default allocation " + Utilities.DEFAULT_FIELD_MAX);
-			// for each one
-			System.out.println("ERROR: formField num request exceeds default allocation.");
-			return;
-			/*
-			if (allocateNewFields(fieldNum - Utilities.DEFAULT_FIELD_MAX)) {
+		if (fieldNum > currentFieldsNum) {
+			updateConsole("form field size " + fieldNum + ", exceeds default allocation of " + currentFieldsNum);			
+			if (allocateNewFields(fieldNum)) {
 				updateConsole("added new formFields");
 			}
 			else {
 				System.out.println("ERROR in allocate new");
-			}
-			*/
+				updateConsole("Error in allocating new form fields.");
+				return;
+			}			
 		}
 				
 		int i = 0;
@@ -213,8 +209,6 @@ public class SquawkView {
 			formFieldLabels.get(i).setVisible(true);
 			i++;
 		}
-		// for remainder of formfields not used, can:
-		formTextFields.get(i).setVisible(false);
 	}
 	
 	public void clearFormFields() {
@@ -292,8 +286,8 @@ public class SquawkView {
 		// this called every char...
 		//	
 		
-		Text text = ((Text) event.widget);		
-		int id = ((int)event.widget.getData());
+		//Text text = ((Text) event.widget);		
+		//int id = ((int)event.widget.getData());
 		//updateConsole("text field updated id: " + id);
 		
 		//String what = text.getText();
@@ -328,49 +322,42 @@ public class SquawkView {
 		return true;
 	}
 	
-	/*
-	private boolean allocateNewFields(int numFields) {
-		// template/component page has found more tags than default allocation
-		// add another numFields number here.
-		System.out.println("allocate new, total fields: " + (formFieldLabels.size() + numFields));
+	
+	private boolean allocateNewFields(int requestedFieldsNum) {
+		if (requestedFieldsNum < 1) return false;
+		int numNewFields = 0;
+		
+		numNewFields = requestedFieldsNum - currentFieldsNum;
+		if (numNewFields < 1) return false;
+		updateConsole("allocate " + numNewFields + " new field(s) for total : " + requestedFieldsNum);
 
 		Label label;
-		Text text;
-		GridData data;
-		GridData data2;
-		
-		shell.open();
-		shell.layout(true);
-		gridComp.layout(true);
-		//Control[] children = gridComp.getChildren();
-
-		for (int i = 0; i < formFieldLabels.size() + numFields; i++) { 			
-			label = new Label(gridComp, SWT.NONE);
+		Text text;		
+		// oh wow
+		for (int i = 0; i < numNewFields;) { 						
+			label = TemplateView.getFormFieldLabel(this);
 			label.setText("empty");
-			data = new GridData();
-			data.widthHint = Utilities.FORM_LABEL_WIDTH;
-			label.setLayoutData(data);
 			formFieldLabels.add(label);
-
-			text = new Text(gridComp, SWT.MULTI | SWT.BORDER | SWT.WRAP | SWT.V_SCROLL);
-			text.setText("empty field");
+			updateConsole("add label count: " + i);
+			text = TemplateView.getFormFieldText(this);
 			text.setEnabled(true);
-			data2 = new GridData(GridData.FILL_HORIZONTAL);
-			data2.heightHint = Utilities.FORM_FIELD_HEIGHT;
-			// width will be remainder of gridComp after labels
-			text.setLayoutData(data2);
 			text.addModifyListener(new ModifyListener() {
 				public void modifyText(ModifyEvent event) {
 					updateTextField(event);
 				}
 			});	
 			formTextFields.add(text);
+			updateConsole("add text count: " + i);
+			i++;
 		}
-		gridComp.pack();
-		shell.pack();
+		gridComp.layout(true, true);
+		scrollComp.layout(true, true);
+		scrollComp.setMinSize(gridComp.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+		currentFieldsNum += numNewFields;
+		
 		return true;
 	}
-	*/
+
 	
 /************************************************************
 * 
