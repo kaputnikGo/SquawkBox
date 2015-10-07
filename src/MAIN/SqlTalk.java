@@ -57,9 +57,7 @@ public class SqlTalk {
 * 
 ************************************************************/		
 	public Map<String, String> initForDisplays() {
-		//TODO create a pool of fields of default or max size
 		FORM_FIELDS = new HashMap<String, String>();		
-		//FORM_FIELDS.put("default label", "default field");
 		for (int i = 0; i < Utilities.DEFAULT_FIELD_MAX; i++) {
 			FORM_FIELDS.put("empty " + i, "empty field");
 		}
@@ -84,8 +82,7 @@ public class SqlTalk {
 			stringArray[0] = "n/a";
 			return stringArray;
 		}	
-		else {
-			// convert arraylist to string[]			
+		else {			
 			List<String> list = getTemplateListByWebcode(webcode);
 			stringArray = list.toArray(new String[list.size()]);
 			return stringArray;
@@ -100,7 +97,6 @@ public class SqlTalk {
 	}
 	
 	protected void addNewTemplate(final String webcode, final String name, final String templateHtml) {		
-		//TODO
 		// expecting a fully constructed template with correct <div> id's for templates
 		// as a single html file
 		if (!Utilities.checkString(webcode)) {

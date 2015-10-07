@@ -21,10 +21,13 @@ public class ControlView {
 	private static String button9String = "dump";
 	private static String button10String = "refresh";
 	private static String button11String = "grid";
+	private static String button14String = "selector";
+	private static String button15String = "LOCK";
+	private static String button16String = "update selector(s)";
 	
 	private static String label16String = "Component List:";
 	private static String button12String = "add component";
-	private static String button13String = "start";
+	private static String button13String = "start new";
 	
 	public static void loadView(final SquawkView squawkView) {
 		// controls
@@ -98,6 +101,12 @@ public class ControlView {
 		squawkView.b6.setText(button6String);
 		squawkView.b11 = new Button(rowComp1, SWT.PUSH);
 		squawkView.b11.setText(button11String);
+		squawkView.b14 = new Button(rowComp1, SWT.PUSH);
+		squawkView.b14.setText(button14String);
+		squawkView.b15 = new Button(rowComp1, SWT.PUSH);
+		squawkView.b15.setText(button15String);
+		squawkView.b16 = new Button(rowComp1, SWT.PUSH);
+		squawkView.b16.setText(button16String);
   
 		// rowComp3 reserved for drop down component list
 		Label label16 = new Label(squawkView.rowComp3, SWT.NONE);

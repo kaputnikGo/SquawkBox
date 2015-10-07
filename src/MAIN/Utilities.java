@@ -19,6 +19,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import org.jsoup.safety.Whitelist;
 
@@ -28,7 +29,6 @@ public class Utilities {
 	public static final int SHELL_WIDTH = 1400;
 	public static final int SHELL_HEIGHT = 1000;
 	public static final int SHELL_PADDING = 120;
-	// this number is problematic... need dynamically allocate
 	public static final int DEFAULT_FIELD_MAX = 8;
 	public static final int FORM_FIELD_HEIGHT = 60;
 	public static final int FORM_LABEL_WIDTH = 120;
@@ -68,6 +68,11 @@ public class Utilities {
 			+ "style.appendChild(document.createTextNode(css));"
 			+ "}"
 			+ "head.appendChild(style);";
+	
+	// wobbly js via swt browser string...
+	// best try some jsoup
+	public static final String SELECT_HTML = "if(window.getSelection()){return window.getSelection().toString();}";
+	public static final String SELECT_HTML_ELEMENT = "if(window.getSelection()){return window.getSelection().parentElement();}";
 	
 	public static final String DOCTYPE_DECLARE_EMAIL = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n";
 	public static final String DOCTYPE_DECLARE_HTML3 = "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 3.2 Final//EN\">";
@@ -162,6 +167,10 @@ public class Utilities {
 		return candidate != null && !candidate.isEmpty();
 	}
 	
+	public static boolean checkMapEmpty(final Map< ?, ? > map) {
+		return map == null || map.isEmpty();
+	}
+	
 	@SuppressWarnings("unused")
 	public static boolean isValidUrl(final String candidate) {
 		// this returns only if it appears to be a valid url string
@@ -207,7 +216,6 @@ public class Utilities {
 	}
 	
 	public static String getTemplateHtml(final String webcode, final String name) {
-		//TODO
 		String htmlString = "";
 		if (!isValidWebcode(webcode)) {
 			System.out.println("ERROR: getTemplateHtml bad webcode - " + webcode);
@@ -218,7 +226,6 @@ public class Utilities {
 		try {
 			// construct the path string
 			String seek = "templates/EMAIL/" + webcode + "/" + name + ".html";
-			//TODO
 			System.out.println("template string: " + seek);			
 			// need to check for file extension (html or htm)
 		    InputStream inputStream = Utilities.class.getClassLoader().getResourceAsStream(seek);
@@ -265,14 +272,14 @@ public class Utilities {
 		return new String(strBuf);
 	}
 	
+	/*
 	public static String replaceWithHtmlEntity(String inputString) { 
+		//TODO		
+		// non-functioning now that ide is in utf-8	
 		//  this is to catch the use of entities in user added content	
 		// 	(&amp; &lsquo; &rsquo; &ldquo; &rdquo &mdash; &ndash; &copy; etc)
-		//  avoid <!-- --> comments !		
-		
-		//TODO
+		//  avoid <!-- --> comments !				
 		// some way to add this to the database so user can add new.		
-		
 		inputString = inputString.replaceAll("'", "&apos;");
 		inputString = inputString.replaceAll("�", "&lsquo;");
 		inputString = inputString.replaceAll("�", "&rsquo;");
@@ -282,23 +289,10 @@ public class Utilities {
 		inputString = inputString.replaceAll("�", "&ndash;");
 		inputString = inputString.replaceAll("�", "&mdash;");
 		inputString = inputString.replaceAll("�", "&copy;");
-		inputString = inputString.replaceAll("�", "&bull;");
-		
-		// xml versions entity
-		/*
-		inputString = inputString.replaceAll("&#x02018;", "&lsquo;");		
-		inputString = inputString.replaceAll("&#x02019;", "&rsquo;");		
-		inputString = inputString.replaceAll("&#x0201C;", "&ldquo;");		
-		inputString = inputString.replaceAll("&#x0201D;", "&rdquo;");		
-		inputString = inputString.replaceAll("&#x02026;", "&hellip;");
-		inputString = inputString.replaceAll("&#x02010;", "&ndash;");				
-		inputString = inputString.replaceAll("&#x02014;", "&mdash;");		
-		inputString = inputString.replaceAll("&#x000A9;", "&copy;");		
-		inputString = inputString.replaceAll("&#x02022;", "&bull;");
-		*/	
+		inputString = inputString.replaceAll("�", "&bull;");			
 		return inputString;		
 	}
-	
+	*/
 	
 	public static Whitelist getDocumentWhitelist() {		
 		Whitelist whitelist = new Whitelist();
@@ -501,25 +495,5 @@ public class Utilities {
 				System.out.println(element);
 			}
 		}		
-	}
-	
-	/*
-	public static String replaceHtmlEntityWithChar(String inputString) {
-		// get any html entities from content and turn into their chars
-		//inputString = inputString.replaceAll("&apos;", "'");
-		inputString = inputString.replaceAll("&lsquo;", "�");
-		inputString = inputString.replaceAll("&rsquo;", "�");
-		inputString = inputString.replaceAll("&ldquo;", "�");
-		inputString = inputString.replaceAll("&rdquo;", "�");
-		inputString = inputString.replaceAll("&hellip;", "�");
-		inputString = inputString.replaceAll("&ndash;", "�");
-		inputString = inputString.replaceAll("&mdash;", "�");
-		inputString = inputString.replaceAll("&copy;", "�");
-		inputString = inputString.replaceAll("&bull;", "�");
-		inputString = inputString.replaceAll("&amp;", "&");
-		inputString = inputString.replaceAll("&commat;", "@");
-		return inputString;	
-	}
-	*/
-	
+	}	
 }

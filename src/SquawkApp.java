@@ -27,17 +27,31 @@ public class SquawkApp {
 	
 	// need a class diagram...
 	
+	// ability to edit the template/component directly, bypassing any template IDs (create new IDs as well)
+	//		eg. changing an image or a table colour that sits outside any template spans, changing font/sizes etc.
+	//		need to guard the layout code...
+	// can select text from html browser, need to be able to edit and put it back again...
+	// get start+end index of selected string from html string, replace with new user edits. 
+	//	need to lock the template during this so no other edits are made, index count will be out.
+	
+	// better way of creating/editing bullet lists, nested ones mainly (number of bullets is not changeable presently
+	
 	// squawkView to load view for rightPanel depending on mode (templates or components)
 	
-	// what happens when there are more form fields that default number - have an error message. can create more dynamically?
-	// have increased default number to 24, added scrolling composite - but still need to figure on maximum number
-	//		and dynamic allocation of new resources, 
-	//		ie. create a very large pool,	switch "views" of chunks of 12 fields
-
+	// dynamic allocation of form fields achieved.
+	// need to work out way of dealing with dupes of span ids... multiple versions of same component
 	// need a component class with a name and its content?
+	// component class can be responsible for its own span ids and form fields that are linked.
+	
+	// noob component class Basic.java - for inheritance
+	// possibly need an edit/new component window to allowaccess to all component html directly
 	
 	// need a template_tags db table to list them and save them
 	
 	// insert new component within list of those already present...
+	// can only be possible when all components are reduced again to smallest discrete size
+	
+	// may need a bridge to javascript from java for some of the more functional things needing to be done
+	
 
 }

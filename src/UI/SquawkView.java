@@ -41,6 +41,7 @@ public class SquawkView {
 	private int currentFieldsNum = Utilities.DEFAULT_FIELD_MAX;
 	
 	private static final String errorString = "n/a";
+	private static final String USER_TAG = "selection";
 	
 	public static final int VIEW_TEMPLATE = 0;
 	public static final int VIEW_COMPONENT = 1;
@@ -79,6 +80,9 @@ public class SquawkView {
 	protected Button b11;
 	protected Button b12;
 	protected Button b13;
+	protected Button b14;
+	protected Button b15;
+	protected Button b16;
 	protected Text debugText;
 
 	
@@ -182,9 +186,6 @@ public class SquawkView {
 	}
 	
 	public void updateFormFieldsDisplay() {
-		// TODO
-		// here is a problem if number of fields found exceeds number 
-		// created by default in squawk
 		int fieldNum = FORM_FIELDS.size();
 		if (fieldNum > currentFieldsNum) {
 			updateConsole("form field size " + fieldNum + ", exceeds default allocation of " + currentFieldsNum);			
@@ -202,6 +203,7 @@ public class SquawkView {
 		for (String key : FORM_FIELDS.keySet()) {
 			// get the value associated with the key
 			formTextFields.get(i).setText(FORM_FIELDS.get(key));
+			// enable and visible in case we working with default fields still
 			formTextFields.get(i).setEnabled(true);
 			formTextFields.get(i).setVisible(true);
 			// get the key
@@ -221,6 +223,26 @@ public class SquawkView {
 	public void enableAddComponent(boolean enable) {
 		if (enable) b12.setEnabled(true);
 		else b12.setEnabled(true);
+	}
+	
+	public void lockInterface() {
+		// allow only one selection, is a live edit, commit then its gone
+		if (squawkBrowser.isLocked()) {
+			b12.setEnabled(false);
+			b5.setEnabled(false);
+			b14.setEnabled(false);
+			b15.setText("UNLOCK");
+			b16.setEnabled(true);
+			squawkBrowser.setLock(false);			
+		}
+		else {
+			b12.setEnabled(true);
+			b5.setEnabled(true);
+			b14.setEnabled(true);
+			b15.setText("LOCK");
+			b16.setEnabled(false);
+			squawkBrowser.setLock(true);
+		}
 	}
 	
 	public void disableFormFields() {
@@ -330,24 +352,9 @@ public class SquawkView {
 		numNewFields = requestedFieldsNum - currentFieldsNum;
 		if (numNewFields < 1) return false;
 		updateConsole("allocate " + numNewFields + " new field(s) for total : " + requestedFieldsNum);
-
-		Label label;
-		Text text;		
-		// oh wow
 		for (int i = 0; i < numNewFields;) { 						
-			label = TemplateView.getFormFieldLabel(this);
-			label.setText("empty");
-			formFieldLabels.add(label);
-			updateConsole("add label count: " + i);
-			text = TemplateView.getFormFieldText(this);
-			text.setEnabled(true);
-			text.addModifyListener(new ModifyListener() {
-				public void modifyText(ModifyEvent event) {
-					updateTextField(event);
-				}
-			});	
-			formTextFields.add(text);
-			updateConsole("add text count: " + i);
+			formFieldLabels.add(TemplateView.getFormFieldLabel(this, "empty"));
+			formTextFields.add(TemplateView.getFormFieldText(this, "empty"));
 			i++;
 		}
 		gridComp.layout(true, true);
@@ -357,7 +364,52 @@ public class SquawkView {
 		
 		return true;
 	}
-
+	
+	private void addSelectionField(String labelName, String selection) {
+		if (!Utilities.checkString(selection)) return;
+		if (!Utilities.checkString(labelName)) labelName = "empty";
+		updateConsole("add selection field: " + selection);
+		
+		// need to know if we changing default field or creating a new one
+		int size = FORM_FIELDS.size();
+		if (size < currentFieldsNum) {
+			formFieldLabels.get(size).setText(labelName);
+			formFieldLabels.get(size).setVisible(true);
+			formTextFields.get(size).setText(selection);
+			formTextFields.get(size).setEnabled(true);
+			formTextFields.get(size).setVisible(true);
+		}
+		else {
+			formFieldLabels.add(TemplateView.getFormFieldLabel(this, labelName));
+			formTextFields.add(TemplateView.getFormFieldText(this, selection));
+			scrollComp.layout(true, true);
+			currentFieldsNum++;		
+		}
+		
+		FORM_FIELDS.put(labelName, selection);
+	}
+	
+	//TODO
+	private void removeSelectionField() {
+		for (String key : FORM_FIELDS.keySet()) {
+			if (key.toString().equals(USER_TAG)) {
+				updateConsole("found key, removing...");
+				FORM_FIELDS.remove(key);
+				currentFieldsNum--;
+				updateFormFieldsDisplay();
+			}			
+		}		
+	}
+	
+	//TODO
+	private void updateSelection() {
+		updateConsole("update selector");
+		// get the selection text and update it
+		// assume is last field... oh dear - key the key USER_TAG
+		squawkBrowser.updateSelector(formTextFields.get(formTextFields.size()-1).getText());
+		// then
+		removeSelectionField();
+	}
 	
 /************************************************************
 * 
@@ -365,7 +417,7 @@ public class SquawkView {
 * 
 ************************************************************/		
 	void addButtonListeners() {
-		//TODO	    
+		//TODO - an array	    
 	    b5.addListener(SWT.Selection,  new Listener() {
 	    	public void handleEvent(Event event) {
 	    		// re-process the current device with new vars
@@ -425,6 +477,28 @@ public class SquawkView {
 	    	public void handleEvent(Event e) {    		
 	    		squawkBrowser.startComponents();
 	    		viewInflate.switchViewType(VIEW_COMPONENT);
+	    	}
+	    });
+		// user selected html for editing
+	    b14.addListener(SWT.Selection, new Listener() {
+	    	public void handleEvent(Event e) {    		
+	    		// get user string from browser,
+	    		// add it to a new unique form field	    		
+	    		addSelectionField(new String(USER_TAG), squawkBrowser.userSelection);
+	    		lockInterface();
+	    	}
+	    });
+		// user editing lock override
+	    b15.addListener(SWT.Selection, new Listener() {
+	    	public void handleEvent(Event e) {
+	    		updateConsole("lock override called");
+	    		lockInterface();
+	    	}
+	    });
+		// user editing lock override
+	    b16.addListener(SWT.Selection, new Listener() {
+	    	public void handleEvent(Event e) {
+	    		updateSelection();
 	    	}
 	    });
 	}

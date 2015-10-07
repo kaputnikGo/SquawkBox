@@ -22,6 +22,8 @@ import org.eclipse.swt.browser.ProgressListener;
 import org.eclipse.swt.browser.TitleEvent;
 import org.eclipse.swt.browser.TitleListener;
 import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.ShellEvent;
 import org.eclipse.swt.events.ShellListener;
 import org.eclipse.swt.graphics.Image;
@@ -37,8 +39,6 @@ import org.eclipse.swt.widgets.Monitor;
 import org.eclipse.swt.widgets.Shell;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 
 import MAIN.Utilities;
 
@@ -53,6 +53,8 @@ public class SquawkBrowser {
 	private Shell shell;
 	
 	private static String[] urls;
+	
+	private boolean USERLOCK = false;
 
 	private static final int TYPE_UNKNOWN = 0;
 	private static final int TYPE_LOCAL = 1;
@@ -66,6 +68,7 @@ public class SquawkBrowser {
 	protected String exportHtml;
 	protected String gridOnString;
 	protected String gridOffString;
+	protected String userSelection;
 	
 	protected boolean initPhase = false;
 	protected boolean gridTog = true;
@@ -157,7 +160,39 @@ public class SquawkBrowser {
 		    			squawkView.updateFormFieldsDisplay();
 		    		}
 		    	}
-		    });		   
+		    });	
+		    
+		    //TODO
+		    browser.addMouseListener(new MouseListener() {
+		    	@Override
+		    	public void mouseUp(MouseEvent event) {
+		    		try {
+		    			String selected = ((String) browser.evaluate(Utilities.SELECT_HTML));
+		    			debug("userSelection: " + selected);
+		    			if (Utilities.checkString(selected)) {			
+		    				userSelection = selected;
+		    				
+		    				USERLOCK = true;
+		    			}
+		    		} catch (SWTException e) {
+		    			debug("mouseup select error: " + e);
+		    		}
+		    		
+		    	}
+		    	@Override
+		    	public void mouseDown(MouseEvent event) {
+		    		// nothing, user selecting...
+		    		// could get an index here (possible start or end)
+		    		
+		    	}
+		    	@Override
+		    	public void mouseDoubleClick(MouseEvent event) {
+		    		// possibly not here...
+		    		//String userSelection = (String) browser.evaluate(Utilities.SELECT_HTML);
+		    		//userHtmlSelection((String) browser.evaluate(Utilities.SELECT_HTML));
+		    		// not yet
+		    	}
+		    });
 		    
 			shell.open();	
 			// grid blue thing
@@ -187,7 +222,6 @@ public class SquawkBrowser {
 	}
 	
 	public void startComponents() {
-		//TODO
 		initPhase = false;
 		// clear formfields in case templates were used
 		squawkView.clearFormFields();
@@ -206,7 +240,6 @@ public class SquawkBrowser {
 			debug("Component file not found: " + userComponentName);
 			return;
 		}		
-		//TODO
 		// need to check if already has basic template
 		Document doc = Jsoup.parse(browser.getText());		
 		//exportHtml += doc.html();
@@ -356,6 +389,48 @@ public class SquawkBrowser {
 			squawkView.updateFormFieldsDisplay();
 		}
 	}
+	
+	//TODO
+	public void updateSelector(String selected) {
+		// need the changed selection, idiot;
+		if(!Utilities.checkString(selected)) return;
+		// uses js:
+		// maybe not the full function declare, empty one
+		String jsFunction = //"function replaceSelectedText() {"
+			    "var sel, range;"
+			    +"if (window.getSelection) {"
+			        +"sel = window.getSelection();"
+			        +"if (sel.rangeCount) {"
+			            +"range = sel.getRangeAt(0);"
+			            +"range.deleteContents();"
+			            +"range.insertNode(document.createTextNode('" + selected + "'));"
+			        +"}"
+			    +"} else if (document.selection && document.selection.createRange) {"
+			        +"range = document.selection.createRange();"
+			        +"range.text = '" + selected + "';"
+			    +"}";
+			//+"}";
+		
+		boolean wait = false;
+		try {
+			wait = executeJavascriptAndWait(jsFunction);
+		} catch(SWTException e) {
+			// caused by js returning an error.
+			debug("execute js error: " + e);
+		}
+		
+		
+		debug("execute js is: " + wait);
+	}
+	
+	public void setLock(boolean lock) {
+		// called by user
+		USERLOCK = lock;
+	}
+	
+	public boolean isLocked() {
+		return USERLOCK == true;
+	}
 
 /************************************************************
 * 
@@ -454,23 +529,28 @@ public class SquawkBrowser {
 * 
 ************************************************************/	
 	
+	private void currentBrowserParse() {
+		currentBrowserHtml = "";		
+		Document doc = Jsoup.parse(browser.getText());		
+		currentBrowserHtml = doc.html();
+	}
+	
 	private void searchBrowserContent() {
 		// after user loads component,
 		// parse the browser html and get all div id="#NAME#"
 		debug("searchBrowserContent called...");		
 		List<String> formFieldNames = new ArrayList<String>();
 		List<String> formFieldContent = new ArrayList<String>();
-		currentBrowserHtml = "";		
-		Document doc = Jsoup.parse(browser.getText());		
-		currentBrowserHtml = doc.html();
+		currentBrowserParse();
 		
-//TODO
 // maybe add the jsoup here as well, currently using a String			
 		// look for str "# and #" with a word in between...
 		String startToken = "id=\"#";
 		String endToken = "#\"";
 		String closingTag = "</span>";
 		String content;
+		
+		// will need to account for userSeelcted "selector" key word, allow to remain.
 		
 		// add title, is between <head> and </head>
 		formFieldNames.add("title");
@@ -496,13 +576,12 @@ public class SquawkBrowser {
 						currentBrowserHtml.indexOf(closingTag, matcher.end() + 1));
 				// maybe needs a strip tabs
 				content = Utilities.stripFormatting(content);
-				content = Utilities.replaceWithHtmlEntity(content);
+				//content = Utilities.replaceWithHtmlEntity(content);
 				formFieldContent.add(content);
 			}
 		}
 		squawkView.updateFormFieldMap(formFieldNames, formFieldContent);
 	}
-	
 	/*
 	private void searchBrowserDocument() {
 		// after user loads component,
@@ -682,6 +761,7 @@ public class SquawkBrowser {
 	private static Pattern JAVASCRIPT_LINE_COMMENT_PATTERN = Pattern.compile("^^\\s*//.*$", Pattern.MULTILINE);
 	private boolean executeJavascriptAndWait(String javascript) {
 		javascript = JAVASCRIPT_LINE_COMMENT_PATTERN.matcher(javascript).replaceAll("");
+		System.out.println("js is:" + javascript);
 		return browser.execute(javascript);
 	}
 }
