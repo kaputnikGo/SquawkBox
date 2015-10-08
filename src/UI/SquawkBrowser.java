@@ -69,6 +69,9 @@ public class SquawkBrowser {
 	protected String gridOnString;
 	protected String gridOffString;
 	protected String userSelection;
+	// for use in selecting within template span
+	protected String userSelectionTag;
+	protected String userSelectionContent;
 	
 	protected boolean initPhase = false;
 	protected boolean gridTog = true;
@@ -151,7 +154,6 @@ public class SquawkBrowser {
 		    		//
 		    	}
 		    	public void completed(ProgressEvent event) {
-		    		debug("browser processing complete reached.");
 		    		searchBrowserContent();
 		    		//searchBrowserDocument();
 		    		
@@ -162,20 +164,18 @@ public class SquawkBrowser {
 		    	}
 		    });	
 		    
-		    //TODO
 		    browser.addMouseListener(new MouseListener() {
 		    	@Override
 		    	public void mouseUp(MouseEvent event) {
 		    		try {
 		    			String selected = ((String) browser.evaluate(Utilities.SELECT_HTML));
-		    			debug("userSelection: " + selected);
+		    			debug("User text selection: " + selected);
 		    			if (Utilities.checkString(selected)) {			
-		    				userSelection = selected;
-		    				
+		    				userSelection = selected;		    				
 		    				USERLOCK = true;
 		    			}
 		    		} catch (SWTException e) {
-		    			debug("mouseup select error: " + e);
+		    			debug("User selection error: " + e);
 		    		}
 		    		
 		    	}
@@ -210,14 +210,14 @@ public class SquawkBrowser {
 	}
 	public void openInitPage(final String userString) {
 		// this opens the generic template for a given webcode	
-		debug("resource url: " + userString);
+		debug("Loading resource url: " + userString);
 		browser.setUrl(userString);
 		
 	}
 	
 	public void openTemplatePage(final String userString) {		
 		initPhase = false;
-		debug("resource url: " + userString);
+		debug("Template resource url: " + userString);
 		browser.setUrl(userString);
 	}
 	
@@ -229,7 +229,7 @@ public class SquawkBrowser {
 		browser.setText(Utilities.returnComponentFileHtml("head.html"), true);
 		searchBrowserContent();
 		//searchBrowserDocument();
-		debug("browser window cleared with head.html");
+		debug("Browser window cleared, added head.html");
 	}
 	
 	public void addComponentToPage(final String userComponentName) {
@@ -260,7 +260,7 @@ public class SquawkBrowser {
 			debug("Not a valid url string: " + userString);
 			type =  TYPE_UNKNOWN;
 		}
-		debug("url type: " + type);
+		debug("Open webpage url type: " + type);
 		switch (type) {
 			case 0: // unknown
 					unknownPagetype(userString);
@@ -298,22 +298,22 @@ public class SquawkBrowser {
 				urls[i] = url;
 			}
 			catch (MalformedURLException ex) {
-				debug ("bad url.");
+				debug ("Open local directory error, bad url.");
 			}
 		}
 		if (urls.length > 0) {
 			browser.setUrl(urls[0]);
-			debug("local file opened: " + urls[0]);
+			debug("Local file opened: " + urls[0]);
 		}		
 	}
 	
 	public void processBrowser() {
-		debug("processBrowser called.");
+		debug("Processing browser.");
 		iterateFormFields(SET_FORM);
 	}
 	
 	public void openEmailTemplate() {
-		debug("opening email responsive template...");
+		debug("Opening email responsive V2 template.");
 		// get deviceHtml
 		URL emailFile = getClass().getClassLoader().getResource("templates/EMAIL/Component_template-v2-responsive.html");
 		if (emailFile == null) 
@@ -331,7 +331,7 @@ public class SquawkBrowser {
 	}
 	
 	public void dumpToBrowser(final String htmlDump) {
-		debug("html dump to browser called.");
+		debug("HTML dump to browser called.");
 		browser.setText(htmlDump, true);
 	}
 	
@@ -340,17 +340,16 @@ public class SquawkBrowser {
 		Document doc = Jsoup.parse(browser.getText());		
 		exportHtml += doc.html();
         if (!saveTemplateFile(saveDialog(savename))) { 
-            debug("exportHtml save fail with name: " + savename);
+            debug("Export browser html save fail with name: " + savename);
         	return; 
         } 
         else {
-        	debug ("exportHtml saved with name: " + savename);
+        	debug ("Export browser html saved with name: " + savename);
         }
 	}
 	
 	public void toggleGrid() {
 		// dem blue lines all over the place...
-	    debug("toggle called...");
 	    boolean result;
 	    try {	    
 		    if (!gridTog) {
@@ -360,7 +359,7 @@ public class SquawkBrowser {
 		    	result = browser.execute(gridOffString);
 		    }
 		    if (!result) {
-		    	debug("browser failed to execute toggle grid append script.");		    	
+		    	debug("Browser failed to execute toggle grid append script.");		    	
 		    }
 		    //flip it
 		    gridTog = !gridTog;
@@ -370,15 +369,8 @@ public class SquawkBrowser {
 		    browser.setText(currentBrowserHtml, true);		    		    
 		} catch (SWTException e) {
 			// caused by js returning an error.
-			debug("toggle error: " + e);
+			debug("Toggle grid js error: " + e);
 		}
-	}
-	
-	public void executeJavascript(String javascript) {		
-		boolean result = executeJavascriptAndWait(javascript);
-		if (result) debug("Browser execute js success.");
-		else
-			debug("Browser execute js fail.");
 	}
 	
 	public void refreshBrowser() {
@@ -390,14 +382,13 @@ public class SquawkBrowser {
 		}
 	}
 	
-	//TODO
+
 	public void updateSelector(String selected) {
-		// need the changed selection, idiot;
+//TODO
+// need to get the parent template span (if any) and change it too.		
 		if(!Utilities.checkString(selected)) return;
-		// uses js:
-		// maybe not the full function declare, empty one
-		String jsFunction = //"function replaceSelectedText() {"
-			    "var sel, range;"
+		debug("Update with text: " + selected);
+		String jsFunction = "var sel, range;"
 			    +"if (window.getSelection) {"
 			        +"sel = window.getSelection();"
 			        +"if (sel.rangeCount) {"
@@ -406,21 +397,17 @@ public class SquawkBrowser {
 			            +"range.insertNode(document.createTextNode('" + selected + "'));"
 			        +"}"
 			    +"} else if (document.selection && document.selection.createRange) {"
-			        +"range = document.selection.createRange();"
+			        +"range = document.selection.createRange();" // createRange().htmlText; to include html tags ?
 			        +"range.text = '" + selected + "';"
 			    +"}";
-			//+"}";
-		
-		boolean wait = false;
+
 		try {
-			wait = executeJavascriptAndWait(jsFunction);
+			if (executeJavascript(jsFunction)) 
+				checkForTemplateSelection(selected);
 		} catch(SWTException e) {
 			// caused by js returning an error.
 			debug("execute js error: " + e);
 		}
-		
-		
-		debug("execute js is: " + wait);
 	}
 	
 	public void setLock(boolean lock) {
@@ -538,20 +525,17 @@ public class SquawkBrowser {
 	private void searchBrowserContent() {
 		// after user loads component,
 		// parse the browser html and get all div id="#NAME#"
-		debug("searchBrowserContent called...");		
+		debug("Checking browser page for editable content.");
 		List<String> formFieldNames = new ArrayList<String>();
 		List<String> formFieldContent = new ArrayList<String>();
 		currentBrowserParse();
-		
-// maybe add the jsoup here as well, currently using a String			
+				
 		// look for str "# and #" with a word in between...
 		String startToken = "id=\"#";
 		String endToken = "#\"";
 		String closingTag = "</span>";
 		String content;
-		
-		// will need to account for userSeelcted "selector" key word, allow to remain.
-		
+			
 		// add title, is between <head> and </head>
 		formFieldNames.add("title");
 		formFieldContent.add(patternMatchTitle());
@@ -576,44 +560,11 @@ public class SquawkBrowser {
 						currentBrowserHtml.indexOf(closingTag, matcher.end() + 1));
 				// maybe needs a strip tabs
 				content = Utilities.stripFormatting(content);
-				//content = Utilities.replaceWithHtmlEntity(content);
 				formFieldContent.add(content);
 			}
 		}
 		squawkView.updateFormFieldMap(formFieldNames, formFieldContent);
 	}
-	/*
-	private void searchBrowserDocument() {
-		// after user loads component,
-		// parse the browser html and get all div id="#NAME#"
-		debug("searchBrowserDocument called...");		
-		List<String> formFieldNames = new ArrayList<String>();
-		List<String> formFieldContent = new ArrayList<String>();
-		
-		Document doc = Jsoup.parse(browser.getText());
-		Elements elems = new Elements();
-		
-		//String startToken = "id=\"#";
-		String startToken = "\"#";
-		String endToken = "#\"";
-		//String closingTag = "</span>";
-		//String content;
-				
-		// add title
-		formFieldNames.add("title");
-		formFieldContent.add(doc.title());
-		
-		// look for all ids with the template start and end tokens
-		Pattern pattern = Pattern.compile(startToken + "(.*?)" + endToken);
-		String key = "id";
-		elems = doc.getElementsByAttributeValueMatching(key, pattern);
-		for (Element el : elems) {
-			formFieldNames.add(el.toString());
-			formFieldContent.add(doc.getElementById(el.toString()).html());
-		}
-		squawkView.updateFormFieldMap(formFieldNames, formFieldContent);
-	}
-	*/
 	
 	private String patternMatchTitle() {
 		String title = "default title";
@@ -628,18 +579,16 @@ public class SquawkBrowser {
 			// strip the tokens from it
 			title = title.substring(title.indexOf(startToken) + startToken.length(), title.indexOf(endToken));
 		}
-		debug("patternMatch title: " + title);
 		return title;
 	}
 	
 	private String patternMatchImageTag(final String imageTag) {
 		// imageTagContent starts with any imageTag (#NAMEURL#) and ends with either ">" or "/>" 
 		// can include styling elements too.
-		if (imageTag == null || imageTag == "") return "no image tag";
+		if (imageTag == null || imageTag == "") return "No image tag";
 		
 		// need to look for this: src=" as start token
-		// end token will be n chars sequence until "
-		
+		// end token will be n chars sequence until "		
 		String imageTagContent = "";
 		String imageSrc = "";
 		String startToken = imageTag;
@@ -661,7 +610,7 @@ public class SquawkBrowser {
 	}
 	
 	private String getSrcFromTag(String imageTagContent) {
-		if (imageTagContent == null || imageTagContent == "") return "no image tag content";
+		if (imageTagContent == null || imageTagContent == "") return "No image tag content";
 		
 		String imageSrc = "";
 		String startToken = "src=\"";
@@ -696,13 +645,10 @@ public class SquawkBrowser {
 				}
 				else {
 					value = doc.getElementById(key).html();
-					//value = Utilities.replaceWithHtmlEntity(value);
 				}				
 			}
 			else if (type == SET_FORM) {
 				// set the div id data from the Map				
-				//value = Utilities.stripFormatting(value);
-				//value = Utilities.replaceWithHtmlEntity(value);
 				if (key.equals("title")) {
 					doc.title(value);
 				}
@@ -717,9 +663,76 @@ public class SquawkBrowser {
 			}
 		}
 	}
+
+//TODO	
+	private void checkForTemplateSelection(String selection) {
+		// user selected text, check if it is within template span,
+		// as need to update that list too.
+		Document doc = Jsoup.parse(browser.getText());		
+		String candidate = doc.select("span:contains(" + selection + ")").first().toString();
+		String startToken = "id=\"#";
+		String endToken = "#\"";
+		Pattern pattern = Pattern.compile(startToken + "(.*?)" + endToken);
+		Matcher matcher = pattern.matcher(candidate);
+		String tag;
+		// should only be one (?)
+		if (matcher.find()) {
+			// here remove the id= part
+			tag = matcher.group().toString();
+			tag = tag.substring(4, tag.length()-1);
+			// look for tag in FORM_FIELDS
+			debug("Found selection in matching tag element: " + tag);
+			squawkView.updateSingleFormField(tag, candidate);
+		}
+	}
+	
+	private static Pattern JAVASCRIPT_LINE_COMMENT_PATTERN = Pattern.compile("^^\\s*//.*$", Pattern.MULTILINE);
+	private boolean executeJavascript(String javascript) {
+		javascript = JAVASCRIPT_LINE_COMMENT_PATTERN.matcher(javascript).replaceAll("");
+		return browser.execute(javascript);
+	}
 	
 	/*
-	private String parseDocumentElements8() {
+	 * 
+	 *  Unused functions below
+	 * 
+	 */
+	
+	/*
+	private void searchBrowserDocument() {
+		// after user loads component,
+		// parse the browser html and get all div id="#NAME#"
+		debug("searchBrowserDocument called...");		
+		List<String> formFieldNames = new ArrayList<String>();
+		List<String> formFieldContent = new ArrayList<String>();
+		
+		Document doc = Jsoup.parse(browser.getText());
+		Elements elems = new Elements();
+		
+		//String startToken = "id=\"#";
+		String startToken = "\"#";
+		String endToken = "#\"";
+		//String closingTag = "</span>";
+		//String content;
+				
+		// add title
+		formFieldNames.add("title");
+		formFieldContent.add(doc.title());
+		
+		// look for all ids with the template start and end tokens
+		Pattern pattern = Pattern.compile(startToken + "(.*?)" + endToken);
+		String key = "id";
+		elems = doc.getElementsByAttributeValueMatching(key, pattern);
+		for (Element el : elems) {
+			formFieldNames.add(el.toString());
+			formFieldContent.add(doc.getElementById(el.toString()).html());
+		}
+		squawkView.updateFormFieldMap(formFieldNames, formFieldContent);
+	}
+	*/
+	
+	/*
+	private String parseDocumentElements() {
 		Document doc = Jsoup.parse(browser.getText());
 		
 		Iterator<Entry<String, String>> entries = squawkView.FORM_FIELDS.entrySet().iterator();
@@ -757,11 +770,4 @@ public class SquawkBrowser {
 		}
 	}
 	*/
-	
-	private static Pattern JAVASCRIPT_LINE_COMMENT_PATTERN = Pattern.compile("^^\\s*//.*$", Pattern.MULTILINE);
-	private boolean executeJavascriptAndWait(String javascript) {
-		javascript = JAVASCRIPT_LINE_COMMENT_PATTERN.matcher(javascript).replaceAll("");
-		System.out.println("js is:" + javascript);
-		return browser.execute(javascript);
-	}
 }

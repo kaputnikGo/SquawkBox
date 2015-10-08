@@ -29,7 +29,7 @@ public class Utilities {
 	public static final int SHELL_WIDTH = 1400;
 	public static final int SHELL_HEIGHT = 1000;
 	public static final int SHELL_PADDING = 120;
-	public static final int DEFAULT_FIELD_MAX = 8;
+	public static final int DEFAULT_FIELD_MAX = 4;
 	public static final int FORM_FIELD_HEIGHT = 60;
 	public static final int FORM_LABEL_WIDTH = 120;
 	

@@ -37,7 +37,7 @@ public class SquawkView {
 	private static Image icon;
 	private SqlTalk squawk;
 	private SquawkBrowser squawkBrowser;
-	private String appName = "SQUAWK BOX.";
+	private String appName = "SQUAWK BOX - prototype";
 	private int currentFieldsNum = Utilities.DEFAULT_FIELD_MAX;
 	
 	private static final String errorString = "n/a";
@@ -58,12 +58,14 @@ public class SquawkView {
 	protected String userTemplateName = "";
 	protected String userComponentName = "";
 	
-	// get them from the squawk
+	// UI collections
 	protected List<Text> formTextFields;
 	protected List<Label> formFieldLabels;
 	protected Map<String, String> FORM_FIELDS;
+	protected List<Button> buttonList;
 
-	protected Button[] webcodeButtons;
+	protected Text debugText;
+
 	protected Combo comboTemplates;
 	protected Combo componentTemplates;
 	protected Composite rowComp2;
@@ -71,24 +73,7 @@ public class SquawkView {
 	protected Composite rightPanel;
 	protected StackLayout stackLayout;	
 	
-	protected Button b5;
-	protected Button b6;
-	protected Button b7;
-	protected Button b8;
-	protected Button b9;
-	protected Button b10;
-	protected Button b11;
-	protected Button b12;
-	protected Button b13;
-	protected Button b14;
-	protected Button b15;
-	protected Button b16;
-	protected Text debugText;
-
-	
-	public SquawkView() {
-		// constructor
-		
+	public SquawkView() {	
 		// init the display window		
 		display = new Display();		
 		shell = new Shell(display);
@@ -108,9 +93,8 @@ public class SquawkView {
 
 	    viewInflate = new ViewInflate();
 		viewInflate.initView(this, VIEW_TEMPLATE);
-		updateConsole("formfield size: " + FORM_FIELDS.size());
 		squawk.installDB();				
-		updateConsole("Squawk says finished DB.");
+		updateConsole("Database checks complete.");
 
 		addButtonListeners();		
 		addComboElements();
@@ -176,21 +160,17 @@ public class SquawkView {
 			//FORM_FIELDS.putIfAbsent(key, foundContent.get(i));
 			FORM_FIELDS.put(key, foundContent.get(i));
 			i++;
-		}
-		
+		}	
 		// recalculate widget display of form fields		
 		scrollComp.setMinSize(gridComp.computeSize(SWT.DEFAULT, SWT.DEFAULT));
         gridComp.layout();
-        
-		updateConsole("updated form field size: " + FORM_FIELDS.size());
 	}
 	
 	public void updateFormFieldsDisplay() {
 		int fieldNum = FORM_FIELDS.size();
-		if (fieldNum > currentFieldsNum) {
-			updateConsole("form field size " + fieldNum + ", exceeds default allocation of " + currentFieldsNum);			
+		if (fieldNum > currentFieldsNum) {			
 			if (allocateNewFields(fieldNum)) {
-				updateConsole("added new formFields");
+				// nothing
 			}
 			else {
 				System.out.println("ERROR in allocate new");
@@ -213,6 +193,17 @@ public class SquawkView {
 		}
 	}
 	
+	public void updateSingleFormField(String tag, String content) {
+		updateConsole("Updating formField at tag: " + tag);
+		for (String key : FORM_FIELDS.keySet()) {
+			if (key.toString().equals(tag)) {
+				// update its content with the changed
+				FORM_FIELDS.put(key, content);
+				updateFormFieldsDisplay();				
+			}		
+		}
+	}
+	
 	public void clearFormFields() {
 		for (int i = 0; i < formTextFields.size(); i++) {
 			formTextFields.get(i).setText("");
@@ -221,28 +212,52 @@ public class SquawkView {
 	}
 	
 	public void enableAddComponent(boolean enable) {
-		if (enable) b12.setEnabled(true);
-		else b12.setEnabled(true);
+		if (enable) 
+			buttonList.get(19).setEnabled(true);
+		else 
+			buttonList.get(19).setEnabled(false);
 	}
 	
 	public void lockInterface() {
+		// has an array now, yo.
 		// allow only one selection, is a live edit, commit then its gone
-		if (squawkBrowser.isLocked()) {
-			b12.setEnabled(false);
-			b5.setEnabled(false);
-			b14.setEnabled(false);
-			b15.setText("UNLOCK");
-			b16.setEnabled(true);
-			squawkBrowser.setLock(false);			
+		// lock everything except the selection Text field and updateSelector buttonList.get(9) -(b16)
+		// leave override lock enabled always
+		
+// TODO
+// add call to lock/unlock FORM_FIELDS except selection
+		for (int i = 0; i < buttonList.size(); i++) {
+			if (squawkBrowser.isLocked()) {
+				// disable all controls except the update selector
+				buttonList.get(i).setEnabled(false);
+				if (i == 8) {
+					buttonList.get(8).setText("UNLOCK");
+					buttonList.get(8).setEnabled(true);
+				}
+				if (i == 9) {
+					buttonList.get(9).setEnabled(true);
+				}
+				if (i == 10) {
+					buttonList.get(10).setEnabled(true);
+				}
+			}
+			else {
+				// enable all controls except the update selector
+				buttonList.get(i).setEnabled(true);
+				if (i == 8) {
+					buttonList.get(8).setText("LOCK");					
+				}
+				if (i == 9) {
+					buttonList.get(9).setEnabled(false);
+				}
+				if (i == 10) {
+					buttonList.get(10).setEnabled(false);
+				}
+			}
+			// always
+			
 		}
-		else {
-			b12.setEnabled(true);
-			b5.setEnabled(true);
-			b14.setEnabled(true);
-			b15.setText("LOCK");
-			b16.setEnabled(false);
-			squawkBrowser.setLock(true);
-		}
+		squawkBrowser.setLock(!squawkBrowser.isLocked());
 	}
 	
 	public void disableFormFields() {
@@ -278,7 +293,7 @@ public class SquawkView {
 				return;
 			}
 			squawkBrowser.openInitPage(initFile.toString());
-			updateConsole("openResourcePage called.");
+			updateConsole("Initialise browser.");
 		}
 	}
 	
@@ -290,7 +305,7 @@ public class SquawkView {
 			initBrowser();
 		}
 		else {
-			updateConsole("browser not null.");
+			updateConsole("Browser is not null.");
 		}
 	}
 	
@@ -299,12 +314,12 @@ public class SquawkView {
 		Button button = ((Button) event.widget);
 		userWebcode = button.getText();
 		comboTemplates.setItems(squawk.getTemplateList(userWebcode));
-		updateConsole("Button press: " + userWebcode);
+		updateConsole("Template webcode selected: " + userWebcode);
 	}
 	
 
 	void updateTextField(ModifyEvent event) {
-		//TODO - got the id num	
+//TODO - got the id num	
 		// this called every char...
 		//	
 		
@@ -332,13 +347,9 @@ public class SquawkView {
 	}
 	
 	private boolean preProcessFormFields() {
-		updateConsole("preprocess formfields now...");
 		int i = 0;
 		for (String key : FORM_FIELDS.keySet()) {
 			FORM_FIELDS.put(key, formTextFields.get(i).getText());
-			if (key.toString().equals("title")) {
-				updateConsole("title from text field: " + formTextFields.get(i).getText());
-			}
 			i++;
 		}
 		return true;
@@ -351,10 +362,9 @@ public class SquawkView {
 		
 		numNewFields = requestedFieldsNum - currentFieldsNum;
 		if (numNewFields < 1) return false;
-		updateConsole("allocate " + numNewFields + " new field(s) for total : " + requestedFieldsNum);
 		for (int i = 0; i < numNewFields;) { 						
-			formFieldLabels.add(TemplateView.getFormFieldLabel(this, "empty"));
-			formTextFields.add(TemplateView.getFormFieldText(this, "empty"));
+			formFieldLabels.add(TemplateView.getFormFieldLabel(this, "empty", false));
+			formTextFields.add(TemplateView.getFormFieldText(this, "empty", false));
 			i++;
 		}
 		gridComp.layout(true, true);
@@ -368,9 +378,7 @@ public class SquawkView {
 	private void addSelectionField(String labelName, String selection) {
 		if (!Utilities.checkString(selection)) return;
 		if (!Utilities.checkString(labelName)) labelName = "empty";
-		updateConsole("add selection field: " + selection);
 		
-		// need to know if we changing default field or creating a new one
 		int size = FORM_FIELDS.size();
 		if (size < currentFieldsNum) {
 			formFieldLabels.get(size).setText(labelName);
@@ -378,36 +386,41 @@ public class SquawkView {
 			formTextFields.get(size).setText(selection);
 			formTextFields.get(size).setEnabled(true);
 			formTextFields.get(size).setVisible(true);
-		}
+		}		
 		else {
-			formFieldLabels.add(TemplateView.getFormFieldLabel(this, labelName));
-			formTextFields.add(TemplateView.getFormFieldText(this, selection));
+			formFieldLabels.add(TemplateView.getFormFieldLabel(this, labelName, true));
+			formTextFields.add(TemplateView.getFormFieldText(this, selection, true));
 			scrollComp.layout(true, true);
 			currentFieldsNum++;		
-		}
-		
+		}		
 		FORM_FIELDS.put(labelName, selection);
 	}
 	
-	//TODO
+	
 	private void removeSelectionField() {
 		for (String key : FORM_FIELDS.keySet()) {
 			if (key.toString().equals(USER_TAG)) {
-				updateConsole("found key, removing...");
 				FORM_FIELDS.remove(key);
-				currentFieldsNum--;
-				updateFormFieldsDisplay();
+				//currentFieldsNum--;
+				//updateFormFieldsDisplay();
 			}			
 		}		
 	}
 	
-	//TODO
 	private void updateSelection() {
-		updateConsole("update selector");
 		// get the selection text and update it
-		// assume is last field... oh dear - key the key USER_TAG
+		// assume is last field... oh dear - key the key USER_TAG?
 		squawkBrowser.updateSelector(formTextFields.get(formTextFields.size()-1).getText());
 		// then
+		lockInterface();
+		removeSelectionField();
+	}
+	
+	private void cancelSelection() {
+		// stop it all, now	
+		
+		// then
+		lockInterface();
 		removeSelectionField();
 	}
 	
@@ -417,110 +430,108 @@ public class SquawkView {
 * 
 ************************************************************/		
 	void addButtonListeners() {
-		//TODO - an array	    
-	    b5.addListener(SWT.Selection,  new Listener() {
-	    	public void handleEvent(Event event) {
-	    		// re-process the current device with new vars
-	    		if (preProcessFormFields())
-	    			squawkBrowser.processBrowser();
-	    	}
-	    });
-	    b6.addListener(SWT.Selection,  new Listener() {
-	    	public void handleEvent(Event event) {
-	    		// export the finished device as a text file
-	    		// send default save name string to browser
-	    		squawkBrowser.exportBrowser("test_save");
-	    	}
-	    });
-	    b7.addListener(SWT.Selection,  new Listener() {
-	    	public void handleEvent(Event event) {
-	    		// 
-	    		openBrowser();
-	    	}
-	    });
-		// open file button
-	    b8.addListener(SWT.Selection, new Listener() {
-	    	public void handleEvent(Event e) {
-	    		squawkBrowser.openLocalDirFile();
-	    	}
-	    });
+		// array ordering is flunky here...
+		// init state for the buttons as well.
 		// dump to squawkBrowser button
-	    b9.addListener(SWT.Selection, new Listener() {
+		buttonList.get(0).addListener(SWT.Selection, new Listener() {
 	    	public void handleEvent(Event e) {
 	    		//squawkBrowser.dumpToBrowser(Utilities.debugDumpTableDB(squawk.getDefaultDB(), squawk.getComponentTable()));
 	    		squawkBrowser.dumpToBrowser(squawkBrowser.getBrowserHtml());
 	    	}
 	    });
 		// add site specific wrapper to device in browser
-	    b10.addListener(SWT.Selection, new Listener() {
+		buttonList.get(1).addListener(SWT.Selection, new Listener() {
 	    	public void handleEvent(Event e) {
 	    		//squawkBrowser.openEmailTemplate();
 	    		squawkBrowser.refreshBrowser();
 	    		
 	    	}
 	    });
+		buttonList.get(2).addListener(SWT.Selection,  new Listener() {
+	    	public void handleEvent(Event event) {
+	    		openBrowser();
+	    	}
+	    });
+		// open file button
+		buttonList.get(3).addListener(SWT.Selection, new Listener() {
+	    	public void handleEvent(Event e) {
+	    		squawkBrowser.openLocalDirFile();
+	    	}
+	    });	
+		// re-process the current device with new vars
+		buttonList.get(4).addListener(SWT.Selection,  new Listener() {
+	    	public void handleEvent(Event event) {
+	    		if (preProcessFormFields())
+	    			squawkBrowser.processBrowser();
+	    	}
+	    });
+		// export the finished device as a text file
+		buttonList.get(5).addListener(SWT.Selection,  new Listener() {
+	    	public void handleEvent(Event event) {	    		
+	    		// send default save name string to browser
+	    		squawkBrowser.exportBrowser("test_save");
+	    	}
+	    });
+	    	    
 		// toggle grid lines of blue
-	    b11.addListener(SWT.Selection, new Listener() {
+		buttonList.get(6).addListener(SWT.Selection, new Listener() {
 	    	public void handleEvent(Event e) {
 	    		squawkBrowser.toggleGrid();
 	    	}
 	    });
+		// user selected html for editing
+		buttonList.get(7).addListener(SWT.Selection, new Listener() {
+	    	public void handleEvent(Event e) {    		
+	    		// get user string from browser,
+	    		// add it to a new unique form field	
+	    		lockInterface();
+	    		addSelectionField(new String(USER_TAG), squawkBrowser.userSelection);
+	    	}
+	    });
+		// user editing lock override
+		buttonList.get(8).addListener(SWT.Selection, new Listener() {
+	    	public void handleEvent(Event e) {
+	    		updateConsole("Lock override called");
+	    		lockInterface();
+	    	}
+	    });
+		// update user selection text
+		buttonList.get(9).addListener(SWT.Selection, new Listener() {
+	    	public void handleEvent(Event e) {
+	    		updateSelection();
+	    		if (preProcessFormFields())
+	    			squawkBrowser.processBrowser();
+	    	}
+	    });
+		// cancel user selection text
+		buttonList.get(10).addListener(SWT.Selection, new Listener() {
+	    	public void handleEvent(Event e) {
+	    		cancelSelection();
+	    		if (preProcessFormFields())
+	    			squawkBrowser.processBrowser();
+	    	}
+	    });
+		buttonList.get(10).setEnabled(false);
+		// webcodes button listeners added in ControlView
+
+		// clear browser browser to allow creating component template	
+		buttonList.get(18).addListener(SWT.Selection, new Listener() {
+	    	public void handleEvent(Event e) {    		
+	    		squawkBrowser.startComponents();
+	    		//viewInflate.switchViewType(VIEW_COMPONENT);
+	    	}
+	    });
 		// add selected component to browser
-	    b12.addListener(SWT.Selection, new Listener() {
+		buttonList.get(19).addListener(SWT.Selection, new Listener() {
 	    	public void handleEvent(Event e) {    		
 	    		squawkBrowser.addComponentToPage(userComponentName);
 	    		updateFormFieldsDisplay();
 	    	}
 	    });
-		// clear browser browser to allow creating component template
-	    b13.addListener(SWT.Selection, new Listener() {
-	    	public void handleEvent(Event e) {    		
-	    		squawkBrowser.startComponents();
-	    		viewInflate.switchViewType(VIEW_COMPONENT);
-	    	}
-	    });
-		// user selected html for editing
-	    b14.addListener(SWT.Selection, new Listener() {
-	    	public void handleEvent(Event e) {    		
-	    		// get user string from browser,
-	    		// add it to a new unique form field	    		
-	    		addSelectionField(new String(USER_TAG), squawkBrowser.userSelection);
-	    		lockInterface();
-	    	}
-	    });
-		// user editing lock override
-	    b15.addListener(SWT.Selection, new Listener() {
-	    	public void handleEvent(Event e) {
-	    		updateConsole("lock override called");
-	    		lockInterface();
-	    	}
-	    });
-		// user editing lock override
-	    b16.addListener(SWT.Selection, new Listener() {
-	    	public void handleEvent(Event e) {
-	    		updateSelection();
-	    	}
-	    });
-	}
-	
-	void addWebcodeButtons() {
-		int numButtons = Utilities.WEBCODE_LIST.length;
-		if (numButtons <= 0) numButtons = 1;		
-		webcodeButtons = new Button[numButtons];		
-		for (int i = 0; i < numButtons; i++) {
-			webcodeButtons[i] = new Button(rowComp2, SWT.PUSH);
-			webcodeButtons[i].setText(Utilities.WEBCODE_LIST[i]);
-			webcodeButtons[i].addListener(SWT.Selection,  new Listener() {
-				@Override
-				public void handleEvent(Event event) {
-					userButtonPressed(event);
-				}
-				
-			});
-		}		
+		buttonList.get(19).setEnabled(false);
 	}
 		
-	void addTextListeners() {
+	private void addTextListeners() {
 		// these listen to the text boxes and update the browser vars
 		for (int i = 0; i < FORM_FIELDS.size(); i++) {
 			formTextFields.get(i).addModifyListener(new ModifyListener() {
@@ -533,7 +544,7 @@ public class SquawkView {
 		}
 	}
 	
-	void addComboElements() {	
+	private void addComboElements() {	
 		// full template selector
 		comboTemplates = new Combo(rowComp2, SWT.DROP_DOWN | SWT.BORDER);
 	    SelectionListener comboListener = new SelectionAdapter() {

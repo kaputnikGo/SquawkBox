@@ -65,6 +65,7 @@ public class SqlTalk {
 	}
 	
 	public void installDB() {
+		debug("Checking database...");
 		installAdminTable();		
 		installTemplatesTable();
 		installComponentsTable();
@@ -146,7 +147,6 @@ public class SqlTalk {
 			return true;
 		}
 		else {
-			debug("check table exists returned: " + check);
 			createAdminTable();
 			populateAdminTable();	
 			return true;
@@ -161,7 +161,6 @@ public class SqlTalk {
 			return true;
 		}
 		else {
-			debug("check table exists returned: " + check);
 			createTemplatesTable();
 			//TODO
 			// this needs to get templates from the EMAIL folders
@@ -179,7 +178,6 @@ public class SqlTalk {
 			return true;
 		}
 		else {
-			debug("check table exists returned: " + check);
 			createComponentTable();
 			//TODO
 			// this needs to get templates from the EMAIL folders
@@ -198,11 +196,12 @@ public class SqlTalk {
 /*	admin database table	*/
 	
 	private boolean createAdminTable() {
+		debug("Creating admin DB table...");
 		sqlConnection = null;
 		try {
 			sqlConnection = Utilities.getConnection(DEFAULT_DB);
 		} catch (Exception e) {
-			debug("getConnection failure.");
+			debug("Get SQL connection failure: " + e);
 			e.printStackTrace();
 			return false;
 		}
@@ -218,7 +217,7 @@ public class SqlTalk {
 			sqlStatement.close();
 			// then populate table
 		} catch (SQLException e) {
-			debug("SQL connection open failure.");
+			debug("SQL connection open failure: " + e);
 			e.printStackTrace();
 		}
 		finally {
@@ -230,7 +229,7 @@ public class SqlTalk {
 		        }
 			}
 		    catch(SQLException e) {
-		    	debug("SQL connection close failure.");
+		    	debug("SQL connection close failure: " + e);
 		        System.err.println(e);
 		        return false;
 		    }
@@ -239,7 +238,7 @@ public class SqlTalk {
 	}	
 	
 	private boolean populateAdminTable() {
-		debug("populateAdminTable called.");
+		debug("Populating admin DB table...");
 		// this uses a default list of templates currently
 		// available in templates/EMAIL/
 		// each one should have its own webcode folder (MM, DR etc)
@@ -249,14 +248,11 @@ public class SqlTalk {
 		try {
 			sqlConnection = Utilities.getConnection(DEFAULT_DB);
 		} catch (Exception e) {
-			debug("getConnection failure.");
+			debug("Get SQL connection failure: " + e);
 			e.printStackTrace();
 			return false;
 		}
 		try {
-			if (sqlConnection != null) {
-				debug("sqlConnection made...");
-			}
 // BUILD PROPER INSERT			
 			sqlConnection.setAutoCommit(false);
 			
@@ -306,7 +302,7 @@ public class SqlTalk {
 		    }
 
 		} catch (SQLException e) {
-			debug("SQL connection open failure.");
+			debug("SQL connection open failure:" + e);
 			e.printStackTrace();
 		}
 		finally {
@@ -318,7 +314,7 @@ public class SqlTalk {
 		        }
 			}
 		    catch(SQLException e) {
-		    	debug("SQL connection close failure.");
+		    	debug("SQL connection close failure: " + e);
 		        System.err.println(e);
 		        return false;
 		    }
@@ -330,11 +326,12 @@ public class SqlTalk {
 	
 	private boolean createTemplatesTable() {			
 		// can reserve a given webcode and name without a template html yet.
+		debug("Creating templates DB table...");
 		sqlConnection = null;
 		try {
 			sqlConnection = Utilities.getConnection(DEFAULT_DB);
 		} catch (Exception e) {
-			debug("getConnection failure.");
+			debug("Get SQL connection failure: " + e);
 			e.printStackTrace();
 			return false;
 		}
@@ -351,7 +348,7 @@ public class SqlTalk {
 			sqlStatement.close();
 			// then populate table
 		} catch (SQLException e) {
-			debug("SQL connection open failure.");
+			debug("SQL connection open failure: " + e);
 			e.printStackTrace();
 		}
 		finally {
@@ -363,7 +360,7 @@ public class SqlTalk {
 		        }
 			}
 		    catch(SQLException e) {
-		    	debug("SQL connection close failure.");
+		    	debug("SQL connection close failure: " + e);
 		        System.err.println(e);
 		        return false;
 		    }
@@ -372,7 +369,7 @@ public class SqlTalk {
 	}
 	
 	private boolean populateTemplatesTable() {
-		debug("populateTemplatesTable called.");
+		debug("Populating templates table...");
 		// TODO
 		// this needs to load from templates/EMAIL folder?
 		// assume user cannot create new templates and save in the app?
@@ -380,23 +377,17 @@ public class SqlTalk {
 		try {
 			sqlConnection = Utilities.getConnection(DEFAULT_DB);
 		} catch (Exception e) {
-			debug("getConnection failure.");
+			debug("Get SQL connection failure: " + e);
 			e.printStackTrace();
 			return false;
 		}
 		try {
-			if (sqlConnection != null) {
-				debug("sqlConnection made...");
-			}
 // BUILD PROPER INSERT			
-			sqlConnection.setAutoCommit(false);
-			
+			sqlConnection.setAutoCommit(false);			
 			// 			
 			String insertSQL = "INSERT INTO " + TEMPLATES_TABLE + " (WEBCODE, NAME, HTML) "
 					+ "VALUES (?,?,?)";
 			PreparedStatement query = sqlConnection.prepareStatement(insertSQL);
-		    debug("prepStatement batch start...");
-		    
 		    String[] str = new String[7];
 		    str[0] = getTemplateHtml("DR", "endo");
 		    str[1] = getTemplateHtml("ELH", "bulletin");
@@ -455,7 +446,7 @@ public class SqlTalk {
 		    }
 
 		} catch (SQLException e) {
-			debug("SQL connection open failure.");
+			debug("SQL connection open failure: " + e);
 			e.printStackTrace();
 		}
 		finally {
@@ -467,7 +458,7 @@ public class SqlTalk {
 		        }
 			}
 		    catch(SQLException e) {
-		    	debug("SQL connection close failure.");
+		    	debug("SQL connection close failure: " + e);
 		        System.err.println(e);
 		        return false;
 		    }
@@ -480,14 +471,11 @@ public class SqlTalk {
 		try {
 			sqlConnection = Utilities.getConnection(DEFAULT_DB);
 		} catch (Exception e) {
-			debug("getConnection failure.");
+			debug("Get SQL connection failure: " + e);
 			e.printStackTrace();
 			return false;
 		}
 		try {
-			if (sqlConnection != null) {
-				debug("sqlConnection made...");
-			}
 // BUILD PROPER INSERT			
 			sqlConnection.setAutoCommit(false);
 						
@@ -515,7 +503,7 @@ public class SqlTalk {
 		    }
 	
 		} catch (SQLException e) {
-			debug("SQL connection open failure.");
+			debug("SQL connection open failure: " + e);
 			e.printStackTrace();
 		}
 		finally {
@@ -527,7 +515,7 @@ public class SqlTalk {
 		        }
 			}
 		    catch(SQLException e) {
-		    	debug("SQL connection close failure.");
+		    	debug("SQL connection close failure: " + e);
 		        System.err.println(e);
 		        return false;
 		    }
@@ -545,13 +533,10 @@ public class SqlTalk {
 		try {
 			sqlConnection = Utilities.getConnection(DEFAULT_DB);
 		} catch (Exception e) {
-			debug("getConnection failure.");
+			debug("Get SQL connection failure: " + e);
 			e.printStackTrace();
 		}
-		try {
-			if (sqlConnection != null) {
-				debug("sqlConnection made...");
-			}			
+		try {			
 			sqlConnection.setAutoCommit(false);
 
 			String selectSQL = "SELECT TEMPLATE_NAME FROM " + ADMIN_TABLE + " WHERE WEBCODE = ?";					
@@ -574,12 +559,11 @@ public class SqlTalk {
 		finally {
 			try {
 		        if(sqlConnection != null) {
-		        	sqlConnection.close();
-		        	debug("Get templateList for " + webcode + " SQL connection closed.");		            
+		        	sqlConnection.close();		            
 		        }
 			}
 		    catch(SQLException e) {
-		    	debug("Get templateList for " + webcode + " SQL connection close failure.");
+		    	debug("Get templateList for " + webcode + " SQL connection close failure: " + e);
 		        System.err.println(e);		        
 		    }
 		}		
@@ -594,7 +578,7 @@ public class SqlTalk {
 		try {
 			sqlConnection = Utilities.getConnection(DEFAULT_DB);
 		} catch (Exception e) {
-			debug("getConnection failure.");
+			debug("Get connection failure: " + e);
 			e.printStackTrace();
 			return false;
 		}
@@ -610,7 +594,7 @@ public class SqlTalk {
 			sqlStatement.close();
 			// then populate table
 		} catch (SQLException e) {
-			debug("SQL connection open failure.");
+			debug("SQL connection open failure: " + e);
 			e.printStackTrace();
 		}
 		finally {
@@ -622,7 +606,7 @@ public class SqlTalk {
 		        }
 			}
 		    catch(SQLException e) {
-		    	debug("SQL connection close failure.");
+		    	debug("SQL connection close failure: " + e);
 		        System.err.println(e);
 		        return false;
 		    }
@@ -631,7 +615,7 @@ public class SqlTalk {
 	}
 	
 	private boolean populateComponentTable() {
-		debug("populateComponentTable called.");
+		debug("Populating component table...");
 		// TODO
 		// this needs to load from templates/EMAIL folder?
 		// assume user cannot create new templates and save in the app?
@@ -639,33 +623,28 @@ public class SqlTalk {
 		try {
 			sqlConnection = Utilities.getConnection(DEFAULT_DB);
 		} catch (Exception e) {
-			debug("getConnection failure.");
+			debug("Get connection failure: " + e);
 			e.printStackTrace();
 			return false;
 		}
 		try {
-			if (sqlConnection != null) {
-				debug("sqlConnection made...");
-			}
 // BUILD PROPER INSERT			
 			sqlConnection.setAutoCommit(false);
-			
-			// 
+
 			String insertSQL = "INSERT INTO " + COMPONENT_TABLE + " (COMPONENT_NAME, COMPONENT_HTML) "
 					+ "VALUES (?,?)";
 			PreparedStatement query = sqlConnection.prepareStatement(insertSQL);
-		    debug("prepStatement batch start...");
-		    
+
 		    //String[] str = new String[7];
 		    String path = "templates/EMAIL/components";
 		    List<String> fileNames = Utilities.getComponentFileNameList(path);
 		    if (fileNames == null) {
-		    	debug("load component resource list error for: " + path);
+		    	debug("Load component resource list error for: " + path);
 		    	return false;
 		    }
 		  
 		    if (fileNames.size() != Utilities.fileNameHtml.size()) {
-		    	debug("file name list count does not match file html count");
+		    	debug("File name list count: " + fileNames.size() + ", does not match file html count: " + Utilities.fileNameHtml.size());
 		    }
 		    
 		    for (int i = 0; i < fileNames.size(); i++) {
@@ -688,7 +667,7 @@ public class SqlTalk {
 		    }
 
 		} catch (SQLException e) {
-			debug("SQL connection open failure.");
+			debug("SQL connection open failure: " + e);
 			e.printStackTrace();
 		}
 		finally {
@@ -700,7 +679,7 @@ public class SqlTalk {
 		        }
 			}
 		    catch(SQLException e) {
-		    	debug("SQL connection close failure.");
+		    	debug("SQL connection close failure: " + e);
 		        System.err.println(e);
 		        return false;
 		    }
@@ -718,13 +697,10 @@ public class SqlTalk {
 		try {
 			sqlConnection = Utilities.getConnection(DEFAULT_DB);
 		} catch (Exception e) {
-			debug("getConnection failure.");
+			debug("Get connection failure: " + e);
 			e.printStackTrace();
 		}
-		try {
-			if (sqlConnection != null) {
-				debug("sqlConnection made...");
-			}			
+		try {			
 			sqlConnection.setAutoCommit(false);
 
 			String selectSQL = "SELECT COMPONENT_NAME FROM " + COMPONENT_TABLE;					
@@ -740,18 +716,17 @@ public class SqlTalk {
 		    query.close();
 	
 		} catch (SQLException e) {
-			debug("Get componentList SQL connection open failure.");
+			debug("Get componentList SQL connection open failure: " + e);
 			e.printStackTrace();
 		}
 		finally {
 			try {
 		        if(sqlConnection != null) {
-		        	sqlConnection.close();
-		        	debug("Get componentList SQL connection closed.");		            
+		        	sqlConnection.close();	            
 		        }
 			}
 		    catch(SQLException e) {
-		    	debug("Get componentList for SQL connection close failure.");
+		    	debug("Get componentList for SQL connection close failure: " + e);
 		        System.err.println(e);		        
 		    }
 		}		

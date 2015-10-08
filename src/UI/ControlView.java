@@ -1,5 +1,7 @@
 package UI;
 
+import java.util.ArrayList;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.FillLayout;
@@ -9,26 +11,21 @@ import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 
+import MAIN.Utilities;
+
 public class ControlView {
-	
-	private static String button5String = "process";
-	private static String button6String = "EXPORT";
-	private static String button7String = "browser";
-	private static String button8String = "local open";
-	private static String button9String = "dump";
-	private static String button10String = "refresh";
-	private static String button11String = "grid";
-	private static String button14String = "selector";
-	private static String button15String = "LOCK";
-	private static String button16String = "update selector(s)";
-	
-	private static String label16String = "Component List:";
-	private static String button12String = "add component";
-	private static String button13String = "start new";
-	
+	private static final String[] BUTTON_NAMES = new String[] {
+		"dump", "refresh", "browser", "local open",
+		"process", "EXPORT", "grid", "selector",
+		"LOCK", "update selector", "CANCEL", 
+		"start new", "add component"
+	};
+
 	public static void loadView(final SquawkView squawkView) {
 		// controls
 		FillLayout fillLayout = new FillLayout();
@@ -82,45 +79,40 @@ public class ControlView {
 		RowLayout rowLayout3 = new RowLayout();
 		rowLayout3.pack = false;
 		squawkView.rowComp3.setLayout(rowLayout3);
+				
+		squawkView.buttonList = new ArrayList<Button>(20);
 		
-		
-		squawkView.b9 = new Button(rowComp1, SWT.PUSH);
-		squawkView.b9.setText(button9String);
-		squawkView.b10 = new Button(rowComp1, SWT.PUSH);
-		squawkView.b10.setText(button10String);
-		squawkView.b7 = new Button(rowComp1, SWT.PUSH);
-		squawkView.b7.setText(button7String);
-		squawkView.b8 = new Button(rowComp1, SWT.PUSH);
-		squawkView.b8.setText(button8String);
-		
-		squawkView.addWebcodeButtons();
-		
-		squawkView.b5 = new Button(rowComp1, SWT.PUSH);
-		squawkView.b5.setText(button5String);
-		squawkView.b6 = new Button(rowComp1, SWT.PUSH);
-		squawkView.b6.setText(button6String);
-		squawkView.b11 = new Button(rowComp1, SWT.PUSH);
-		squawkView.b11.setText(button11String);
-		squawkView.b14 = new Button(rowComp1, SWT.PUSH);
-		squawkView.b14.setText(button14String);
-		squawkView.b15 = new Button(rowComp1, SWT.PUSH);
-		squawkView.b15.setText(button15String);
-		squawkView.b16 = new Button(rowComp1, SWT.PUSH);
-		squawkView.b16.setText(button16String);
-  
+		for (int i = 0; i <= 10; i++) {
+			squawkView.buttonList.add(getControlButton(rowComp1, BUTTON_NAMES[i]));			
+		}
+		// add the webcode buttons
+		for (int i = 0; i < Utilities.WEBCODE_LIST.length; i++) {
+			Button button = getControlButton(squawkView.rowComp2, Utilities.WEBCODE_LIST[i]);
+			button.addListener(SWT.Selection,  new Listener() {
+				@Override
+				public void handleEvent(Event event) {
+					squawkView.userButtonPressed(event);
+				}
+				
+			});
+			squawkView.buttonList.add(button);
+		}
 		// rowComp3 reserved for drop down component list
-		Label label16 = new Label(squawkView.rowComp3, SWT.NONE);
-		label16.setText(label16String);
-		squawkView.b13 = new Button(squawkView.rowComp3, SWT.PUSH);
-		squawkView.b13.setText(button13String);
-		squawkView.b12 = new Button(squawkView.rowComp3, SWT.PUSH);
-		squawkView.b12.setText(button12String);
-		squawkView.b12.setEnabled(false);
+		Label label = new Label(squawkView.rowComp3, SWT.NONE);
+		label.setText("Component List:");		
+		squawkView.buttonList.add(getControlButton(squawkView.rowComp3, BUTTON_NAMES[11]));		
+		squawkView.buttonList.add(getControlButton(squawkView.rowComp3, BUTTON_NAMES[12]));
 
 		// debugging console
 	    squawkView.debugText = new Text(innerLow, SWT.BORDER | SWT.WRAP | SWT.V_SCROLL);
-	    squawkView.debugText.setText("console waiting...\n");
+	    squawkView.debugText.setText("Console loaded.\n");
 		
 	}
 	
+	public static Button getControlButton(Composite comp, String name) {
+		Button button = new Button(comp, SWT.PUSH);
+		button.setText(name);
+		button.setEnabled(true);		
+		return button;
+	}
 }

@@ -36,21 +36,16 @@ public class TemplateView {
 		squawkView.gridComp.setLayout(gridLayout);		
 
 		Map.Entry<String, String> entry;
-		Label label;
-		Text text;
 		squawkView.formTextFields = new ArrayList<Text>(squawkView.FORM_FIELDS.size());
 		squawkView.formFieldLabels = new ArrayList<Label>(squawkView.FORM_FIELDS.size());
 		
+//TODO
+// make iterator a thing from squawkView for single use 
 		Iterator<Entry<String, String>> entries = squawkView.FORM_FIELDS.entrySet().iterator();
 		while (entries.hasNext()) {
 			entry = (Map.Entry<String, String>)entries.next();		
-			label = getFormFieldLabel(squawkView, entry.getKey());
-			squawkView.formFieldLabels.add(label);
-
-			text = getFormFieldText(squawkView, entry.getValue());
-			//text.setText(entry.getValue());
-			//text.setEnabled(true);
-			squawkView.formTextFields.add(text);
+			squawkView.formFieldLabels.add(getFormFieldLabel(squawkView, entry.getKey(), false));
+			squawkView.formTextFields.add(getFormFieldText(squawkView, entry.getValue(), false));
 		}
 		
 		FormData formGrid = new FormData();
@@ -61,8 +56,14 @@ public class TemplateView {
 		squawkView.gridComp.setLayoutData(formGrid);	
 	}
 		
-	public static Label getFormFieldLabel(SquawkView squawkView, String name) {
-		Label label = new Label(squawkView.gridComp, SWT.NONE);
+	public static Label getFormFieldLabel(SquawkView squawkView, String name, boolean unique) {
+		Label label;
+		if (unique) {
+			label = new Label(squawkView.gridComp, SWT.BORDER);
+		}
+		else {
+			label = new Label(squawkView.gridComp, SWT.NONE);
+		}
 		label.setText(name);
 		GridData data;
 		data = new GridData();
@@ -71,8 +72,15 @@ public class TemplateView {
 		return label;
 	}
 
-	public static Text getFormFieldText(SquawkView squawkView, String content) {
-		Text text = new Text(squawkView.gridComp, SWT.MULTI | SWT.BORDER | SWT.WRAP | SWT.V_SCROLL);
+	public static Text getFormFieldText(SquawkView squawkView, String content, boolean unique) {
+		Text text;
+		if (unique) {
+			text = new Text(squawkView.gridComp, SWT.MULTI | SWT.BORDER | SWT.WRAP | SWT.V_SCROLL);
+		}
+		else {
+			text = new Text(squawkView.gridComp, SWT.MULTI | SWT.WRAP | SWT.V_SCROLL);
+		}
+		
 		GridData data2;
 		data2 = new GridData(GridData.FILL_HORIZONTAL);
 		data2.heightHint = Utilities.FORM_FIELD_HEIGHT;
